@@ -195,7 +195,7 @@ function rowHtml(c) {
     <div class="m-main">
       <div class="m-top"><span class="t">${esc(titleOf(c))}</span><span class="m-date">${esc(fmtDate(c.decision_date || c.publication_date))}</span></div>
       <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}</div>
-      <p class="why">${esc(whyOf(c))}</p>
+      <p class="why">${fmt(whyOf(c))}</p>
       <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
     <div class="m-act">${readOnly() ? "" : `<button class="act" data-act="${isDone(c) ? "reopen" : "done"}" title="${isDone(c) ? t("reopen") : t("mark_done")}">${isDone(c) ? "↺" : "✓"}</button>`}</div>
@@ -265,8 +265,16 @@ function markRead(slug) { if (!readSet.has(slug)) { readSet.add(slug); saveRead(
 
 /* ---------- citations: "(Erw. 4.2)" / "(consid. 5.2)" link to the consideration in the original text ---------- */
 const CITE_RE = /\b(Erw(?:ägung(?:en)?)?\.?|E\.|consid(?:érants?)?\.?|cons\.|considérants?)\s*(\d+(?:\.\d+)*)/g;
+// Model text cleanup for display: single line breaks inside a paragraph (left over from the court's HTML) become
+// spaces, blank lines stay paragraph breaks; "Art. 26bis" gets the usual superscript.
+function tidy(text) {
+  return String(text || "").replace(/\r/g, "").replace(/[ \t]*\n(?!\n)(?<!\n\n)[ \t]*/g, " ").replace(/\n{3,}/g, "\n\n")
+    .replace(/ {2,}/g, " ").replace(/([(„'’]) /g, "$1").trim();
+}
+const SUP_RE = /\b(\d+)(bis|ter|quater|quinquies|sexies)\b/g;
+function fmt(text) { return esc(tidy(text)).replace(SUP_RE, "$1<sup>$2</sup>"); }
 function linkCitations(text) {
-  return esc(text).replace(CITE_RE, (m, word, num) => `<a href="#" class="cite" data-erw="${num}" title="${t("cite_hint")}">${word} ${num}</a>`);
+  return fmt(text).replace(CITE_RE, (m, word, num) => `<a href="#" class="cite" data-erw="${num}" title="${t("cite_hint")}">${word} ${num}</a>`);
 }
 function renderOriginal(text) {
   const lines = text.split("\n");
@@ -339,7 +347,7 @@ async function renderPanel() {
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
       ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
-      ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${esc(why)}</p>`}
+      ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(why)}</p>`}
       ${E ? tagEditor(dr.tags ?? a.tags ?? [])
         : `<div class="tags">${a.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}${a.tags_edited ? `<span class="muted small">✎</span>` : ""}</div>`}</div>
     <div class="section"><h4>${t("details")}</h4><div class="kv">
