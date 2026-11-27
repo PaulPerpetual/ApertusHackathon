@@ -2,9 +2,9 @@
 const I18N = {
   de: {
     app_title: "Urteilsradar", search: "Suchen (Titel, Nummer, Schlagwort)", show_low: "Wenig relevante zeigen",
-    add: "+ Urteil zusammenfassen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
+    add: "Urteil manuell hinzufügen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     cancel: "Abbrechen", add_title: "Weiteres Urteil zusammenfassen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
-    start: "Starten", name_set: "Name festlegen", edited_by: "bearbeitet von", ai: "KI", relevance: "Relevanz",
+    start: "Starten", name_set: "Meinen Namen festlegen", edited_by: "bearbeitet von", ai: "KI", relevance: "Relevanz",
     why: "Begründung (Triage)", details: "Details", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
     edit: "Bearbeiten", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden",
@@ -14,17 +14,16 @@ const I18N = {
     saved: "Gespeichert", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet",
     mock: "Mock-Modell", demo: "Demo", suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung",
-    view_radar: "Radar", view_kb: "Bibliothek", kind_all: "Alle", kind_suva: "Suva", kind_ai: "KI", kind_edited: "Bearbeitet",
-    kb_search: "Bibliothek durchsuchen (Stichwort, Artikel, Nummer)", kb_n: (n) => `${n} Zusammenfassungen`, read_only: "Nur lesen",
+    view_radar: "Neue Urteile", view_kb: "Archiv", kind_all: "Alle", kind_suva: "Suva", kind_ai: "KI", kind_edited: "Bearbeitet",
+    kb_search: "Archiv durchsuchen (Stichwort, Artikel, Nummer)", kb_n: (n) => `${n} Zusammenfassungen`, read_only: "Nur lesen",
     in_radar: "Im Radar öffnen", author: "Autor:in",
-    compare: "Mit Suva-Zusammenfassung vergleichen", compare_off: "Vergleich schliessen", ours: "Unsere Zusammenfassung",
-    suva_expert: "Suva-Expert:innen", cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
+    cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher (titre, numéro, mot-clé)", show_low: "Afficher les moins pertinents",
-    add: "+ Résumer un arrêt", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
+    add: "Ajouter un arrêt manuellement", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     cancel: "Annuler", add_title: "Résumer un autre arrêt", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
-    start: "Lancer", name_set: "Définir le nom", edited_by: "modifié par", ai: "IA", relevance: "Pertinence",
+    start: "Lancer", name_set: "Définir mon nom", edited_by: "modifié par", ai: "IA", relevance: "Pertinence",
     why: "Justification (triage)", details: "Détails", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
     edit: "Modifier", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA",
@@ -34,11 +33,10 @@ const I18N = {
     saved: "Enregistré", queued: "En cours …", done: "Terminé", failed: "Erreur", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié",
     mock: "Modèle fictif", demo: "Démo", suva_party: "Suva partie", human_example: "Résumé original Suva",
-    view_radar: "Radar", view_kb: "Bibliothèque", kind_all: "Tous", kind_suva: "Suva", kind_ai: "IA", kind_edited: "Modifiés",
-    kb_search: "Rechercher dans la bibliothèque (mot-clé, article, numéro)", kb_n: (n) => `${n} résumés`, read_only: "Lecture seule",
+    view_radar: "Nouveaux arrêts", view_kb: "Archives", kind_all: "Tous", kind_suva: "Suva", kind_ai: "IA", kind_edited: "Modifiés",
+    kb_search: "Rechercher dans les archives (mot-clé, article, numéro)", kb_n: (n) => `${n} résumés`, read_only: "Lecture seule",
     in_radar: "Ouvrir dans le radar", author: "Auteur·e",
-    compare: "Comparer avec le résumé Suva", compare_off: "Fermer la comparaison", ours: "Notre résumé",
-    suva_expert: "Expert·e·s Suva", cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
+    cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
 };
 
@@ -46,7 +44,7 @@ const store = {
   get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
-const state = { compare: false, view: "radar", kbKind: "", kbTag: "", lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
+const state = { view: "radar", kbKind: "", kbTag: "", lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
 const $ = (s) => document.querySelector(s);
 const t = (k, ...a) => { const v = I18N[state.lang][k]; return typeof v === "function" ? v(...a) : v ?? k; };
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -100,8 +98,9 @@ function renderChrome() {
   $("#addBtn").hidden = !!ro; $("#editorChip").hidden = !!ro;
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
   $("#editorChip").textContent = state.editor ? "✎ " + state.editor : t("name_set");
+  $("#menuBtn").title = state.editor || "";
   document.title = "Suva · " + t("app_title");
-  if (state.status) { const b = $("#modelBadge"); b.textContent = ro ? t("read_only") : state.status.mock ? t("mock") : state.status.model; b.classList.toggle("warn", state.status.mock || !!ro); }
+  if (state.status) { const b = $("#modelBadge"); b.textContent = (ro ? t("read_only") + " · " : "") + t("model") + ": " + (state.status.mock ? t("mock") : state.status.model); }
 }
 
 /* ---------- list ---------- */
@@ -273,17 +272,8 @@ async function renderPanel() {
     } else {
       const meta = s.edited_by ? `<span class="edited">✎ ${t("edited_by")} ${esc(s.edited_by)} · ${esc(fmtTime(s.edited_at))}</span>`
         : s.model === "suva-human-example" ? `<span class="tag">${t("human_example")}</span>` : `<span class="tag">${t("ai")} · ${esc(s.model)}</span>`;
-      const expert = d.expert_summaries && d.expert_summaries[lang];
-      const canCompare = expert && s.model !== "suva-human-example";
-      if (canCompare && state.compare) {
-        html += `<div class="compare">
-          <div><h4>${t("ours")}</h4><div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div></div>
-          <div><h4>${t("suva_expert")}${d.expert_summaries.author ? ` · ${esc(d.expert_summaries.author)}` : ""}</h4><div class="c-sub"><span class="tag">${t("human_example")}</span></div><div class="summary">${linkCitations(expert)}</div></div>
-        </div>`;
-      } else {
-        html += `<div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div>`;
-      }
-      html += `<div class="row">${canCompare ? `<button class="btn small" id="toggleCompare">${state.compare ? t("compare_off") : t("compare")}</button>` : ""}
+      html += `<div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div>`;
+      html += `<div class="row">
         ${s.edited_by && s.ai_text ? `<button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button>` : ""}
         <button class="btn" id="editBtn">${t("edit")}</button></div>
         ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
@@ -297,7 +287,6 @@ async function renderPanel() {
   }
   html += `</div>`;
   $("#pBody").innerHTML = html;
-  $("#panel").classList.toggle("wide", !!(state.compare && state.tab.startsWith("summary_") && d.expert_summaries && !state.editing));
   $("#pBody").querySelectorAll(".cite").forEach((a) => (a.onclick = (e) => { e.preventDefault(); jumpToErw(a.dataset.erw); }));
   if (state.tab === "text" && state.pendingErw) {
     const num = state.pendingErw; state.pendingErw = null;
@@ -312,7 +301,6 @@ async function renderPanel() {
   on("editBtn", async () => { if (await requireName()) { state.editing = true; renderPanel(); } });
   on("cancelEdit", () => { state.editing = false; renderPanel(); });
   on("toggleAi", () => { state.showAi = !state.showAi; renderPanel(); });
-  on("toggleCompare", () => { state.compare = !state.compare; renderPanel(); });
   on("saveEdit", async () => {
     const lang = state.tab.slice(-2);
     await api(`/api/judgements/${encodeURIComponent(state.open)}/summary/${lang}`, { method: "PUT", body: JSON.stringify({ text: $("#sumEdit").value, editor: state.editor }) });
@@ -413,7 +401,11 @@ function setView(v) {
 function init() {
   renderChrome();
   document.querySelectorAll(".lang button").forEach((b) => (b.onclick = () => { state.lang = b.dataset.lang; store.set("suva.lang", state.lang); if (state.tab?.startsWith("summary_")) state.tab = "summary_" + state.lang; renderChrome(); state.view === "kb" ? loadKb() : renderList(); if (state.open) renderPanel(); }));
-  $("#editorChip").onclick = askName;
+  const menu = $("#menu"), menuBtn = $("#menuBtn");
+  const setMenu = (open) => { menu.hidden = !open; menuBtn.setAttribute("aria-expanded", String(open)); };
+  menuBtn.onclick = (e) => { e.stopPropagation(); setMenu(menu.hidden); };
+  document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closest(".menu-wrap")) setMenu(false); });
+  $("#editorChip").onclick = () => { setMenu(false); askName(); };
   let deb; $("#search").oninput = () => { if (state.view === "kb") { clearTimeout(deb); deb = setTimeout(loadKb, 200); } else renderList(); };
   document.querySelectorAll(".views button").forEach((b) => (b.onclick = () => setView(b.dataset.view)));
   $("#kbKind").onclick = (e) => { const b = e.target.closest("[data-kind]"); if (!b) return; state.kbKind = b.dataset.kind; $("#kbKind").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); loadKb(); };
@@ -428,7 +420,7 @@ function init() {
     if (sc) { e.stopPropagation(); editScore(li.dataset.slug, sc); return; }
     openPanel(li.dataset.slug);
   });
-  $("#addBtn").onclick = () => { const dlg = $("#addDlg"); $("#addInput").value = ""; dlg.onclose = () => { const v = $("#addInput").value.trim(); if (dlg.returnValue === "ok" && v) startAdd(v); }; dlg.showModal(); };
+  $("#addBtn").onclick = () => { setMenu(false); const dlg = $("#addDlg"); $("#addInput").value = ""; dlg.onclose = () => { const v = $("#addInput").value.trim(); if (dlg.returnValue === "ok" && v) startAdd(v); }; dlg.showModal(); };
   setupDnD();
   api("/api/status").then((s) => { state.status = s; renderChrome(); });
   load();

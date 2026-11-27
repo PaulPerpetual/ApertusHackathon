@@ -10,16 +10,21 @@
 <header class="topbar">
   <div class="brand"><span class="logo">S</span><span data-i18n="app_title">Urteilsradar</span></div>
   <div class="views" role="tablist">
-    <button data-view="radar" class="on" data-i18n="view_radar">Radar</button><button data-view="kb" data-i18n="view_kb">Bibliothek</button>
+    <button data-view="radar" class="on" data-i18n="view_radar">Neue Urteile</button><button data-view="kb" data-i18n="view_kb">Archiv</button>
   </div>
   <input id="search" type="search" data-i18n-placeholder="search">
-  <label class="toggle"><input id="showLow" type="checkbox"> <span data-i18n="show_low">Wenig relevante zeigen</span></label>
   <div class="spacer"></div>
-  <span id="modelBadge" class="badge"></span>
-  <button id="addBtn" class="btn primary" data-i18n="add">+ Urteil zusammenfassen</button>
-  <button id="editorChip" class="chip" title=""></button>
   <div class="lang" role="group" aria-label="Sprache / langue">
     <button data-lang="de" class="on">DE</button><button data-lang="fr">FR</button>
+  </div>
+  <div class="menu-wrap">
+    <button id="menuBtn" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">⋯</button>
+    <div id="menu" class="menu" hidden>
+      <button id="addBtn" class="menu-item" data-i18n="add">Urteil manuell hinzufügen</button>
+      <button id="editorChip" class="menu-item"></button>
+      <label class="menu-item toggle"><input id="showLow" type="checkbox"> <span data-i18n="show_low">Wenig relevante zeigen</span></label>
+      <div class="menu-foot"><span id="modelBadge"></span></div>
+    </div>
   </div>
 </header>
 
