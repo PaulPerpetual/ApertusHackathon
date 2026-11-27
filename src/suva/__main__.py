@@ -149,9 +149,9 @@ _DE_WORDS = re.compile(r"\b(der|die|das|und|ist|nicht|wird|zur|zum|des|vom|auf)\
 
 
 def _lang_ok(text, lang):
-    """Cheap guard: reject a German field that reads French and vice versa."""
-    fr, de = len(_FR_WORDS.findall(text)), len(_DE_WORDS.findall(text))
-    return de >= fr if lang == "de" else fr >= de
+    """Cheap guard: reject a German field that reads French or Italian, and vice versa."""
+    from . import tags
+    return tags.lang_ok(text, lang)
 
 
 def cmd_relabel(args):
