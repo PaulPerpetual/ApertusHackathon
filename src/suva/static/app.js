@@ -4,7 +4,7 @@ const I18N = {
   de: {
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
-    col_relevance: "Relevanz", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheid", col_tags: "Schlagworte", col_edited: "Bearbeitet",
+    col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheid", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
     add: "Urteil manuell hinzufügen …", add_title: "Urteil manuell hinzufügen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
@@ -17,14 +17,14 @@ const I18N = {
     edit: "Bearbeiten", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
-    st_new: "neu", st_done: "erledigt", saved: "Gespeichert", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
+    st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
     suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung", demo: "Demo",
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
-    col_relevance: "Pertinence", col_title: "Titre", col_docket: "Numéro", col_date: "Décision", col_tags: "Mots-clés", col_edited: "Modifié",
+    col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Décision", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
     add: "Ajouter un arrêt manuellement …", add_title: "Ajouter un arrêt manuellement", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
@@ -37,7 +37,7 @@ const I18N = {
     edit: "Modifier", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
-    st_new: "nouveau", st_done: "traité", saved: "Enregistré", queued: "En cours …", done: "Terminé", failed: "Erreur",
+    st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
     suva_party: "Suva partie", human_example: "Résumé original Suva", demo: "Démo",
     cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
@@ -92,8 +92,14 @@ async function api(path, opts = {}) {
   if (r.status === 401 && opts.method && opts.method !== "GET") {
     if (await askEditor(true)) r = await send();
   }
-  if (!r.ok) throw new Error(await r.text());
+  if (!r.ok) { const e = new Error(await r.text()); e.status = r.status; throw e; }
   return r.json();
+}
+function errText(e) {
+  if (e?.status === 401) return t("err_key");
+  if (e?.status === 403) return t("read_only");
+  let m = e?.message || String(e); try { m = JSON.parse(m).detail || m; } catch (_) {}
+  return String(m).slice(0, 160);
 }
 function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("show"), 2400); }
 
@@ -128,6 +134,7 @@ function renderChrome() {
   document.querySelectorAll("[data-lang]").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
   document.querySelectorAll("#scope [data-scope]").forEach((b) => b.classList.toggle("on", b.dataset.scope === state.scope));
   $("#sortBy").value = state.sort;
+  document.querySelectorAll("#mhead [data-sort]").forEach((b) => { b.classList.toggle("on", b.dataset.sort === state.sort); b.classList.toggle("asc", state.dir === "asc"); });
   $("#sortDir").textContent = state.dir === "desc" ? "↓" : "↑"; $("#sortDir").title = state.dir === "desc" ? t("desc") : t("asc");
   $("#editorBtn").textContent = t("editor_set", state.editor);
   $("#addBtn").hidden = readOnly(); $("#editorBtn").hidden = readOnly();
@@ -137,11 +144,17 @@ function renderChrome() {
 }
 
 function renderTagFilter() {
-  const freq = {};
-  state.cards.forEach((c) => (c.tags || []).forEach((g) => (freq[g] = (freq[g] || 0) + 1)));
-  const tags = Object.keys(freq).sort((a, b) => freq[b] - freq[a] || a.localeCompare(b));
+  const freq = {}, label = {};
+  state.cards.forEach((c) => tagsOf(c).forEach((g) => { freq[g.key] = (freq[g.key] || 0) + 1; label[g.key] = label[g.key] || g.label; }));
+  const tags = Object.keys(freq).sort((a, b) => freq[b] - freq[a] || label[a].localeCompare(label[b]));
   $("#tagFilter").innerHTML = `<option value="">${t("all_keywords")}</option>` +
-    tags.map((g) => `<option value="${esc(g)}" ${g === state.tag ? "selected" : ""}>${esc(g)} (${freq[g]})</option>`).join("");
+    tags.map((g) => `<option value="${esc(g)}" ${g === state.tag ? "selected" : ""}>${esc(label[g])} (${freq[g]})</option>`).join("");
+}
+
+/* tags: DE is the key (filter works across languages); FR label when triage delivered a 1:1 translation */
+function tagsOf(c) {
+  const de = c.tags || [], fr = c.tags_fr || [];
+  return de.map((k, i) => ({ key: k, label: state.lang === "fr" && fr.length === de.length ? fr[i] : k }));
 }
 
 /* ---------- list ---------- */
@@ -152,7 +165,7 @@ function visible() {
     if (state.scope === "done" && !isDone(c)) return false;
     if ((c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
     if (state.tag && !(c.tags || []).includes(state.tag)) return false;
-    if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || [])].join(" ").toLowerCase().includes(q)) return false;
+    if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || []), ...(c.tags_fr || [])].join(" ").toLowerCase().includes(q)) return false;
     return true;
   });
   const key = {
@@ -170,18 +183,17 @@ function rowHtml(c) {
   const unread = !readSet.has(c.slug) && !isDone(c);
   const tip = `${t("score_ai")}: ${c.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${c.score_override} (${c.override_by || ""})` : ""} · ${t("edit_score")}`;
   const edited = c.last_editor ? `<span class="edited">✎ ${esc(c.last_editor)} · ${esc(fmtTime(c.last_edit_at))}</span>` : "";
-  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${unread ? "unread" : ""}">
+  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
     <div class="m-dot">${unread ? '<span class="dot"></span>' : ""}</div>
-    <div class="m-score" data-score title="${esc(tip)}">
+    <div class="m-score ${overridden ? "manual" : ""}" data-score title="${esc(tip)}">
       <span class="n">${c.score ?? "–"}</span>
       <span class="level"><i class="${band(s)}" style="width:${s}%"></i></span>
-      <span class="lbl">${overridden ? "✎ " + t("manual") : t("relevance")}</span>
     </div>
     <div class="m-main">
       <div class="m-top"><span class="t">${esc(titleOf(c))}</span><span class="m-date">${esc(fmtDate(c.decision_date || c.publication_date))}</span></div>
       <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}</div>
       <p class="why">${esc(whyOf(c))}</p>
-      <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${(c.tags || []).map((g) => `<span class="tag">#${esc(g)}</span>`).join("")}</div>${edited}</div>
+      <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
     <div class="m-act">${readOnly() ? "" : `<button class="act" data-act="${isDone(c) ? "reopen" : "done"}" title="${isDone(c) ? t("reopen") : t("mark_done")}">${isDone(c) ? "↺" : "✓"}</button>`}</div>
   </li>`;
@@ -213,16 +225,27 @@ async function editScore(slug, el) {
   const commit = async (save) => {
     if (done) return; done = true;
     const v = Math.max(0, Math.min(100, parseInt(inp.value, 10)));
-    if (save && !Number.isNaN(v) && v !== c.score) await setScore(slug, v); else renderList();
+    if (save && !Number.isNaN(v) && v !== c.score) {
+      el.classList.add("manual"); el.innerHTML = `<span class="n">${v}</span><span class="level"><i class="${band(v)}" style="width:${v}%"></i></span>`;
+      await setScore(slug, v);
+    } else { await pointerReleased(); renderList(); }
   };
   inp.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") commit(true); if (e.key === "Escape") commit(false); });
   inp.addEventListener("blur", () => commit(true));
   inp.addEventListener("click", (e) => e.stopPropagation());
 }
 async function setScore(slug, score) {
-  await api(`/api/judgements/${encodeURIComponent(slug)}/score`, { method: "PUT", body: JSON.stringify({ score, editor: state.editor }) });
-  toast(t("saved")); await load();
+  try {
+    await api(`/api/judgements/${encodeURIComponent(slug)}/score`, { method: "PUT", body: JSON.stringify({ score, editor: state.editor }) });
+    toast(t("saved"));
+  } catch (e) { toast(`${t("failed_action")}: ${errText(e)}`); }
+  await pointerReleased(); await load();
 }
+// Re-rendering the list between mousedown and click swallows the click; wait until the pointer is up.
+let pointerDown = false;
+document.addEventListener("pointerdown", () => (pointerDown = true), true);
+document.addEventListener("pointerup", () => setTimeout(() => (pointerDown = false)), true);
+const pointerReleased = () => new Promise((r) => (function wait() { pointerDown ? setTimeout(wait, 30) : setTimeout(r); })());
 
 /* ---------- done / reopen (team-wide), read (this browser) ---------- */
 async function setDone(slug, done) {
@@ -289,7 +312,7 @@ async function renderPanel() {
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
       ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}</h4><p>${esc(L === "fr" ? a.explanation_fr : a.explanation_de)}</p>
-      <div class="tags">${a.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${(a.tags || []).map((g) => `<span class="tag">${esc(g)}</span>`).join("")}</div></div>
+      <div class="tags">${a.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div></div>
     <div class="section"><h4>${t("details")}</h4><div class="kv">
       ${d.decision_date ? `<span class="muted">${t("decided")}</span><span>${esc(fmtDate(d.decision_date))}</span>` : ""}
       ${d.publication_date ? `<span class="muted">${t("published")}</span><span>${esc(fmtDate(d.publication_date))}</span>` : ""}
@@ -378,6 +401,13 @@ function init() {
     state.sort = e.target.value; state.dir = state.sort === "title" || state.sort === "docket" ? "asc" : "desc";
     store.set("lex.sort", state.sort); store.set("lex.dir", state.dir); renderChrome(); renderList();
   };
+  document.querySelectorAll("#mhead [data-sort]").forEach((b) => (b.onclick = () => {
+    if (state.sort === b.dataset.sort) state.dir = state.dir === "desc" ? "asc" : "desc";
+    else { state.sort = b.dataset.sort; state.dir = state.sort === "title" ? "asc" : "desc"; }
+    store.set("lex.sort", state.sort); store.set("lex.dir", state.dir); renderChrome(); renderList();
+  }));
+  // a failed save must never be silent (e.g. missing/wrong editor key on the hosted server)
+  window.addEventListener("unhandledrejection", (e) => { toast(`${t("failed_action")}: ${errText(e.reason)}`); });
   $("#sortDir").onclick = () => { state.dir = state.dir === "desc" ? "asc" : "desc"; store.set("lex.dir", state.dir); renderChrome(); renderList(); };
   $("#minScore").oninput = (e) => { state.minScore = parseInt(e.target.value, 10); store.set("lex.min", String(state.minScore)); $("#minScoreOut").textContent = state.minScore; renderList(); };
   $("#tagFilter").onchange = (e) => { state.tag = e.target.value; renderList(); };

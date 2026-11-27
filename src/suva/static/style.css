@@ -60,6 +60,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* list (Mail-style rows: card content in a clean list) */
 .mlist { list-style: none; margin: 0; padding: 0; }
+/* column header (Finder list view): click to sort, arrow shows the direction */
+.mhead { position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: 18px 64px 1fr 36px; gap: 10px; padding: 3px 14px 3px 8px;
+  background: var(--chrome); border-bottom: 1px solid var(--sep-strong); font-size: 11px; color: var(--muted); }
+.h-main { display: flex; justify-content: space-between; }
+.h-sort { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; padding: 1px 4px; border-radius: 4px; cursor: pointer; }
+.mhead > .h-sort { justify-self: center; }
+.h-sort:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+.h-sort.on { color: var(--text); }
+.h-sort.on::after { content: " ▾"; font-size: 9px; } .h-sort.on.asc::after { content: " ▴"; }
 .mrow { display: grid; grid-template-columns: 18px 64px 1fr 36px; gap: 10px; padding: 10px 14px 10px 8px; border-bottom: 1px solid var(--sep); cursor: default; }
 .mrow:hover { background: var(--stripe); }
 .mrow.sel { background: var(--sel); color: var(--accent-ink); }
@@ -70,8 +79,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .m-score:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
 .mrow.sel .m-score:hover { background: color-mix(in srgb, var(--accent-ink) 15%, transparent); }
 .m-score .n { font-size: 20px; font-weight: 650; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.m-score .lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
-.mrow.sel .m-score .lbl { color: color-mix(in srgb, var(--accent-ink) 80%, transparent); }
+/* human-edited rulings: orange bar on the left, manual scores in orange with a pencil */
+.mrow.is-edited { box-shadow: inset 3px 0 0 var(--edited); }
+.mrow.is-edited.sel { box-shadow: inset 3px 0 0 var(--edited-bg); }
+.m-score.manual .n { color: var(--edited); }
+.m-score.manual .n::after { content: "✎"; font-size: 10px; font-weight: 400; margin-left: 1px; vertical-align: super; }
+.mrow.sel .m-score.manual .n { color: var(--accent-ink); }
 .m-score input { width: 52px; padding: 1px 4px; border: 1px solid var(--accent); border-radius: 4px; background: var(--control); color: var(--text); font-size: 16px; text-align: center; }
 .level { width: 44px; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--text) 12%, transparent); overflow: hidden; }
 .level i { display: block; height: 100%; border-radius: 2px; }
@@ -141,7 +154,7 @@ dialog input { width: 100%; padding: 5px 8px; border: 1px solid var(--control-bo
 #toast.show { opacity: 1; }
 
 @media (max-width: 900px) {
-  .mrow { grid-template-columns: 12px 52px 1fr 30px; gap: 8px; }
+  .mrow, .mhead { grid-template-columns: 12px 52px 1fr 30px; gap: 8px; }
   #panel { position: fixed; inset: 0; width: auto; z-index: 30; }
   .searchbox { width: auto; flex: 1; }
   .toolbar { flex-wrap: wrap; }

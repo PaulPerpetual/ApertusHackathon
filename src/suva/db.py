@@ -88,6 +88,8 @@ def _migrate(con):
     for name, ddl in (("status", "TEXT DEFAULT 'new'"), ("status_by", "TEXT"), ("status_at", "TEXT")):
         if name not in cols:
             con.execute(f"ALTER TABLE judgements ADD COLUMN {name} {ddl}")
+    if "tags_fr" not in {r[1] for r in con.execute("PRAGMA table_info(assessments)")}:
+        con.execute("ALTER TABLE assessments ADD COLUMN tags_fr TEXT")  # JSON list, same order as tags (DE)
 
 
 def upsert_judgement(con, j):
@@ -106,15 +108,15 @@ def upsert_judgement(con, j):
 def save_assessment(con, slug, a, model, prefilter_score):
     con.execute(
         """INSERT INTO assessments (slug, ai_score, prefilter_score, title_de, title_fr, explanation_de,
-               explanation_fr, tags, suva_party, model, created_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?)
+               explanation_fr, tags, tags_fr, suva_party, model, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
            ON CONFLICT(slug) DO UPDATE SET ai_score=excluded.ai_score, prefilter_score=excluded.prefilter_score,
                title_de=excluded.title_de, title_fr=excluded.title_fr, explanation_de=excluded.explanation_de,
-               explanation_fr=excluded.explanation_fr, tags=excluded.tags, suva_party=excluded.suva_party,
+               explanation_fr=excluded.explanation_fr, tags=excluded.tags, tags_fr=excluded.tags_fr, suva_party=excluded.suva_party,
                model=excluded.model, created_at=excluded.created_at""",
         (slug, a.get("score"), prefilter_score, a.get("title_de"), a.get("title_fr"), a.get("explanation_de"),
          a.get("explanation_fr"), json.dumps(a.get("tags") or [], ensure_ascii=False),
-         int(bool(a.get("suva_party"))), model, now()))
+         json.dumps(a.get("tags_fr") or [], ensure_ascii=False), int(bool(a.get("suva_party"))), model, now()))
 
 
 def save_summary(con, slug, lang, text, model):
@@ -137,7 +139,7 @@ def list_cards(con):
         """SELECT j.slug, j.docket, j.decision_date, j.publication_date, j.division, j.subject, j.url, j.source,
                   COALESCE(j.status, 'new') AS status, j.status_by, j.status_at,
                   a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
-                  a.explanation_de, a.explanation_fr, a.tags, a.suva_party, a.model,
+                  a.explanation_de, a.explanation_fr, a.tags, a.tags_fr, a.suva_party, a.model,
                   (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,
                   (SELECT e.editor FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_editor,
                   (SELECT e.at FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_edit_at
@@ -146,6 +148,7 @@ def list_cards(con):
     for r in rows:
         c = dict(r)
         c["tags"] = json.loads(c["tags"] or "[]")
+        c["tags_fr"] = json.loads(c["tags_fr"] or "[]")
         c["score"] = c["score_override"] if c["score_override"] is not None else c["ai_score"]
         cards.append(c)
     # ties: the most recently human-placed card first (so drag-and-drop between equal scores sticks)
@@ -164,6 +167,7 @@ def get_detail(con, slug):
     d["assessment"] = dict(a) if a else None
     if a:
         d["assessment"]["tags"] = json.loads(a["tags"] or "[]")
+        d["assessment"]["tags_fr"] = json.loads(a["tags_fr"] or "[]")
     d["summaries"] = {r["lang"]: dict(r) for r in con.execute("SELECT * FROM summaries WHERE slug=?", (slug,))}
     d["history"] = [dict(r) for r in con.execute("SELECT * FROM edits WHERE slug=? ORDER BY id DESC", (slug,))]
     d["expert_summaries"] = _expert_summary(d["docket"])

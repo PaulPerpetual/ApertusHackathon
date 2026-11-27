@@ -124,7 +124,7 @@ Still open for Paul:
 ### Card fields the UI relies on (`db.list_cards`)
 
 `slug, docket, status, status_by, status_at, decision_date, division, language, subject, url, source, ai_score,
-score_override, override_by, title_de, title_fr, explanation_de, explanation_fr, tags,
+score_override, override_by, title_de, title_fr, explanation_de, explanation_fr, tags, tags_fr (FR translation of tags, same order; [] for older rows),
 suva_party, model, has_summary`. The effective score is `score_override ?? ai_score`.
 
 ### Pipeline additions proposed (Miguel; additive, no breaking change)
