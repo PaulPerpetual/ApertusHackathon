@@ -116,6 +116,7 @@ Still open for Paul:
 | PUT | `/api/judgements/{slug}/score` | `{score: 0-100, editor}` | `{ok}`; logged in `edits` |
 | PUT | `/api/judgements/{slug}/status` | `{status: "new"\|"done", editor}` | `{ok}`; team-wide "Erledigt" state, logged in `edits` (unread/read is per browser) |
 | PUT | `/api/judgements/{slug}/explanation/{lang}` | `{text, editor}` | `{ok}`; edited reasoning, stored in `explanation_{lang}_human` (re-triage keeps it), logged |
+| PUT | `/api/judgements/{slug}/tags` | `{tags: [..], editor}` | `{ok}`; keywords set by hand (German labels; stored in `tags_human`, re-triage keeps them). Cards/detail return `tags` (effective: human list, else model tags mapped onto the fixed list in `suva/tags.py`), `tags_fr`, `tags_ai`, `tags_edited`; `/api/status` returns `tag_vocab` |
 | POST | `/api/judgements/{slug}/notes` | `{text, editor}` | `{ok, id}`; team note, shown in the Notizen tab; detail returns `notes: [{id, text, editor, at}]` |
 | DELETE | `/api/judgements/{slug}/notes/{id}` | `{editor}` | `{ok}`; logged as `note_deleted` |
 | DELETE | `/api/judgements/{slug}/score` | `{editor}` | `{ok}`; reverts to AI score |

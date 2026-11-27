@@ -186,3 +186,11 @@ textarea.note-edit { border-color: var(--control-border); min-height: 70px; marg
 .note-meta { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
 .note-meta .note-del { opacity: .5; margin-left: auto; }
 .note-text { white-space: pre-wrap; margin-top: 2px; }
+
+/* keywords: "Suva Partei" is a status badge, not a keyword */
+.tag.party { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 600; }
+.mrow.sel .tag.party { background: var(--accent-ink); color: var(--sel); }
+.tag-edit { align-items: center; padding: 6px; border: 1px solid var(--accent); border-radius: 6px; background: var(--control); }
+.tag-edit .rm { border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0 0 0 4px; font-size: 12px; }
+.tag-edit input { flex: 1; min-width: 160px; border: 0; outline: none; background: transparent; color: var(--text); font: inherit; padding: 2px 4px; }
+.small { font-size: 11px; }

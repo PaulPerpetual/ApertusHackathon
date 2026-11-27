@@ -181,7 +181,7 @@ def cmd_export(args):
     import json
     from datetime import datetime, timezone
     from pathlib import Path
-    from . import llm, server
+    from . import llm, server, tags
     out = Path(args.folder) / "api"
     (out / "judgements").mkdir(parents=True, exist_ok=True)
     (out / "kb" / "example").mkdir(parents=True, exist_ok=True)
@@ -195,7 +195,7 @@ def cmd_export(args):
         for c in cards:
             dump(f"judgements/{c['slug']}.json", db.get_detail(con, c["slug"]))
     dump("status.json", {"model": llm.model_name(), "mock": config.USE_MOCK_LLM, "threshold": config.RELEVANCE_SUMMARY_THRESHOLD,
-                         "read_only": True, "static": True, "jobs": {},
+                         "read_only": True, "static": True, "jobs": {}, "tag_vocab": tags.vocab(),
                          "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
     dump("kb.json", server.kb_entries())
     for ex in examples.load_examples():

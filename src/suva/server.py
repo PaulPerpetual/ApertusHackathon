@@ -5,7 +5,7 @@ import json
 import re
 import secrets
 import threading
-from typing import Optional
+from typing import List, Optional
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request
@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import config, db, examples, llm
+from . import config, db, examples, llm, tags
 
 STATIC = Path(__file__).parent / "static"
 app = FastAPI(title="Suva judgement triage")
@@ -74,6 +74,11 @@ class SummaryIn(BaseModel):
 
 class NoteIn(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
+    editor: str = Field(min_length=1, max_length=60)
+
+
+class TagsIn(BaseModel):
+    tags: List[str] = Field(max_length=12)
     editor: str = Field(min_length=1, max_length=60)
 
 
@@ -163,7 +168,7 @@ def _data_version():
 def status():
     return {"model": llm.model_name(), "mock": config.USE_MOCK_LLM, "read_only": config.READ_ONLY,
             "editor_key_required": bool(config.EDITOR_KEYS), "data_version": _data_version(),
-            "threshold": config.RELEVANCE_SUMMARY_THRESHOLD, "jobs": JOBS}
+            "threshold": config.RELEVANCE_SUMMARY_THRESHOLD, "jobs": JOBS, "tag_vocab": tags.vocab()}
 
 
 @app.get("/api/judgements")
@@ -263,6 +268,25 @@ def set_explanation(slug: str, lang: str, body: SummaryIn, request: Request):
         con.execute(f"UPDATE assessments SET explanation_{lang}_human=?, explanation_edited_by=?, explanation_edited_at=?"
                     " WHERE slug=?", (body.text, body.editor, db.now(), slug))
         db.log_edit(con, slug, f"explanation_{lang}", a["t"], body.text, body.editor)
+    return {"ok": True}
+
+
+@app.put("/api/judgements/{slug}/tags")
+def set_tags(slug: str, body: TagsIn, request: Request):
+    """Replace the keywords by hand (German labels; ones from the fixed list get their French label automatically)."""
+    body.editor = _editor(request, body.editor)
+    clean = []
+    for t in body.tags:
+        t = re.sub(r"\s+", " ", t.lstrip("#")).strip()[:40]
+        if t and t not in clean:
+            clean.append(t)
+    with db.connect() as con:
+        a = con.execute("SELECT tags, tags_human FROM assessments WHERE slug=?", (slug,)).fetchone()
+        if not a:
+            raise HTTPException(404, "not found")
+        old = db._effective_tags(dict(a))["tags"]
+        con.execute("UPDATE assessments SET tags_human=? WHERE slug=?", (json.dumps(clean, ensure_ascii=False), slug))
+        db.log_edit(con, slug, "tags", ", ".join(old), ", ".join(clean), body.editor)
     return {"ok": True}
 
 

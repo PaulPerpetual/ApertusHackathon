@@ -100,7 +100,7 @@ def _migrate(con):
     acols = {r[1] for r in con.execute("PRAGMA table_info(assessments)")}
     # tags_fr: JSON list, same order as tags (DE). explanation_*_human: edited reasoning, kept apart from the
     # AI text so a re-triage never overwrites it.
-    for name in ("tags_fr", "explanation_de_human", "explanation_fr_human", "explanation_edited_by", "explanation_edited_at"):
+    for name in ("tags_fr", "tags_human", "explanation_de_human", "explanation_fr_human", "explanation_edited_by", "explanation_edited_at"):
         if name not in acols:
             con.execute(f"ALTER TABLE assessments ADD COLUMN {name} TEXT")
 
@@ -153,7 +153,7 @@ def list_cards(con):
                   COALESCE(j.status, 'new') AS status, j.status_by, j.status_at,
                   a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
                   COALESCE(a.explanation_de_human, a.explanation_de) AS explanation_de,
-                  COALESCE(a.explanation_fr_human, a.explanation_fr) AS explanation_fr, a.tags, a.tags_fr, a.suva_party, a.model,
+                  COALESCE(a.explanation_fr_human, a.explanation_fr) AS explanation_fr, a.tags, a.tags_fr, a.tags_human, a.suva_party, a.model,
                   (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,
                   (SELECT COUNT(*) FROM notes n WHERE n.slug=j.slug) AS n_notes,
                   (SELECT e.editor FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_editor,
@@ -162,8 +162,7 @@ def list_cards(con):
     cards = []
     for r in rows:
         c = dict(r)
-        c["tags"] = json.loads(c["tags"] or "[]")
-        c["tags_fr"] = json.loads(c["tags_fr"] or "[]")
+        _effective_tags(c)
         c["score"] = c["score_override"] if c["score_override"] is not None else c["ai_score"]
         cards.append(c)
     # ties: the most recently human-placed card first (so drag-and-drop between equal scores sticks)
@@ -171,6 +170,20 @@ def list_cards(con):
     cards.sort(key=lambda c: c["override_at"] or "", reverse=True)
     cards.sort(key=lambda c: -(c["score"] or 0))
     return cards
+
+
+def _effective_tags(row):
+    """Tags shown and filtered on: a human's list if someone edited them, else the model's tags mapped onto
+    the fixed Suva keyword list (suva/tags.py). French labels come from the same list."""
+    from . import tags as vocab
+    ai = json.loads(row.get("tags") or "[]")
+    human = json.loads(row["tags_human"]) if row.get("tags_human") else None
+    row["tags_ai"] = ai
+    row["tags_edited"] = human is not None
+    row["tags"] = human if human is not None else vocab.normalize(ai)
+    row["tags_fr"] = vocab.french(row["tags"])
+    row.pop("tags_human", None)
+    return row
 
 
 def get_detail(con, slug):
@@ -181,8 +194,7 @@ def get_detail(con, slug):
     a = con.execute("SELECT * FROM assessments WHERE slug=?", (slug,)).fetchone()
     d["assessment"] = dict(a) if a else None
     if a:
-        d["assessment"]["tags"] = json.loads(a["tags"] or "[]")
-        d["assessment"]["tags_fr"] = json.loads(a["tags_fr"] or "[]")
+        _effective_tags(d["assessment"])
         for lang in ("de", "fr"):  # effective reasoning = human edit if any; AI text stays available
             d["assessment"][f"explanation_{lang}_ai"] = a[f"explanation_{lang}"]
             if a[f"explanation_{lang}_human"] is not None:
