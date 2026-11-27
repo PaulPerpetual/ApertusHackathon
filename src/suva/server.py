@@ -90,6 +90,21 @@ def index():
     return FileResponse(STATIC / "index.html")
 
 
+@app.get("/stats")
+def stats_page():
+    """Model statistics page: comparison, F2 curves, April-June overview (data: GET /api/stats)."""
+    return FileResponse(STATIC / "stats.html")
+
+
+@app.get("/api/stats")
+def stats_json():
+    """Precomputed by src/build_stats.py (data/stats.json, deployed with the DB)."""
+    path = config.ROOT / "data" / "stats.json"
+    if not path.exists():
+        raise HTTPException(404, "stats not built yet")
+    return FileResponse(path, media_type="application/json")
+
+
 @app.get("/debug")
 def debug_page():
     """Troubleshooting page for the hosted API (status, data counts, key test)."""

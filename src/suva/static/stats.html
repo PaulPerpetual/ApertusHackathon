@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lex Aperta Stats</title>
+<style>
+  :root { --bg:#f3f2f1; --card:#fff; --fg:#323130; --muted:#605e5c; --line:#edebe9; --accent:#0078d4;
+          --s1:#0078d4; --s2:#c4314b; --s3:#8a8886; --s4:#107c10; --good:#107c10; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --s1:#2899f5; --s2:#f1707b; --s3:#a19f9d; --s4:#54b054; --good:#54b054; } }
+  :root[data-theme="dark"] { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --s1:#2899f5; --s2:#f1707b; --s3:#a19f9d; --s4:#54b054; --good:#54b054; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; }
+  .suite { background:#201f1e; color:#fff; padding:8px 16px; font-weight:600; font-size:14px; }
+  main { max-width:1060px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:24px; font-weight:600; margin:0 0 2px; } h2 { font-size:17px; font-weight:600; margin:0 0 4px; }
+  .sub { color:var(--muted); margin-bottom:16px; }
+  .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:16px; margin-bottom:16px; box-shadow:0 1.6px 3.6px rgba(0,0,0,.08); }
+  .kpis { display:grid; gap:12px; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:12px 14px; }
+  .kpi b { display:block; font-size:26px; font-weight:600; } .kpi span { color:var(--muted); font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { text-align:right; padding:7px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th:first-child, td:first-child { text-align:left; white-space:normal; } th { color:var(--muted); font-weight:600; }
+  tr.best td { font-weight:600; } .tag { display:inline-block; font-size:11px; padding:1px 6px; border-radius:2px; background:var(--line); color:var(--muted); margin-left:6px; }
+  .note { color:var(--muted); font-size:12px; margin-top:8px; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:6px 0; }
+  .legend i { display:inline-block; width:12px; height:3px; vertical-align:middle; margin-right:5px; }
+  svg text { fill:var(--muted); font-size:11px; } .scroll { overflow-x:auto; }
+  code { font:12px ui-monospace, Menlo, monospace; }
+</style>
+</head>
+<body>
+<div class="suite">Lex Aperta</div>
+<main>
+  <h1>Model statistics</h1>
+  <div class="sub" id="gen">Loading…</div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>Model comparison on the labelled window</h2>
+    <div class="sub" id="winlabel"></div>
+    <div class="scroll"><table id="cmp"></table></div>
+    <div class="note">Suva scores the delivered list with Recall and F2 (recall counts 4× as much as precision).
+      Only Apertus can be used in the submitted solution; other models are a development reference only.</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Recall, precision and F2 by score cutoff</h2>
+      <div class="legend"><span><i style="background:var(--s1)"></i>Recall</span><span><i style="background:var(--s2)"></i>Precision</span><span><i style="background:var(--s4)"></i>F2</span></div>
+      <div id="curve"></div>
+      <div class="note">Apertus 70B main score on Oct 2025 – Mar 2026. Our cutoff: 60.</div>
+    </div>
+    <div class="card">
+      <h2>Apertus vs Codex, 40 blind labelled rulings</h2>
+      <div id="cal"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>By subject area (window)</h2>
+      <div class="scroll"><table id="area"></table></div>
+    </div>
+    <div class="card">
+      <h2>April – June 2026: hit list by month</h2>
+      <div id="months"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>April – June 2026: Apertus score distribution</h2>
+      <div id="hist"></div>
+      <div class="note">177 subject-area candidates. Scores cluster: Apertus decides rather than grades.</div>
+    </div>
+    <div class="card">
+      <h2>April – June 2026: Apertus vs Codex</h2>
+      <div id="agree"></div>
+    </div>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x) => x == null ? "–" : Math.round(x * 100) + "%";
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function lineChart(el, pts, series, xKey) {
+  const W = 460, H = 230, L = 36, R = 10, T = 10, B = 28;
+  const xs = pts.map((p) => p[xKey]); const x0 = Math.min(...xs), x1 = Math.max(...xs);
+  const X = (v) => L + (v - x0) / (x1 - x0 || 1) * (W - L - R), Y = (v) => T + (1 - v) * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="line chart">`;
+  for (const g of [0, .25, .5, .75, 1]) s += `<line x1="${L}" x2="${W - R}" y1="${Y(g)}" y2="${Y(g)}" stroke="${css("--line")}"/><text x="${L - 6}" y="${Y(g) + 4}" text-anchor="end">${g * 100}%</text>`;
+  for (const v of xs.filter((v) => v % 20 === 0)) s += `<text x="${X(v)}" y="${H - 8}" text-anchor="middle">≥${v}</text>`;
+  s += `<line x1="${X(60)}" x2="${X(60)}" y1="${T}" y2="${H - B}" stroke="${css("--muted")}" stroke-dasharray="3 3"/>`;
+  for (const [key, color] of series) {
+    s += `<polyline fill="none" stroke="${color}" stroke-width="2.2" points="${pts.map((p) => `${X(p[xKey])},${Y(p[key])}`).join(" ")}"/>`;
+  }
+  el.innerHTML = s + "</svg>";
+}
+
+function hbars(el, items, max) {   // items: [{label, value, color, text}]
+  const W = 460, rowH = 26, L = 120, H = items.length * rowH + 6;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="bar chart">`;
+  items.forEach((it, i) => {
+    const y = i * rowH + 4, w = Math.max(2, (it.value / (max || 1)) * (W - L - 70));
+    s += `<text x="${L - 8}" y="${y + 15}" text-anchor="end">${esc(it.label)}</text>
+          <rect x="${L}" y="${y + 3}" width="${w}" height="16" rx="2" fill="${it.color}"/>
+          <text x="${L + w + 6}" y="${y + 15}">${esc(it.text ?? it.value)}</text>`;
+  });
+  el.innerHTML = s + "</svg>";
+}
+
+function columns(el, groups, keys) {   // groups: [{label, values:{k:v}}], keys: [[k, label, color]]
+  const W = 460, H = 220, L = 30, B = 28, T = 10;
+  const max = Math.max(1, ...groups.flatMap((g) => keys.map(([k]) => g.values[k] || 0)));
+  const gw = (W - L) / groups.length, bw = Math.min(26, (gw - 16) / keys.length);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="column chart">`;
+  groups.forEach((g, gi) => {
+    keys.forEach(([k, , color], ki) => {
+      const v = g.values[k] || 0, h = v / max * (H - T - B), x = L + gi * gw + 8 + ki * (bw + 3);
+      s += `<rect x="${x}" y="${H - B - h}" width="${bw}" height="${h}" rx="2" fill="${color}"/><text x="${x + bw / 2}" y="${H - B - h - 4}" text-anchor="middle">${v}</text>`;
+    });
+    s += `<text x="${L + gi * gw + gw / 2}" y="${H - 8}" text-anchor="middle">${esc(g.label)}</text>`;
+  });
+  el.innerHTML = s + `</svg><div class="legend">${keys.map(([, l, c]) => `<span><i style="background:${c};height:10px"></i>${esc(l)}</span>`).join("")}</div>`;
+}
+
+fetch("api/stats").then((r) => r.json()).then((s) => {
+  $("gen").textContent = `Generated ${s.generated_at} · Apertus v1.5 70B via CSCS / Keera`;
+  const w = s.window || {}, p = s.aprjun || {};
+  const sel = (w.comparison || []).find((c) => /selected rule/.test(c.name)) || {};
+  $("kpis").innerHTML = [
+    [p.crawled, "rulings crawled Apr–Jun 2026"], [p.candidates, "subject-area candidates"],
+    [p.selected, "on the hit list"], [p.summarised, "summarised (DE + FR)"],
+    [pct(sel.recall), "recall on labelled window"], [sel.f2 != null ? sel.f2.toFixed(3) : "–", "F2 on labelled window"],
+  ].map(([v, l]) => `<div class="kpi"><b>${esc(v ?? "–")}</b><span>${esc(l)}</span></div>`).join("");
+
+  $("winlabel").textContent = `${w.label || ""}: ${w.rulings || "?"} social-insurance rulings, ${w.suva_positives || "?"} on Suva's list.`;
+  const comp = [...(w.comparison || [])];
+  const bestF2 = Math.max(...comp.map((c) => c.f2));
+  $("cmp").innerHTML = `<tr><th>Approach</th><th>Listed</th><th>Hits</th><th>Recall</th><th>Precision</th><th>F2</th></tr>` +
+    comp.map((c) => `<tr class="${c.f2 === bestF2 ? "best" : ""}"><td>${esc(c.name)}<span class="tag">${esc(c.kind)}</span></td><td>${c.listed}</td><td>${c.hits}</td><td>${pct(c.recall)}</td><td>${pct(c.precision)}</td><td>${c.f2.toFixed(3)}</td></tr>`).join("");
+
+  if (w.curve) lineChart($("curve"), w.curve.map((c) => ({ ...c, cutoff: c.cutoff })), [["recall", css("--s1")], ["precision", css("--s2")], ["f2", css("--s4")]], "cutoff");
+
+  const c40 = w.calibration40;
+  if (c40) {
+    $("cal").innerHTML = `<table><tr><th></th><th>Apertus 70B</th><th>${esc(c40.codex_model.split(" (")[0])}</th></tr>
+      ${[["Listed", "listed"], ["Hits", "hits"], ["Recall", "recall", pct], ["Precision", "precision", pct], ["F2", "f2", (x) => x.toFixed(3)]].map(([l, k, f]) =>
+        `<tr><td>${l}</td><td>${(f || String)(c40.apertus[k])}</td><td>${(f || String)(c40.codex[k])}</td></tr>`).join("")}
+      <tr><td>Ranking quality (AUC)</td><td>${c40.auc_apertus ?? "–"}</td><td>${c40.auc_codex ?? "–"}</td></tr>
+      <tr><td>Same yes/no decision</td><td colspan="2" style="text-align:center">${pct(c40.agreement)}</td></tr></table>
+      <div class="note">Both models blind to Suva's labels. Codex's reasons were used to sharpen the Apertus rubric
+      ("general rule vs individual case"); the submitted ranking is Apertus only.</div>`;
+  } else $("cal").innerHTML = `<div class="note">No second-model results yet.</div>`;
+
+  const areas = w.by_area || {};
+  $("area").innerHTML = `<tr><th>Area</th><th>Rulings</th><th>Suva picked</th><th>Listed</th><th>Hits</th><th>Recall</th><th>F2</th></tr>` +
+    Object.entries(areas).filter(([, v]) => v.rulings).map(([k, v]) => `<tr><td>${esc({ accident: "Accident (UVG)", invalidity: "Invalidity (IV)", daily_allowance: "Daily allowance" }[k] || k)}</td><td>${v.rulings}</td><td>${v.suva_picked}</td><td>${v.listed}</td><td>${v.hits}</td><td>${pct(v.recall)}</td><td>${v.f2.toFixed(2)}</td></tr>`).join("") +
+    (w.iv_auc ? `<tr><td colspan="7" class="note" style="text-align:left">IV ranking quality (AUC): main prompt ${w.iv_auc.main_prompt}, IV second pass ${w.iv_auc.iv_second_pass}</td></tr>` : "");
+
+  if (p.months) columns($("months"), Object.entries(p.months).map(([m, v]) => ({ label: m, values: v })),
+    [["candidates", "Candidates", css("--s3")], ["selected", "On hit list", css("--s1")], ["summarised", "Summarised", css("--s4")]]);
+  if (p.score_hist) hbars($("hist"), p.score_hist.slice().reverse().map((h) => ({ label: `${h.bin}–${h.bin + 9}`, value: h.count, color: h.bin >= 60 ? css("--s1") : css("--s3") })), Math.max(...p.score_hist.map((h) => h.count)));
+
+  const cx = p.codex;
+  if (cx) {
+    hbars($("agree"), [
+      { label: "Both flag", value: cx.both, color: css("--s4") },
+      { label: "Only Apertus", value: cx.only_apertus, color: css("--s1") },
+      { label: "Only Codex", value: cx.only_codex, color: css("--s2") },
+    ], Math.max(cx.both, cx.only_apertus, cx.only_codex));
+    $("agree").insertAdjacentHTML("beforeend", `<div class="note">Only Codex: <code>${esc(cx.only_codex_dockets.join(", "))}</code></div>`);
+  } else $("agree").innerHTML = `<div class="note">No second-model results yet.</div>`;
+}).catch((e) => { $("gen").textContent = "Could not load api/stats: " + e.message; });
+</script>
+</body>
+</html>
