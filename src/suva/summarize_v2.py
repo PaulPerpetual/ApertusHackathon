@@ -60,8 +60,9 @@ STYLE = {
   Nie E. 1 (Eintreten) oder die Kostenfolgen zitieren.
 - Das Bundesgericht höchstens einmal nennen. 1-2 Verweise "(E. 5.2)" beim zentralen Rechtssatz.
 - Ergebnis nur, wenn es für die Praxis zählt, in einem Satz, genau wie im Dispositiv.
-- Immer "die Suva" (nie CNA, SUVA, INSAI), aber NUR wenn die Suva tatsächlich Partei ist; sonst den Versicherer so
-  nennen wie im Urteil (AXA, Generali, IV-Stelle …) oder neutral "der Unfallversicherer". Keine Platzhalter wie
+- Immer "die Suva" (nie CNA, SUVA, INSAI), aber NUR wenn die Suva tatsächlich Partei ist; andere Versicherer
+  neutral wie Suva selbst: "ein Unfallversicherer"/"der Unfallversicherer", nie Firmennamen (Vaudoise, AXA …);
+  IV-Stelle, Krankenkasse usw. mit der Funktion bezeichnen. Keine Platzhalter wie
   "A.________", keine Lücken wie "in ansässige Gesellschaft": neutral umschreiben ("eine Reinigungsfirma").
 - Schweizer Fachsprache: UVG, UVV, ATSG, IVG, IVV, LSE (nie LAA, LPGA, OLAA, LAI, RAI, ESS im deutschen Text);
   relatives Wagnis, Listenverletzung, Distorsion/Kontusion, Untersuchungshaft, Valideneinkommen, Einspracheentscheid.""",
@@ -79,8 +80,8 @@ STYLE = {
   Ne jamais citer le consid. 1 (recevabilité) ni les frais.
 - Nommer le Tribunal fédéral au plus une fois. 1-2 renvois "(consid. 5.2)" sur la règle centrale.
 - L'issue seulement si elle compte pour la pratique, en une phrase, exactement comme le dispositif.
-- "la Suva" seulement si la Suva est partie; sinon l'assureur tel que dans l'arrêt (AXA, Generali, office AI …) ou
-  "l'assureur-accidents". Pas de caractères de substitution ni de lacunes laissées par l'anonymisation.
+- "la Suva" seulement si la Suva est partie; sinon neutre comme la Suva elle-même:
+  "un assureur-accidents"/"l'assureur-accidents", jamais de raison sociale (Vaudoise, AXA …); office AI selon sa fonction. Pas de caractères de substitution ni de lacunes laissées par l'anonymisation.
 - Terminologie suisse: LAA, OLAA, LPGA, LAI, RAI, ESS (jamais UVG, ATSG … dans le texte français); entreprise
   téméraire relative, lésion assimilée à un accident, distorsion/contusion, revenu sans invalidité.
 - Rédiger directement en français juridique suisse (terminologie des ATF), pas une traduction de l'allemand.""",
@@ -139,7 +140,7 @@ def write(j, notes, examples, lang):
         problems.append("mit dem Rechtssatz beginnen, nicht mit dem Gericht")
     if re.search(r"\bSuva\b", out) and not re.search(r"\b(Suva|SUVA|CNA|INSAI)\b|Unfallversicherungsanstalt|"
                                                       r"Caisse nationale suisse d'assurance", text):
-        problems.append("die Suva ist in diesem Urteil nicht Partei: den Versicherer so nennen wie im Urteil")
+        problems.append("die Suva ist in diesem Urteil nicht Partei: neutral 'der Unfallversicherer' schreiben")
     if re.search(r"\b(?:in|bei|des|der|vom)\s+(?:ansässige|AG|GmbH|Dr\.)\s+(?:vom|Gesellschaft|in)\b", out):
         problems.append("Lücken der Anonymisierung neutral umschreiben")
     if problems:

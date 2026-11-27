@@ -58,7 +58,8 @@ STYLE = {
   Nur Nummern aus der Liste "Erwägungen des Urteils" verwenden.
 - Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss in einem Satz
   ("Das Bundesgericht wies die Beschwerde ab." / "hiess die Beschwerde gut").
-- Die Suva heisst immer "die Suva" (nie CNA, SUVA oder INSAI). Keine Personennamen und keine Platzhalter wie
+- Die Suva heisst immer "die Suva" (nie CNA, SUVA oder INSAI). Andere Versicherer neutral "ein Unfallversicherer"/
+  "der Unfallversicherer", nie Firmennamen (Vaudoise, AXA, Générale …). Keine Personennamen und keine Platzhalter wie
   "A.________"; Parteien als "der Versicherte" bzw. "die Versicherte" (Geschlecht wie im Urteil), "die Beschwerdeführerin", "die Suva".""",
     "fr": """Style des résumés de la Suva (français):
 - COURT: 100-180 mots, au plus 3 paragraphes courts, texte suivi et factuel, pas d'énumérations ni de titres.
@@ -78,7 +79,8 @@ STYLE = {
 - Citer avec parcimonie: 1-2 renvois au considérant déterminant, au format "(consid. 5.2)", pas à chaque phrase.
   N'utiliser que des numéros de la liste "Considérants de l'arrêt".
 - "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin en une phrase ("Le Tribunal fédéral a rejeté le recours.").
-- Toujours "la Suva" (jamais CNA, SUVA ou INSAI). Pas de noms de personnes ni de caractères de substitution comme
+- Toujours "la Suva" (jamais CNA, SUVA ou INSAI). Autres assureurs: "un assureur-accidents"/"l'assureur-accidents",
+  jamais de raison sociale (Vaudoise, AXA …). Pas de noms de personnes ni de caractères de substitution comme
   "A.________"; parties: "l'assuré" ou "l'assurée" (selon l'arrêt), "la recourante", "la Suva".
 - Rédiger directement en français juridique suisse, ce n'est pas une traduction de l'allemand.""",
 }
