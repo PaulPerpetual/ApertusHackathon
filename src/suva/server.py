@@ -1,5 +1,6 @@
 """FastAPI backend for the triage UI. Serves the static frontend and a small JSON API."""
 import threading
+from typing import Optional
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -32,7 +33,7 @@ class EditorIn(BaseModel):
 
 class AddIn(BaseModel):
     docket: str = Field(min_length=3, max_length=300)
-    editor: str | None = None
+    editor: Optional[str] = None
 
 
 @app.get("/")
