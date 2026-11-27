@@ -95,7 +95,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .m-top .t { flex: 1; font-weight: 600; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mrow.unread .t { font-weight: 700; }
 .m-date { color: var(--muted); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.m-sub { color: var(--muted); font-size: 12px; }
+.m-sub { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .why { margin: 3px 0 6px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: var(--why-lines, 4); -webkit-box-orient: vertical; overflow: hidden; }
 .mrow.sel .m-date, .mrow.sel .m-sub, .mrow.sel .why { color: color-mix(in srgb, var(--accent-ink) 85%, transparent); }
 .m-foot { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
