@@ -169,6 +169,11 @@ def build():
             p = os.path.join(ROOT, "data", "second_opinion", f"{agent}_{suffix}.jsonl")
             if os.path.exists(p):
                 imp(p, agent, ds, None, "Fleet agent, blind second opinion (development reference only).")
+    try:  # weighted consensus of the second-opinion agents (src/consensus.py), refreshed on every build
+        import consensus
+        consensus.main()
+    except Exception as e:  # noqa: BLE001
+        print("consensus skipped:", e)
     index()
 
 

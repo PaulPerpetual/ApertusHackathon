@@ -80,6 +80,8 @@ def main():
         LEFT JOIN recall_assessments rc ON rc.slug = j.slug
         LEFT JOIN iv_assessments i ON i.slug = j.slug LEFT JOIN final_selection f ON f.slug = j.slug
         LEFT JOIN {a.adj_table} ad ON ad.slug = j.slug LEFT JOIN rankings rk ON rk.slug = j.slug""")]
+    con.execute("CREATE TABLE IF NOT EXISTS tiebreak (slug TEXT PRIMARY KEY, rank INTEGER, score INTEGER)")
+    tiebreak = dict(con.execute("SELECT slug, score FROM tiebreak").fetchall())
     hit = []
     for r in rows:
         main_score = r["f_main"] if r["f_main"] is not None else r["ai_score"]
@@ -146,6 +148,8 @@ def main():
             # ranking (pass 5, src/run_rank_pass.py): Tier 1 -> 60-99, Grenzfall -> 20-59, so sorting by score = our rank
             if r["importance"] is not None and tier == 1:
                 score = 60 + round(r["importance"] * 0.39)
+            if tier == 1 and r["slug"] in tiebreak:  # direct comparison of the top (src/tiebreak_top.py)
+                score = tiebreak[r["slug"]]
             elif r["importance"] is not None and tier == 2:
                 score = 20 + round(r["importance"] * 0.39)
             con.execute("UPDATE assessments SET tier=?, tier_reason=?, ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? "
