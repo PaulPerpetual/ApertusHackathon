@@ -177,7 +177,6 @@ def clean_reason(text, max_words=45):
     t = re.sub(r"^\s*(?:Für die Suva|Pour la Suva)\s*:\s*", "", text.strip())
     t = re.sub(r"(?:Für die Suva bedeutet dies|Bedeutung für (?:die )?Suva|Für (?:die )?Suva)\s*:\s*(\w)",
                lambda m: m.group(1).upper(), t)
-    t = re.sub(r"Für die Suva bedeutet dies,? dass\s+", "Damit gilt: ", t)
     t = re.sub(r"\s+", " ", t)
     sents = _sentences(t)
     if sents and (not re.search(r"[.!?)»\"]$", sents[-1]) or re.search(r"\b\d{1,2}\.$", sents[-1])):
