@@ -74,11 +74,20 @@ def connect():
     con = sqlite3.connect(config.DB_PATH)
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
+    _migrate(con)
     try:
         yield con
         con.commit()
     finally:
         con.close()
+
+
+def _migrate(con):
+    """Additive columns for databases created before they existed."""
+    cols = {r[1] for r in con.execute("PRAGMA table_info(judgements)")}
+    for name, ddl in (("status", "TEXT DEFAULT 'new'"), ("status_by", "TEXT"), ("status_at", "TEXT")):
+        if name not in cols:
+            con.execute(f"ALTER TABLE judgements ADD COLUMN {name} {ddl}")
 
 
 def upsert_judgement(con, j):
@@ -126,6 +135,7 @@ def log_edit(con, slug, field, old, new, editor):
 def list_cards(con):
     rows = con.execute(
         """SELECT j.slug, j.docket, j.decision_date, j.publication_date, j.division, j.subject, j.url, j.source,
+                  COALESCE(j.status, 'new') AS status, j.status_by, j.status_at,
                   a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
                   a.explanation_de, a.explanation_fr, a.tags, a.suva_party, a.model,
                   (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,

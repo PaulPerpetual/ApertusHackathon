@@ -3,55 +3,66 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Suva Urteilsradar</title>
+<title>Urteilsradar</title>
 <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand"><span class="logo">S</span><span data-i18n="app_title">Urteilsradar</span></div>
-  <div class="views" role="tablist">
-    <button data-view="radar" class="on" data-i18n="view_radar">Neue Urteile</button><button data-view="kb" data-i18n="view_kb">Archiv</button>
+<header class="toolbar">
+  <div class="seg" id="scope" role="tablist">
+    <button data-scope="new" class="on"><span data-i18n="scope_new">Neu</span> <span class="count" id="cNew"></span></button>
+    <button data-scope="all" data-i18n="scope_all">Alle</button>
+    <button data-scope="done"><span data-i18n="scope_done">Erledigt</span> <span class="count" id="cDone"></span></button>
   </div>
-  <input id="search" type="search" data-i18n-placeholder="search">
   <div class="spacer"></div>
-  <div class="lang" role="group" aria-label="Sprache / langue">
+  <label class="searchbox"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <input id="search" type="search" data-i18n-placeholder="search"></label>
+  <div class="seg small" role="group" aria-label="Sprache / langue">
     <button data-lang="de" class="on">DE</button><button data-lang="fr">FR</button>
   </div>
   <div class="menu-wrap">
-    <button id="menuBtn" class="icon-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">⋯</button>
+    <button id="menuBtn" class="tool-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">⋯</button>
     <div id="menu" class="menu" hidden>
-      <button id="addBtn" class="menu-item" data-i18n="add">Urteil manuell hinzufügen</button>
-      <button id="editorChip" class="menu-item"></button>
-      <label class="menu-item toggle"><input id="showLow" type="checkbox"> <span data-i18n="show_low">Wenig relevante zeigen</span></label>
-      <div class="menu-foot"><span id="modelBadge"></span></div>
+      <button id="addBtn" class="menu-item" data-i18n="add">Urteil manuell hinzufügen …</button>
+      <button id="editorBtn" class="menu-item"></button>
+      <div class="menu-sep"></div>
+      <div class="menu-foot" id="modelInfo"></div>
     </div>
   </div>
 </header>
 
+<div class="filterbar">
+  <label class="f-item"><span data-i18n="min_relevance">Relevanz ab</span>
+    <input id="minScore" type="range" min="0" max="100" step="5"><output id="minScoreOut"></output></label>
+  <label class="f-item"><span data-i18n="keyword">Schlagwort</span>
+    <select id="tagFilter"></select></label>
+  <label class="f-item"><span data-i18n="sort_by">Sortieren nach</span>
+    <select id="sortBy">
+      <option value="score" data-i18n="col_relevance">Relevanz</option>
+      <option value="date" data-i18n="col_date">Entscheid</option>
+      <option value="title" data-i18n="col_title">Titel</option>
+      <option value="docket" data-i18n="col_docket">Nummer</option>
+      <option value="edited" data-i18n="col_edited">Bearbeitet</option>
+    </select>
+    <button id="sortDir" class="tool-btn small" title=""></button></label>
+  <div class="spacer"></div>
+  <span id="listMeta" class="meta"></span>
+</div>
+
 <main id="layout">
-  <section id="listPane">
-    <div id="radarView">
-      <div id="listMeta" class="meta"></div>
-      <ol id="cards"></ol>
-    </div>
-    <div id="kbView" hidden>
-      <div class="kb-filters">
-        <div class="seg" id="kbKind">
-          <button data-kind="" class="on" data-i18n="kind_all">Alle</button><button data-kind="suva" data-i18n="kind_suva">Suva</button><button data-kind="ai" data-i18n="kind_ai">KI</button><button data-kind="edited" data-i18n="kind_edited">Bearbeitet</button>
-        </div>
-        <div id="kbTags" class="tags"></div>
-      </div>
-      <div id="kbMeta" class="meta"></div>
-      <ol id="kbList" class="kb-list"></ol>
-    </div>
+  <section id="listPane" tabindex="0">
+    <ol id="rows" class="mlist"></ol>
+    <p id="empty" class="empty" hidden></p>
   </section>
   <aside id="panel" hidden>
     <div class="panel-head">
-      <div>
+      <div class="panel-title">
         <div id="pDocket" class="docket"></div>
         <h2 id="pTitle"></h2>
       </div>
-      <button id="closePanel" class="icon" aria-label="close">✕</button>
+      <div class="panel-actions">
+        <button id="pDone" class="btn"></button>
+        <button id="closePanel" class="tool-btn" aria-label="close">✕</button>
+      </div>
     </div>
     <div id="pBody"></div>
   </aside>
@@ -61,19 +72,20 @@
   <form method="dialog">
     <h3 data-i18n="who">Wer bearbeitet?</h3>
     <p class="muted" data-i18n="who_hint">Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.</p>
-    <input id="nameInput" required maxlength="60" autocomplete="name">
+    <label class="field"><span data-i18n="name">Name</span><input id="nameInput" maxlength="60" autocomplete="name"></label>
+    <label class="field" id="keyField"><span data-i18n="key">Editor-Schlüssel (nur Server)</span><input id="keyInput" type="password" autocomplete="off"></label>
     <div class="row"><button value="cancel" class="btn" data-i18n="cancel" formnovalidate>Abbrechen</button>
-      <button id="nameOk" value="ok" class="btn primary">OK</button></div>
+      <button value="ok" class="btn primary">OK</button></div>
   </form>
 </dialog>
 
 <dialog id="addDlg">
   <form method="dialog">
-    <h3 data-i18n="add_title">Weiteres Urteil zusammenfassen</h3>
+    <h3 data-i18n="add_title">Urteil manuell hinzufügen</h3>
     <p class="muted" data-i18n="add_hint">Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch</p>
     <input id="addInput" required>
     <div class="row"><button value="cancel" class="btn" data-i18n="cancel" formnovalidate>Abbrechen</button>
-      <button value="ok" class="btn primary" data-i18n="start">Starten</button></div>
+      <button value="ok" class="btn primary" data-i18n="start">Zusammenfassen</button></div>
   </form>
 </dialog>
 

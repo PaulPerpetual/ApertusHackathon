@@ -75,6 +75,11 @@ class EditorIn(BaseModel):
     editor: str = Field(min_length=1, max_length=60)
 
 
+class StatusIn(BaseModel):
+    status: str = Field(pattern="^(new|done)$")
+    editor: str = Field(min_length=1, max_length=60)
+
+
 class AddIn(BaseModel):
     docket: str = Field(min_length=3, max_length=300)
     editor: Optional[str] = None
@@ -124,6 +129,20 @@ def set_score(slug: str, body: ScoreIn, request: Request):
         con.execute("UPDATE assessments SET score_override=?, override_by=?, override_at=? WHERE slug=?",
                     (body.score, body.editor, db.now(), slug))
         db.log_edit(con, slug, "score", old, body.score, body.editor)
+    return {"ok": True}
+
+
+@app.put("/api/judgements/{slug}/status")
+def set_status(slug: str, body: StatusIn, request: Request):
+    """Team-wide workflow state: 'done' moves a ruling to Erledigt, 'new' puts it back. (Unread is per browser.)"""
+    body.editor = _editor(request, body.editor)
+    with db.connect() as con:
+        j = con.execute("SELECT status FROM judgements WHERE slug=?", (slug,)).fetchone()
+        if not j:
+            raise HTTPException(404, "not found")
+        con.execute("UPDATE judgements SET status=?, status_by=?, status_at=? WHERE slug=?",
+                    (body.status, body.editor, db.now(), slug))
+        db.log_edit(con, slug, "status", j["status"] or "new", body.status, body.editor)
     return {"ok": True}
 
 
