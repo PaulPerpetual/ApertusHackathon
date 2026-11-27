@@ -42,6 +42,9 @@ def main():
     ap.add_argument("--rewrite-text", action="store_true",
                     help="also rewrite tags and explanations from reason_tags / explanations. Default: selection only, "
                          "so texts from `python -m suva relabel` (Paul's house style) and human edits are kept")
+    ap.add_argument("--recall-pass", type=int, metavar="CUTOFF", default=None,
+                    help="also select rulings the recall pass (src/run_recall_pass.py) scored >= CUTOFF, and five-judge "
+                         "rulings. Off by default; turn on once `eval_f2.py --variants` shows a better F2")
     a = ap.parse_args()
     con = sqlite3.connect(a.db, timeout=30)
     con.row_factory = sqlite3.Row
@@ -50,15 +53,18 @@ def main():
     for ddl in ("CREATE TABLE IF NOT EXISTS reason_tags (slug TEXT PRIMARY KEY, grounds TEXT, outcome TEXT, model TEXT, created_at TEXT)",
                 "CREATE TABLE IF NOT EXISTS explanations (slug TEXT PRIMARY KEY, de TEXT, fr TEXT, model TEXT, created_at TEXT)"):
         con.execute(ddl)
+    con.execute("CREATE TABLE IF NOT EXISTS recall_assessments (slug TEXT PRIMARY KEY, score INTEGER, scores TEXT,"
+                " leading TEXT, reason_de TEXT, model TEXT, created_at TEXT)")
     con.execute("CREATE TABLE IF NOT EXISTS iv_assessments (slug TEXT PRIMARY KEY, score INTEGER, principle TEXT,"
                 " reason_de TEXT, model TEXT, created_at TEXT)")
     rows = [dict(r) for r in con.execute("""
         SELECT j.slug, j.docket, j.decision_date, j.subject, j.text, a.ai_score, a.tags, a.suva_party, a.model,
                a.explanation_de, a.explanation_fr, i.score AS iv, i.principle,
                f.main_score AS f_main, f.orig_tags, f.orig_expl_de, f.orig_expl_fr,
-               rt.grounds AS rt_grounds, rt.outcome AS rt_outcome, ex.de AS ex_de, ex.fr AS ex_fr
+               rc.score AS rc_score, rc.leading AS rc_leading, rt.grounds AS rt_grounds, rt.outcome AS rt_outcome, ex.de AS ex_de, ex.fr AS ex_fr
         FROM judgements j JOIN assessments a ON a.slug = j.slug
         LEFT JOIN reason_tags rt ON rt.slug = j.slug LEFT JOIN explanations ex ON ex.slug = j.slug
+        LEFT JOIN recall_assessments rc ON rc.slug = j.slug
         LEFT JOIN iv_assessments i ON i.slug = j.slug LEFT JOIN final_selection f ON f.slug = j.slug""")]
     hit = []
     for r in rows:
@@ -70,9 +76,15 @@ def main():
             expl_de, expl_fr = r["ex_de"], r["ex_fr"] or expl_fr
         c = triage.classify({"subject": r["subject"], "text": r["text"]})
         iv_flag = "invalidity" in c["areas"] and r["iv"] is not None and r["iv"] >= IV_CUTOFF
-        selected = (main_score or 0) >= MAIN_CUTOFF or iv_flag
-        rule = "main" if (main_score or 0) >= MAIN_CUTOFF else ("iv_pass" if iv_flag else "")
+        rc_flag = a.recall_pass is not None and (
+            (r["rc_score"] or 0) >= a.recall_pass or bool(json.loads(r["rc_leading"] or "[]")))
+        selected = (main_score or 0) >= MAIN_CUTOFF or iv_flag or rc_flag
+        rule = "main" if (main_score or 0) >= MAIN_CUTOFF else ("iv_pass" if iv_flag else ("recall_pass" if rc_flag else ""))
         score = main_score
+        if rule == "recall_pass":
+            score = MAIN_CUTOFF
+            expl_de = (expl_de or "") + " — Zweitprüfung (Apertus): in der zweiten Durchsicht als relevant eingestuft."
+            expl_fr = (expl_fr or "") + " — Second examen (Apertus): jugé pertinent lors du second examen."
         if rule == "iv_pass":
             score = MAIN_CUTOFF
             expl_de = (expl_de or "") + f" — IV-Zweitprüfung (Apertus): {r['principle'] or 'übertragbarer Grundsatz'}"
@@ -106,7 +118,8 @@ def main():
     open(out, "w").write(", ".join(hit) + "\n")
     print(f"{len(hit)} rulings on the hit list -> {out}")
     print(f"  via main score: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('main',)))}"
-          f", via IV second pass: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('iv_pass',)))}")
+          f", via IV second pass: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('iv_pass',)))}"
+          f", via recall pass: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('recall_pass',)))}")
 
 
 if __name__ == "__main__":
