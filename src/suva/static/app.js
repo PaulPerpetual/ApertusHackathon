@@ -2,6 +2,7 @@
    detail pane, human score overrides and summary edits with simple name attribution. */
 const I18N = {
   de: {
+    hitlist_btn: "Trefferliste", info_btn: "Info", info_close: "Verstanden",
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_hint1: "Apertus ist unsicher, eine Juristin sollte es ansehen.", promote: "Bestätigen", promoted: "Als relevant bestätigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
@@ -22,6 +23,7 @@ const I18N = {
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
+    hitlist_btn: "Liste des résultats", info_btn: "Info", info_close: "Compris",
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_hint1: "Apertus n’est pas sûr, un juriste devrait l’examiner.", promote: "Confirmer", promoted: "Confirmé comme pertinent",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
@@ -110,6 +112,60 @@ function errText(e) {
   return String(m).slice(0, 160);
 }
 function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("show"), 2400); }
+
+
+/* ---------- Info dialog: explains the UI (for every user, DAU-proof) ---------- */
+const INFO = {
+  de: `<h3>So funktioniert das Urteilsradar</h3>
+    <p>Apertus (Swiss AI) sichtet alle Bundesgerichtsurteile vom 1.4.–30.6.2026, wählt die für die Suva relevanten aus,
+    ordnet sie nach Wichtigkeit und fasst sie auf Deutsch und Französisch zusammen.</p>
+    <h4>Relevanz</h4>
+    <p>Der Score (0–100) zeigt, wie wichtig ein Urteil für die Praxis der Suva ist; die Liste ist danach sortiert,
+    das wichtigste Urteil steht oben und ist beim Öffnen bereits ausgewählt. Die <b>Begründung</b> sagt in einem Satz,
+    welche Rechtsfrage entschieden wurde und warum das für die Suva zählt.</p>
+    <h4>Grenzfälle</h4>
+    <p>Urteile, bei denen Apertus unsicher ist (oft Invaliden- oder Verfahrensrecht, das auch für die Unfallversicherung
+    gelten kann). Sie stehen unter den klar relevanten Urteilen, tragen das Schlagwort <b>Grenzfall</b> und sind im Reiter
+    „Grenzfälle" gesammelt. Lieber ein Grenzfall zu viel als ein verpasstes Urteil: bitte kurz prüfen.</p>
+    <h4>Neu · Erledigt · Nicht relevant</h4>
+    <ul><li><b>Neu</b>: noch nicht bearbeitet.</li>
+      <li><b>Erledigt</b>: geprüft und in Ordnung (Taste E). Gilt für das ganze Team.</li>
+      <li><b>Nicht relevant</b>: nimmt das Urteil von der Trefferliste. Im gleichnamigen Reiter mit einem Klick wiederherstellbar.</li></ul>
+    <h4>Bearbeiten</h4>
+    <p>„Bearbeiten" im Detailbereich öffnet Score, Begründung und beide Zusammenfassungen zur Korrektur. Jede Änderung wird
+    mit Ihrem Namen gespeichert und im Verlauf protokolliert; der ursprüngliche KI-Text bleibt abrufbar.
+    Beim ersten Bearbeiten werden Name und Editor-Schlüssel abgefragt.</p>
+    <h4>Trefferliste</h4>
+    <p>Der Knopf <b>Trefferliste</b> zeigt alle ausgewählten Urteile mit Rang und Kategorie (normal / Grenzfall), zum
+    Kopieren oder als CSV. Ihre Entscheide hier wirken sofort dort.</p>
+    <h4>Verweise</h4>
+    <p>„(E. 4.2)" in einer Zusammenfassung springt direkt zur Erwägung im Originalurteil.</p>`,
+  fr: `<h3>Fonctionnement du radar des arrêts</h3>
+    <p>Apertus (Swiss AI) examine tous les arrêts du Tribunal fédéral du 1.4 au 30.6.2026, sélectionne ceux qui sont
+    pertinents pour la Suva, les classe par importance et les résume en allemand et en français.</p>
+    <h4>Pertinence</h4>
+    <p>Le score (0–100) indique l'importance d'un arrêt pour la pratique de la Suva; la liste est triée ainsi, l'arrêt le
+    plus important figure en tête et est déjà sélectionné à l'ouverture. La <b>justification</b> indique en une phrase la
+    question juridique tranchée et pourquoi elle compte pour la Suva.</p>
+    <h4>Cas limites</h4>
+    <p>Arrêts pour lesquels Apertus hésite (souvent assurance-invalidité ou procédure pouvant aussi valoir pour
+    l'assurance-accidents). Ils figurent sous les arrêts clairement pertinents, portent le mot-clé <b>Cas limite</b> et
+    sont regroupés dans l'onglet « Grenzfälle ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
+    <h4>Nouveau · Traité · Non pertinent</h4>
+    <ul><li><b>Nouveau</b>: pas encore traité.</li>
+      <li><b>Traité</b>: vérifié et en ordre (touche E). Vaut pour toute l'équipe.</li>
+      <li><b>Non pertinent</b>: retire l'arrêt de la liste des résultats. Restaurable en un clic dans l'onglet du même nom.</li></ul>
+    <h4>Modifier</h4>
+    <p>« Modifier » dans le panneau de détail permet de corriger le score, la justification et les deux résumés. Chaque
+    modification est enregistrée avec votre nom et historisée; le texte original de l'IA reste disponible. Lors de la
+    première modification, votre nom et votre clé d'éditeur sont demandés.</p>
+    <h4>Liste des résultats</h4>
+    <p>Le bouton <b>Trefferliste</b> affiche tous les arrêts retenus avec rang et catégorie (normal / cas limite), à copier
+    ou en CSV. Vos décisions ici s'y appliquent immédiatement.</p>
+    <h4>Renvois</h4>
+    <p>« (consid. 4.2) » dans un résumé mène directement au considérant de l'arrêt original.</p>`,
+};
+function openInfo() { $("#infoBody").innerHTML = INFO[state.lang] || INFO.de; $("#infoDlg").showModal(); }
 
 /* ---------- editor name + optional server key (no accounts; kept in this browser) ---------- */
 function askEditor(focusKey = false) {
@@ -508,6 +564,7 @@ async function startAdd(docket) {
 
 /* ---------- wiring ---------- */
 function init() {
+  if ($("#infoBtn")) $("#infoBtn").onclick = openInfo;
   renderChrome();
   document.querySelectorAll("[data-lang]").forEach((b) => (b.onclick = () => {
     state.lang = b.dataset.lang; store.set("suva.lang", state.lang);

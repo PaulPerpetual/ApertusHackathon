@@ -18,6 +18,8 @@
   <div class="spacer"></div>
   <label class="searchbox"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     <input id="search" type="search" data-i18n-placeholder="search"></label>
+  <a class="btn" href="hitlist" id="hitlistBtn" data-i18n="hitlist_btn">Trefferliste</a>
+  <button class="btn" id="infoBtn" aria-haspopup="dialog"><span aria-hidden="true">ⓘ</span> <span data-i18n="info_btn">Info</span></button>
   <div class="seg small" role="group" aria-label="Sprache / langue">
     <button data-lang="de" class="on">DE</button><button data-lang="fr">FR</button>
   </div>
@@ -82,6 +84,12 @@
   </aside>
 </main>
 
+<dialog id="infoDlg" class="info-dlg">
+  <form method="dialog">
+    <div id="infoBody"></div>
+    <div class="row"><button value="ok" class="btn primary" data-i18n="info_close">Verstanden</button></div>
+  </form>
+</dialog>
 <dialog id="nameDlg">
   <form method="dialog">
     <h3 data-i18n="who">Wer bearbeitet?</h3>

@@ -228,3 +228,12 @@ sup { font-size: 0.72em; line-height: 0; vertical-align: baseline; position: rel
   font-size: 12.5px; background: color-mix(in srgb, #d4a300 12%, transparent); }
 .bl-note .btn { flex: none; }
 @media (prefers-color-scheme: dark) { .bl-badge { color: #e8c35a; } }
+
+/* Info dialog (explains the UI) */
+dialog.info-dlg { width: min(640px, 94vw); max-height: 86vh; overflow: auto; }
+.info-dlg h3 { font-size: 16px; margin: 0 0 4px; }
+.info-dlg h4 { font-size: 13px; margin: 14px 0 3px; }
+.info-dlg p, .info-dlg li { font-size: 13px; line-height: 1.5; margin: 0 0 6px; }
+.info-dlg ul { padding-left: 18px; margin: 0 0 6px; }
+.info-dlg .row { display: flex; justify-content: flex-end; margin-top: 12px; }
+a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items: center; }

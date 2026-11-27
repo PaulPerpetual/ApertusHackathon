@@ -129,7 +129,7 @@ def build():
                         "relevant": v2_selected(r), "reason": (r["p_reason"] if in_scope else r["explanation_de"])})
         return out
 
-    v1_notes = "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned)."
+    v1_notes = "Earlier production (until Fri evening). Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned)."
     v2_notes = ("Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural "
                 "rulings. Apertus labels almost everything a general rule.")
     for ds, rows in (("window", win), ("calibration40", cal)):
@@ -145,20 +145,30 @@ def build():
                       "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: "
                       "ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.")
     write_run("aprjun", "apertus70b-v1", "Apertus v1.5 70B (CSCS/Keera)",
-              [{"docket": r["docket"], "score": r["main"], "relevant": bool(r["selected"]) if r["selected"] is not None
-                else v1_selected(r), "reason": r["explanation_de"]} for r in apr], v1_notes + " This is the submitted hit list.")
+              [{"docket": r["docket"], "score": r["main"], "relevant": v1_selected(r), "reason": r["explanation_de"]}
+               for r in apr], v1_notes)
     if any(r["rescue"] is not None for r in apr):
         write_run("aprjun", "apertus70b-v3-atsg-rescue", "Apertus v1.5 70B (CSCS/Keera)",
-                  [{"docket": r["docket"], "score": 60 if ((r["selected"] or v1_selected(r)) or r["rescue"]) else r["main"],
-                    "relevant": bool(r["selected"]) or v1_selected(r) or bool(r["rescue"]),
+                  [{"docket": r["docket"], "score": 60 if (v1_selected(r) or r["rescue"]) else r["main"],
+                    "relevant": v1_selected(r) or bool(r["rescue"]),
                     "reason": (f"ATSG-Rescue ({r['rescue_norm']}): {r['rescue_reason']}"
-                               if r["rescue"] and not (r["selected"] or v1_selected(r)) else r["explanation_de"])} for r in apr],
+                               if r["rescue"] and not v1_selected(r) else r["explanation_de"])} for r in apr],
                   "Experiment, not submitted: v1 + ATSG rescue. Catches 4 of the 5 Codex-only rulings but adds 59 in total; "
                   "on the labelled window only ~4 % of rescued rulings were Suva picks (F2 0.736 -> 0.598).")
+    write_run("aprjun", "apertus70b-v4-tiers-ranked", "Apertus v1.5 70B (CSCS/Keera)",
+              [{"docket": r["docket"], "score": r["ai_score"], "relevant": bool(r["selected"]),
+                "reason": r["explanation_de"]} for r in apr],
+              "PRODUCTION (submitted): Tier 1 + Grenzfälle (adapted pass 4: procedural traps / cross-branch rules), "
+              "ordered by pass-5 importance (Tier 1 score 60-99, Grenzfall 20-59).")
     for ds, path in (("calibration40", "codex_calibration.jsonl"), ("aprjun", "codex_aprjun.jsonl")):
         p = os.path.join(ROOT, "data", "second_opinion", path)
         if os.path.exists(p):
             imp(p, "codex-gpt6", ds, None, "Development reference only (closed model, not allowed at runtime). Blind.")
+    for agent in ("gem", "misty", "muse"):
+        for ds, suffix in (("calibration40", "calibration"), ("aprjun", "aprjun")):
+            p = os.path.join(ROOT, "data", "second_opinion", f"{agent}_{suffix}.jsonl")
+            if os.path.exists(p):
+                imp(p, agent, ds, None, "Fleet agent, blind second opinion (development reference only).")
     index()
 
 
