@@ -29,3 +29,6 @@ build/
 # Local data
 data/*.sqlite
 data/cache/
+# Downloaded court rulings (public, re-fetchable with src/fetch_rulings.py and src/crawl_period.py)
+data/bger/
+data/period/

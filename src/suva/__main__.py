@@ -1,6 +1,7 @@
 """Command line entry point.  Run from the src/ directory:  python -m suva <command>
 
-  scrape   --days 92           fetch bger.ch publications into the database (no LLM)
+  import   ../data/period/<from>_<to>   triage + summarise a crawl made with src/crawl_period.py
+  scrape   --days 92           fallback: fetch directly from bger.ch (often blocked) into the database
   triage   [--all]             score judgements not yet assessed (and summarise relevant ones)
   run      --days 92           scrape + triage + summarise in one go
   add      8C_145/2025         fetch, assess and summarise one judgement
@@ -26,6 +27,16 @@ def cmd_scrape(args, process=False):
                 db.upsert_judgement(con, j)
         n += 1
     print(f"{n} judgements stored in {config.DB_PATH}")
+
+
+def cmd_import(args):
+    exs = examples.load_examples()
+    divisions = set(args.divisions.split(",")) if args.divisions else None
+    n = 0
+    for j in scraper.load_crawled(args.folder, divisions):
+        pipeline.process(j, exs)
+        n += 1
+    print(f"{n} judgements processed into {config.DB_PATH}")
 
 
 def cmd_triage(args):
@@ -87,6 +98,9 @@ def main():
         s = sub.add_parser(name)
         s.add_argument("--days", type=int, default=92)
         s.add_argument("--divisions", default="", help="only fetch full text for these, e.g. 8C,9C,4A")
+    i = sub.add_parser("import")
+    i.add_argument("folder")
+    i.add_argument("--divisions", default="", help="e.g. 8C,9C,4A")
     t = sub.add_parser("triage")
     t.add_argument("--all", action="store_true")
     a = sub.add_parser("add")
@@ -98,9 +112,11 @@ def main():
     s.add_argument("--port", type=int, default=8000)
     args = p.parse_args()
 
-    if config.USE_MOCK_LLM and args.cmd in ("run", "triage", "add", "demo"):
+    if config.USE_MOCK_LLM and args.cmd in ("run", "import", "triage", "add", "demo"):
         print("! LLM_BASE_URL not set: using the MOCK model (output is labelled 'mock').", file=sys.stderr)
-    if args.cmd == "scrape":
+    if args.cmd == "import":
+        cmd_import(args)
+    elif args.cmd == "scrape":
         cmd_scrape(args)
     elif args.cmd == "run":
         cmd_scrape(args, process=True)
