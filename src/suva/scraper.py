@@ -129,6 +129,29 @@ def _html_text(raw):
     return re.sub(r"\n{3,}", "\n\n", soup.get_text("\n", strip=True))
 
 
+_KEEP = {"p", "div", "span", "br", "b", "strong", "i", "em", "u", "sup", "sub", "table", "thead", "tbody", "tr", "td", "th",
+         "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "blockquote", "pre", "hr"}
+
+
+def _html_clean(raw):
+    """The ruling's own formatting, safe to show inside the app: whitelisted tags, no attributes
+    (except http(s) links), no scripts, styles, forms or images."""
+    soup = BeautifulSoup(raw, "html.parser")
+    for t in soup.find_all(["script", "style", "head", "link", "meta", "form", "input", "button", "img", "iframe", "object", "svg"]):
+        t.decompose()
+    root = soup.body or soup
+    for t in root.find_all(True):
+        if t.name not in _KEEP:
+            t.unwrap()
+            continue
+        href = t.get("href", "") if t.name == "a" else ""
+        t.attrs = {}
+        if href.startswith(("http://", "https://")):
+            t.attrs = {"href": href, "target": "_blank", "rel": "noopener"}
+    html = root.decode_contents() if root is not soup else str(root)
+    return re.sub(r"\n{3,}", "\n\n", html).strip()
+
+
 def load_crawled(folder, divisions=None):
     """Yield judgement dicts from a crawl folder (data/period/<from>_<to> or data/bger)."""
     import csv
@@ -148,7 +171,8 @@ def load_crawled(folder, divisions=None):
         div = row.get("chamber") or docket.split("_")[0]
         if divisions and div not in divisions:
             continue
-        text = _html_text(html_path.read_text(encoding="utf-8", errors="ignore"))
+        raw = html_path.read_text(encoding="utf-8", errors="ignore")
+        text = _html_text(raw)
         m = SUBJECT_RE.search(re.sub(r"\s+", " ", text[:6000]))
         meta = {}
         jp = html_path.with_suffix(".json")
@@ -157,7 +181,7 @@ def load_crawled(folder, divisions=None):
         yield {"docket": docket, "division": div, "decision_date": row.get("decision_date") or meta.get("Datum"),
                "language": (row.get("language") or meta.get("Sprache") or detect_language(text))[:2].lower(),
                "subject": m.group(2).strip() if m else "", "url": row.get("source_url") or None,
-               "text": text, "source": "entscheidsuche"}
+               "text": text, "html": _html_clean(raw), "source": "entscheidsuche"}
 
 
 def fetch_single(docket_or_url, log=print):

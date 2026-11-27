@@ -160,3 +160,10 @@ dialog input { width: 100%; padding: 5px 8px; border: 1px solid var(--control-bo
   .toolbar { flex-wrap: wrap; }
   .toolbar .spacer { display: none; }
 }
+
+/* formatted original ruling (HTML from the court, cleaned on import) */
+.original-html { font: 13.5px/1.6 Georgia, "Times New Roman", serif; color: var(--text); overflow-wrap: anywhere; }
+.original-html p { margin: 0 0 .7em; }
+.original-html table { border-collapse: collapse; margin: .5em 0; }
+.original-html td, .original-html th { padding: 2px 8px 2px 0; vertical-align: top; }
+.original-html .erw-anchor { font-weight: inherit; scroll-margin-top: 40px; border-radius: 3px; }

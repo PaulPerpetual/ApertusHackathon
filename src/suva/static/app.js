@@ -283,6 +283,20 @@ function renderOriginal(text) {
   return out.join("\n");
 }
 
+// Same "Erw. N" anchors for the formatted original: number the paragraphs after the "Erwägungen" heading.
+function anchorHtml(root) {
+  if (!root) return;
+  const head = /^(Erwägungen?|Considérant en droit|Considérants?|Considerando in diritto|Diritto)\s*:?\s*$/i;
+  const blocks = [...root.querySelectorAll("p, div, li, td, h1, h2, h3, h4, h5, h6")].filter((el) => !el.querySelector("p, div, li, td"));
+  let started = false; const seen = new Set();
+  for (const el of blocks) {
+    const txt = el.textContent.trim();
+    if (!started) { if (head.test(txt)) started = true; continue; }
+    const m = txt.match(/^(\d+(?:\.\d+)*)\.?(?:\s|$)/);
+    if (m && !seen.has(m[1])) { seen.add(m[1]); el.id = "erw-" + m[1]; el.classList.add("erw-anchor"); }
+  }
+}
+
 /* ---------- detail pane ---------- */
 async function openPanel(slug) {
   state.open = slug; state.editing = false; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
@@ -340,7 +354,9 @@ async function renderPanel() {
         ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
     }
   } else if (state.tab === "text") {
-    html += d.text ? `<div class="original">${renderOriginal(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
+    // formatted original (cleaned server-side, see scraper._html_clean); plain text as fallback
+    html += d.html ? `<div class="original-html" id="origHtml">${d.html}</div>`
+      : d.text ? `<div class="original">${renderOriginal(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
   } else {
     const label = (h) => (h.field === "status" ? `${t("h_status")}: ${t("st_" + h.old_value)} → ${t("st_" + h.new_value)}`
       : t("h_" + h.field.replace("_score", "")) + (h.field.includes("score") ? `: ${esc(h.old_value)} → ${esc(h.new_value)}` : ""));
@@ -353,6 +369,7 @@ async function renderPanel() {
 
   $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; state.editing = false; renderPanel(); }));
   $("#pBody").querySelectorAll(".cite").forEach((el) => (el.onclick = (e) => { e.preventDefault(); state.tab = "text"; state.pendingErw = el.dataset.erw; renderPanel(); }));
+  if (state.tab === "text" && d.html) anchorHtml($("#origHtml"));
   if (state.tab === "text" && state.pendingErw) {
     const num = state.pendingErw; state.pendingErw = null;
     let el = null; for (let n = num; n && !el; n = n.includes(".") ? n.slice(0, n.lastIndexOf(".")) : "") el = document.getElementById("erw-" + n);

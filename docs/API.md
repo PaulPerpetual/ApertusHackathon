@@ -112,7 +112,7 @@ Still open for Paul:
 | GET | `/api/kb?q=&tag=&kind=&lang=` | – | library search over all summaries (AI, edited, Suva examples) |
 | GET | `/api/kb/example/{docket}` | – | one Suva example summary |
 | GET | `/api/judgements` | – | list of cards (`db.list_cards`) ranked by effective score |
-| GET | `/api/judgements/{slug}` | – | detail (`db.get_detail`): card + text, summaries, history |
+| GET | `/api/judgements/{slug}` | – | detail (`db.get_detail`): card + text, html (cleaned original with its formatting; null for rows imported before it existed: `python -m suva attach-html <crawl folder>`), summaries, history |
 | PUT | `/api/judgements/{slug}/score` | `{score: 0-100, editor}` | `{ok}`; logged in `edits` |
 | PUT | `/api/judgements/{slug}/status` | `{status: "new"\|"done", editor}` | `{ok}`; team-wide "Erledigt" state, logged in `edits` (unread/read is per browser) |
 | DELETE | `/api/judgements/{slug}/score` | `{editor}` | `{ok}`; reverts to AI score |
