@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 # Runs ON the server (every minute via deploy/systemd/lex-autodeploy.timer): if main moved, pull, install and restart.
 # Pull-based on purpose: no SSH key in GitHub and no open port; the server only fetches the public repo.
-#   install once (as root on the server):
+#   install once (as root on the server). The script runs as root, so it is installed as a root-owned COPY:
+#     install -o root -g root -m 0755 deploy/autodeploy.sh /usr/local/sbin/lex-autodeploy
 #     cp deploy/systemd/lex-autodeploy.* /etc/systemd/system/ && systemctl daemon-reload
 #     systemctl enable --now lex-autodeploy.timer
+#   Changes to this file in the repo do NOT take effect until the copy is re-installed (on purpose).
 #   logs: journalctl -u lex-autodeploy -n 50
 set -euo pipefail
 DEST=/opt/lex-aperta

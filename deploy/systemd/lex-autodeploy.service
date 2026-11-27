@@ -3,4 +3,7 @@ Description=Lex Aperta: deploy new commits on main
 
 [Service]
 Type=oneshot
-ExecStart=/opt/lex-aperta/deploy/autodeploy.sh
+# Root-owned copy, NOT the file in the repo checkout: the checkout is updated from GitHub, so running it as root
+# would let anyone who can push to main run code as root on the shared server. Re-install the copy by hand
+# (see deploy/autodeploy.sh) when the script itself changes.
+ExecStart=/usr/local/sbin/lex-autodeploy
