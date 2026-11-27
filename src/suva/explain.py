@@ -8,7 +8,7 @@ The score is not changed.
 import json
 import re
 
-from . import config, erwaegungen, llm
+from . import config, erwaegungen, llm, postcheck
 from .triage import _excerpt
 
 BANNED = re.compile(r"^\s*(Das Bundesgericht|Das BGer|Das Urteil|Dieses Urteil|Im vorliegenden|In diesem Urteil|"
@@ -25,7 +25,10 @@ Regeln:
 - Satz 1: was das Gericht entschieden hat und warum, mit der tragenden Erwägung in Klammern, z.B. "(E. 4.4)".
   Nur Nummern aus der Liste der Erwägungen.
 - Satz 2: Bedeutung für die Suva (Grundsatz für die Fallbearbeitung, Bestätigung der Praxis, oder warum nur Einzelfall).
-- Höchstens 2 Sätze pro Sprache, konkret, keine Floskeln. Ergebnis gemäss Dispositiv.
+- Höchstens 2 Sätze und höchstens 40 Wörter pro Sprache, konkret. Keine Floskeln wie "Für die Suva bedeutet dies",
+  keine Daten, Beträge oder Namen. Ergebnis gemäss Dispositiv; wer gewonnen hat (Suva/Versicherer oder versicherte
+  Person) muss stimmen. Nennt das Rechtsgebiet die IV, AHV, BVG oder Krankenversicherung, ist KEIN Unfallversicherer
+  Partei: die Bedeutung für die Suva dann als Übertragung des Rechtssatzes formulieren.
 - Mindestens ein Verweis auf eine Erwägung pro Sprache: "(E. 4.4)" deutsch, "(consid. 4.4)" französisch.
 - Französisch: eigenständig formuliert, Fachbegriffe wie in den ATF (consid., assurance-accidents, LAA, LPGA).
 
@@ -67,9 +70,17 @@ def explain(j, score):
                                                            "als Stichwort und Doppelpunkt, nicht mit dem Gericht. Gleiches Format DE:/FR:."}])
         except ValueError:
             pass  # keep the first answer rather than losing the ruling
+    issues = postcheck.reason_problems(a.get("explanation_de"), a.get("explanation_fr"), j)
+    if issues:
+        try:
+            a, _ = ask(msgs + [{"role": "assistant", "content": raw},
+                               {"role": "user", "content": "Korrigiere: " + "; ".join(issues) + ". Gleiches Format DE:/FR:."}])
+        except ValueError:
+            pass
     valid = erwaegungen.numbers(text)
     for k in ("explanation_de", "explanation_fr"):
         _, bad = erwaegungen.check_refs(a.get(k) or "", valid)
         for nr in set(bad):
             a[k] = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", a[k])
-    return {"de": (a.get("explanation_de") or "").strip(), "fr": (a.get("explanation_fr") or "").strip()}
+    return {"de": postcheck.clean_reason(a.get("explanation_de") or ""),
+            "fr": postcheck.clean_reason(a.get("explanation_fr") or "")}

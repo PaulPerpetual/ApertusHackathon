@@ -13,7 +13,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import config, db, examples, llm, tags
+from . import config, db, examples, llm, postcheck, tags
 
 STATIC = Path(__file__).parent / "static"
 app = FastAPI(title="Suva judgement triage")
@@ -231,7 +231,12 @@ def status():
 @app.get("/api/judgements")
 def judgements():
     with db.connect() as con:
-        return db.list_cards(con)
+        cards = db.list_cards(con)
+    for c in cards:  # texts already in the DB: finish cut-off reasons (no length cap, a human may have edited)
+        for k in ("explanation_de", "explanation_fr", "tier_reason"):
+            if c.get(k):
+                c[k] = postcheck.clean_reason(c[k], max_words=None)
+    return cards
 
 
 @app.get("/api/judgements/{slug}")
@@ -240,6 +245,13 @@ def judgement(slug: str):
         d = db.get_detail(con, slug)
     if not d:
         raise HTTPException(404, "not found")
+    a = d.get("assessment") or {}
+    for k in ("explanation_de", "explanation_fr", "tier_reason"):
+        if a.get(k):
+            a[k] = postcheck.clean_reason(a[k], max_words=None)
+    for lang, s in (d.get("summaries") or {}).items():  # mechanical fixes on AI text only (table cells, costs, citations)
+        if isinstance(s, dict) and s.get("text") and not s.get("edited_by"):
+            s["text"] = postcheck.clean_summary(s["text"], lang)
     return d
 
 

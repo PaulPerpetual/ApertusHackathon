@@ -14,7 +14,9 @@ Docs: docs/PROMPT_ANALYSIS.md.
 """
 import re
 
-from . import config, erwaegungen, llm
+import os
+
+from . import config, erwaegungen, llm, postcheck
 from .summarize import GLOSSARY, PLACEHOLDER, SUVA_ALIAS, pick_examples
 
 MAX_INPUT = 40000
@@ -48,8 +50,11 @@ Erfinde nichts. Verallgemeinere keine individuelle Heilungsdauer, Prognose oder 
 
 STYLE = {
     "de": """Stil der Suva-Zusammenfassungen (gemessen an 54 echten Zusammenfassungen):
-- Beginne mit dem Rechtssatz aus FOKUS als zitierfähigem Satz im PRÄSENS, unpersönlich (Muster: "Wenn <Voraussetzung>,
-  dann <Rechtsfolge>." bzw. "<Begriff> setzt voraus, dass …"). Der Inhalt stammt NUR aus den Rechtssätzen dieses Urteils.
+- Beginne mit dem Rechtssatz aus FOKUS als zitierfähigem Satz im PRÄSENS, unpersönlich, oder mit dem, was die Suva
+  bzw. der Versicherer getan hat und wie das Bundesgericht das beurteilt. Abwechslungsreich, nicht schematisch mit "Wenn"
+  (z.B. "<Begriff> setzt voraus, dass …", "Ein Unfallversicherer darf …, wenn …", "Für <Frage> ist massgebend, …").
+  Der Inhalt stammt NUR aus den Rechtssätzen dieses Urteils, und es ist die konkret ENTSCHIEDENE Frage, nicht
+  allgemeines Grundlagenwissen.
   Nicht mit "Das Bundesgericht" oder "In diesem Urteil" beginnen.
 - Danach 1-2 Sätze Sachverhalt, allgemein ("Ein Versicherter, Maurer, …" bzw. "Eine Versicherte, …", Geschlecht wie
   im Urteil), ohne Daten, Orte und Namen; vom Leiden nur, worauf es rechtlich ankommt. Statt des Rechtsbegehrens
@@ -69,8 +74,10 @@ STYLE = {
 - Schweizer Fachsprache: UVG, UVV, ATSG, IVG, IVV, LSE (nie LAA, LPGA, OLAA, LAI, RAI, ESS im deutschen Text);
   relatives Wagnis, Listenverletzung, Distorsion/Kontusion, Untersuchungshaft, Valideneinkommen, Einspracheentscheid.""",
     "fr": """Style des résumés de la Suva (mesuré sur 54 résumés réels):
-- Commencer par la règle du FOCUS en une phrase citable, au PRÉSENT, impersonnelle (modèle: "Lorsque <condition>,
-  <conséquence juridique>."). Le contenu provient UNIQUEMENT des règles de cet arrêt.
+- Commencer par la règle du FOCUS en une phrase citable, au PRÉSENT, impersonnelle, ou par ce que la Suva / l'assureur
+  a fait et comment le Tribunal fédéral l'apprécie. Varier, pas systématiquement "Lorsque"
+  (p.ex. "<Notion> suppose que …", "Un assureur-accidents peut …, si …", "Est déterminant pour …").
+  Le contenu provient UNIQUEMENT des règles de cet arrêt et porte sur la question effectivement TRANCHÉE.
   Ne pas commencer par "Le Tribunal fédéral" ni "Dans cet arrêt".
 - Puis 1-2 phrases de faits, générales ("Un assuré, maçon, …" ou "Une assurée, …", selon l'arrêt), sans dates,
   lieux ni noms; de l'atteinte, seulement ce qui compte juridiquement. Au lieu des conclusions, l'argument central
@@ -115,7 +122,34 @@ def extract(j):
                     temperature=0.1, max_tokens=1500)
 
 
-def write(j, notes, examples, lang):
+VERIFY_SYSTEM = """Du bist Gerichtsschreiber:in am Bundesgericht und prüfst eine Urteilszusammenfassung streng gegen das Urteil.
+Melde NUR echte Fehler:
+(a) Ergebnis widerspricht dem Dispositiv (wer hat gewonnen, Rückweisung vs. endgültiger Entscheid);
+(b) falsche Partei oder Versicherung (z.B. Unfallversicherer statt IV-Stelle; Suva als Beschwerdeführerin vs. -gegnerin);
+(c) Aussage, die im Urteil nicht steht oder aus einem anderen Urteil stammt;
+(d) Rechtssatz falsch zugeordnet (z.B. falsches Adäquanzkriterium, falsche Norm);
+(e) offengelassene Frage als entschieden dargestellt, oder Einzelfallwürdigung als allgemeine Regel;
+(f) die im Urteil hauptsächlich entschiedene Frage fehlt.
+Keine Stilfragen. Antworte nur mit JSON: {"fehler": ["<betroffene Stelle> -> <richtig laut Urteil, mit E.>", ...]}
+Leere Liste, wenn die Zusammenfassung korrekt ist."""
+
+
+def verify(j, notes, out):
+    """Faithfulness pass: list of concrete errors in the summary (empty if none or if the check fails)."""
+    text = j.get("text") or ""
+    user = (f"Urteil {j['docket']} (Rechtsgebiet: {j.get('subject') or '?'})\n"
+            f"Dispositiv (verbindlich): {erwaegungen.dispositiv(text, 700)}\n\n"
+            f"Rechtssätze laut Auszug:\n{notes}\n\n<judgement>\n{full_input(text, 30000)}\n</judgement>\n\n"
+            f"Zu prüfende Zusammenfassung:\n<summary>\n{out}\n</summary>")
+    try:
+        got = llm.parse_json(llm.chat([{"role": "system", "content": VERIFY_SYSTEM}, {"role": "user", "content": user}],
+                                      temperature=0.0, max_tokens=500, json_mode=True))
+        return [str(x) for x in (got.get("fehler") or []) if str(x).strip()][:5]
+    except Exception:  # noqa: BLE001 - a failed check must not lose the summary
+        return []
+
+
+def write(j, notes, examples, lang, ref=None):
     text = j.get("text") or ""
     shots = pick_examples(text + notes, examples, lang)
     shot_txt = "\n\n".join(f"Beispiel {i + 1}:\n{ex[lang]}" for i, ex in enumerate(shots))
@@ -126,6 +160,9 @@ def write(j, notes, examples, lang):
             f"Rechtssätze und Fokus zum Urteil {j['docket']}:\n{notes}\n\n"
             f"Dispositiv (verbindlich): {erwaegungen.dispositiv(text, 700)}\n"
             f"Gültige Erwägungsnummern: {', '.join(valid)}\n\n"
+            + (f"Bereits geprüfte Fassung in der anderen Sprache (inhaltlich verbindlich: gleiche Rechtssätze, gleiches "
+               f"Ergebnis, gleiche Parteien, gleiches Geschlecht; nicht wörtlich übersetzen, sondern in der Fachsprache "
+               f"der Zielsprache formulieren):\n{ref}\n\n" if ref else "") +
             f"Schreibe jetzt die Zusammenfassung auf {target}. Nur Rechtssätze aus der Würdigung des Bundesgerichts als "
             f"Regel darstellen; keine individuelle medizinische Feststellung verallgemeinern. Gib nur den Text aus.")
     msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -146,20 +183,42 @@ def write(j, notes, examples, lang):
         problems.append("die Suva ist in diesem Urteil nicht Partei: neutral 'der Unfallversicherer' schreiben")
     if re.search(r"\b(?:in|bei|des|der|vom)\s+(?:ansässige|AG|GmbH|Dr\.)\s+(?:vom|Gesellschaft|in)\b", out):
         problems.append("Lücken der Anonymisierung neutral umschreiben")
-    if problems:
-        out = llm.chat(msgs + [{"role": "assistant", "content": out},
-                               {"role": "user", "content": "Korrigiere: " + "; ".join(problems) + ". Nur der Text."}],
-                       temperature=0.2, max_tokens=900).strip()
+    problems += postcheck.problems(postcheck.clean_summary(out, lang), j, lang, words=260 if lang == "de" else 310)
+
+    def fix(t, what):
+        return llm.chat(msgs + [{"role": "assistant", "content": t}, {"role": "user", "content": what}],
+                        temperature=0.2, max_tokens=900).strip()
+
+    if problems:  # one targeted retry; keep it only if it is really better (Apertus sometimes answers with meta text)
+        fixed = fix(out, "Korrigiere: " + "; ".join(problems) + ". Gib den vollständigen korrigierten Text aus, nur den Text.")
+        if conflict or bad or postcheck.better(out, fixed, j, lang):
+            out = fixed
+    if os.getenv("SUMMARY_VERIFY") == "1":  # experimental faithfulness pass (off by default: unstable on Apertus 70B)
+        errors = verify(j, notes, out)
+        if errors:
+            fixed = fix(out, "Eine Prüfung gegen das Urteil ergab diese Fehler:\n- " + "\n- ".join(errors)
+                        + "\nKorrigiere nur diese Stellen anhand des Urteils, alles andere unverändert. "
+                          "Gleiche Sprache. Gib den vollständigen Text aus.")
+            if postcheck.better(out, fixed, j, lang) or not postcheck.problems(fixed, j, lang):
+                out = fixed
     # (S2.3 mechanical lengthening removed: longer text but fewer Suva points and new errors on the dev set)
     out = PLACEHOLDER.sub("", out)
     if re.search(r"\b(Suva|SUVA|CNA|INSAI)\b", text):
         out = SUVA_ALIAS.sub("Suva", out)
     out = acronyms(out, lang)
+    out = postcheck.clean_summary(out, lang)
     for nr in set(erwaegungen.check_refs(out, valid)[1]):
         out = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", out)
     return out
 
 
 def summarize(j, examples):
+    """Write the ruling's own language first (checked against the ruling), then the other language from it,
+    so DE and FR state the same rules, outcome, parties and gender."""
     notes = extract(j)
-    return {"notes": notes, "de": write(j, notes, examples, "de"), "fr": write(j, notes, examples, "fr")}
+    first = "fr" if (j.get("language") or "") in ("fr", "it") else "de"
+    second = "de" if first == "fr" else "fr"
+    out = {"notes": notes, first: write(j, notes, examples, first)}
+    cross = os.getenv("SUMMARY_CROSSLANG") == "1"  # experimental: second language written from the first
+    out[second] = write(j, notes, examples, second, ref=out[first] if cross else None)
+    return out
