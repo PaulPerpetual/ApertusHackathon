@@ -71,6 +71,11 @@ class SummaryIn(BaseModel):
     editor: str = Field(min_length=1, max_length=60)
 
 
+class NoteIn(BaseModel):
+    text: str = Field(min_length=1, max_length=5000)
+    editor: str = Field(min_length=1, max_length=60)
+
+
 class EditorIn(BaseModel):
     editor: str = Field(min_length=1, max_length=60)
 
@@ -199,6 +204,46 @@ def _run_add(docket):
         JOBS[docket] = {"status": "done", "slug": slug}
     except Exception as e:  # report to UI
         JOBS[docket] = {"status": "error", "message": str(e)[:300]}
+
+
+@app.put("/api/judgements/{slug}/explanation/{lang}")
+def set_explanation(slug: str, lang: str, body: SummaryIn, request: Request):
+    """Edit the reasoning ("Begründung"). Stored beside the AI text, so re-running triage keeps the edit."""
+    body.editor = _editor(request, body.editor)
+    if lang not in ("de", "fr"):
+        raise HTTPException(400, "lang must be de or fr")
+    with db.connect() as con:
+        a = con.execute(f"SELECT COALESCE(explanation_{lang}_human, explanation_{lang}) AS t FROM assessments WHERE slug=?",
+                        (slug,)).fetchone()
+        if not a:
+            raise HTTPException(404, "not found")
+        con.execute(f"UPDATE assessments SET explanation_{lang}_human=?, explanation_edited_by=?, explanation_edited_at=?"
+                    " WHERE slug=?", (body.text, body.editor, db.now(), slug))
+        db.log_edit(con, slug, f"explanation_{lang}", a["t"], body.text, body.editor)
+    return {"ok": True}
+
+
+@app.post("/api/judgements/{slug}/notes")
+def add_note(slug: str, body: NoteIn, request: Request):
+    body.editor = _editor(request, body.editor)
+    with db.connect() as con:
+        if not con.execute("SELECT 1 FROM judgements WHERE slug=?", (slug,)).fetchone():
+            raise HTTPException(404, "not found")
+        cur = con.execute("INSERT INTO notes (slug, text, editor, at) VALUES (?,?,?,?)", (slug, body.text, body.editor, db.now()))
+        db.log_edit(con, slug, "note", None, body.text[:200], body.editor)
+    return {"ok": True, "id": cur.lastrowid}
+
+
+@app.delete("/api/judgements/{slug}/notes/{note_id}")
+def delete_note(slug: str, note_id: int, body: EditorIn, request: Request):
+    body.editor = _editor(request, body.editor)
+    with db.connect() as con:
+        n = con.execute("SELECT text FROM notes WHERE id=? AND slug=?", (note_id, slug)).fetchone()
+        if not n:
+            raise HTTPException(404, "not found")
+        con.execute("DELETE FROM notes WHERE id=?", (note_id,))
+        db.log_edit(con, slug, "note_deleted", n["text"][:200], None, body.editor)
+    return {"ok": True}
 
 
 @app.post("/api/judgements")

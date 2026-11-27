@@ -14,7 +14,7 @@ const I18N = {
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
-    edit: "Bearbeiten", edit_summary: "Zusammenfassung bearbeiten", adjust_score: "Score anpassen", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
+    edit: "Bearbeiten", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
     st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
@@ -34,7 +34,7 @@ const I18N = {
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
-    edit: "Modifier", edit_summary: "Modifier le résumé", adjust_score: "Ajuster le score", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
+    edit: "Modifier", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
     st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
@@ -302,7 +302,7 @@ function anchorHtml(root) {
 
 /* ---------- detail pane ---------- */
 async function openPanel(slug) {
-  state.open = slug; state.editing = false; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
+  state.open = slug; state.editing = false; state.draft = {}; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
   markRead(slug);
   $("#panel").hidden = false; renderList(); await renderPanel();
   const tr = document.querySelector(`#rows [data-slug="${CSS.escape(slug)}"]`); if (tr) tr.scrollIntoView({ block: "nearest" });
@@ -316,20 +316,30 @@ async function renderPanel() {
   const done = d.status === "done";
   $("#pDocket").textContent = [d.docket, fmtDate(d.decision_date || d.publication_date)].filter(Boolean).join(" · ");
   $("#pTitle").textContent = (L === "fr" ? a.title_fr : a.title_de) || d.subject || d.docket;
-  $("#pDone").hidden = readOnly();
+  const E = state.editing && !readOnly();
+  const dr = state.draft || (state.draft = {});
+  $("#pEdit").hidden = readOnly();
+  $("#pEdit").textContent = E ? t("save") : "✎ " + t("edit");
+  $("#pEdit").onclick = E ? () => saveAll(d) : async () => { if (await requireName()) { state.editing = true; state.draft = {}; renderPanel(); } };
+  $("#pCancel").hidden = !E; $("#pCancel").textContent = t("cancel");
+  $("#pCancel").onclick = () => { state.editing = false; state.draft = {}; renderPanel(); };
+  $("#pDone").hidden = readOnly() || E;
   $("#pDone").textContent = done ? "↺ " + t("reopen") : "✓ " + t("mark_done");
   $("#pDone").onclick = () => setDone(d.slug, !done);
   const overridden = a.score_override !== null && a.score_override !== undefined;
   const score = overridden ? a.score_override : a.ai_score;
-  const tabs = ["summary_de", "summary_fr", "text", "history"];
+  const tabs = ["summary_de", "summary_fr", "notes", "text", "history"];
+  const why = L === "fr" ? a.explanation_fr : a.explanation_de;
+  const whyEdited = a[`explanation_${L}`] !== a[`explanation_${L}_ai`];
   let html = `
     <div class="section"><h4>${t("relevance")}</h4>
-      <div class="bigscore"><span class="n" id="pScoreN">${score ?? "–"}</span><span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
+      <div class="bigscore">${E ? `<input type="number" min="0" max="100" class="score-in" id="eScore" value="${esc(dr.score ?? score ?? "")}">`
+        : `<span class="n">${score ?? "–"}</span>`}<span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
-        ${readOnly() ? "" : `<button class="btn" id="scoreBtn">✎ ${t("adjust_score")}</button>`}
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
       ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
-    <div class="section"><h4>${t("why")}</h4><p>${esc(L === "fr" ? a.explanation_fr : a.explanation_de)}</p>
+    <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
+      ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${esc(why)}</p>`}
       <div class="tags">${a.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div></div>
     <div class="section"><h4>${t("details")}</h4><div class="kv">
       ${d.decision_date ? `<span class="muted">${t("decided")}</span><span>${esc(fmtDate(d.decision_date))}</span>` : ""}
@@ -337,7 +347,7 @@ async function renderPanel() {
       ${d.division ? `<span class="muted">${t("division")}</span><span>${esc(d.division)}</span>` : ""}
       ${d.url ? `<span class="muted">${t("original")}</span><span><a href="${esc(d.url)}" target="_blank" rel="noopener">${t("open_bger")} ↗</a></span>` : ""}
     </div></div>
-    <div class="tabs">${tabs.map((k) => `<button data-tab="${k}" class="${state.tab === k ? "on" : ""}">${t(k)}${k === "history" && d.history.length ? ` (${d.history.length})` : ""}</button>`).join("")}</div>
+    <div class="tabs">${tabs.map((k) => `<button data-tab="${k}" class="${state.tab === k ? "on" : ""}">${t(k)}${k === "history" && d.history.length ? ` (${d.history.length})` : ""}${k === "notes" && d.notes?.length ? ` (${d.notes.length})` : ""}</button>`).join("")}</div>
     <div class="section" id="tabBody">`;
 
   if (state.tab.startsWith("summary_")) {
@@ -346,17 +356,22 @@ async function renderPanel() {
     if (!s) {
       html += `<p class="muted">${t("no_summary")}</p>`;
       if (d.text && !readOnly()) html += `<button class="btn primary" id="genBtn">${t("generate")}</button>`;
-    } else if (state.editing) {
-      html += `<textarea class="summary-edit" id="sumEdit">${esc(s.text)}</textarea>
-        <div class="row"><button class="btn" id="cancelEdit">${t("cancel")}</button><button class="btn primary" id="saveEdit">${t("save")}</button></div>`;
+    } else if (E) {
+      html += `<textarea class="summary-edit" id="sumEdit" data-lang="${lang}">${esc(dr["sum_" + lang] ?? s.text)}</textarea>`;
     } else {
       const meta = s.edited_by ? `<span class="edited">✎ ${t("edited_by")} ${esc(s.edited_by)} · ${esc(fmtTime(s.edited_at))}</span>`
         : s.model === "suva-human-example" ? `<span class="tag">${t("human_example")}</span>` : `<span class="tag">${t("ai")} · ${esc(s.model)}</span>`;
-      html += `<div class="sum-head"><div class="c-sub">${meta}</div>${readOnly() ? "" : `<button class="btn primary" id="editBtn">✎ ${t("edit_summary")}</button>`}</div>
+      html += `<div class="sum-head"><div class="c-sub">${meta}</div></div>
         <div class="summary">${linkCitations(s.text)}</div>
         ${s.edited_by && s.ai_text ? `<div class="row"><button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button></div>` : ""}
         ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
     }
+  } else if (state.tab === "notes") {
+    html += (d.notes || []).length ? `<ul class="notes">${d.notes.map((n) => `<li><div class="note-meta"><b>${esc(n.editor)}</b> · ${esc(fmtTime(n.at))}
+        ${readOnly() ? "" : `<button class="act note-del" data-note="${n.id}" title="${t("delete")}">✕</button>`}</div><div class="note-text">${esc(n.text)}</div></li>`).join("")}</ul>`
+      : `<p class="muted">${t("no_notes")}</p>`;
+    if (!readOnly()) html += `<textarea class="note-edit" id="noteInput" placeholder="${t("note_ph")}">${esc(dr.note || "")}</textarea>
+      <div class="row"><button class="btn primary" id="addNote">${t("add_note")}</button></div>`;
   } else if (state.tab === "text") {
     // formatted original (cleaned server-side, see scraper._html_clean); plain text as fallback
     html += d.html ? `<div class="original-html" id="origHtml">${d.html}</div>`
@@ -371,7 +386,7 @@ async function renderPanel() {
   html += `</div>`;
   $("#pBody").innerHTML = html;
 
-  $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; state.editing = false; renderPanel(); }));
+  $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; renderPanel(); }));
   $("#pBody").querySelectorAll(".cite").forEach((el) => (el.onclick = (e) => { e.preventDefault(); state.tab = "text"; state.pendingErw = el.dataset.erw; renderPanel(); }));
   if (state.tab === "text" && d.html) anchorHtml($("#origHtml"));
   if (state.tab === "text" && state.pendingErw) {
@@ -381,21 +396,43 @@ async function renderPanel() {
     else toast(t("cite_missing"));
   }
   const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
-  on("editBtn", async () => { if (await requireName()) { state.editing = true; renderPanel(); } });
-  on("scoreBtn", () => editScore(d.slug, $("#pScoreN")));
-  on("cancelEdit", () => { state.editing = false; renderPanel(); });
-  on("toggleAi", () => { state.showAi = !state.showAi; renderPanel(); });
-  on("saveEdit", async () => {
-    const lang = state.tab.slice(-2);
-    await api(`/api/judgements/${encodeURIComponent(state.open)}/summary/${lang}`, { method: "PUT", body: JSON.stringify({ text: $("#sumEdit").value, editor: state.editor }) });
-    state.editing = false; toast(t("saved")); await load();
+  const keep = (id, key) => { const el = document.getElementById(id); if (el) el.oninput = () => (dr[key ?? el.dataset.lang] = el.value); };
+  keep("eScore", "score"); keep("eWhy", "why"); keep("noteInput", "note");
+  const se = document.getElementById("sumEdit"); if (se) se.oninput = () => (dr["sum_" + se.dataset.lang] = se.value);
+  on("addNote", async () => {
+    const text = $("#noteInput").value.trim(); if (!text || !(await requireName())) return;
+    await api(`/api/judgements/${encodeURIComponent(d.slug)}/notes`, { method: "POST", body: JSON.stringify({ text, editor: state.editor }) });
+    dr.note = ""; toast(t("saved")); await load();
   });
+  $("#pBody").querySelectorAll(".note-del").forEach((b) => (b.onclick = async () => {
+    if (!(await requireName())) return;
+    await api(`/api/judgements/${encodeURIComponent(d.slug)}/notes/${b.dataset.note}`, { method: "DELETE", body: JSON.stringify({ editor: state.editor }) });
+    await load();
+  }));
+  on("toggleAi", () => { state.showAi = !state.showAi; renderPanel(); });
   on("revertBtn", async () => {
     if (!(await requireName())) return;
     await api(`/api/judgements/${encodeURIComponent(state.open)}/score`, { method: "DELETE", body: JSON.stringify({ editor: state.editor }) });
     await load();
   });
   on("genBtn", () => startAdd(d.docket));
+}
+
+// One "Bearbeiten" for the whole panel: score, reasoning (current language) and both summaries; saves what changed.
+async function saveAll(d) {
+  const a = d.assessment || {}, dr = state.draft || {}, L = state.lang, base = `/api/judgements/${encodeURIComponent(d.slug)}`;
+  const put = (path, body) => api(base + path, { method: "PUT", body: JSON.stringify({ ...body, editor: state.editor }) });
+  const cur = a.score_override ?? a.ai_score;
+  try {
+    if (dr.score !== undefined && dr.score !== "" && +dr.score !== cur) await put("/score", { score: Math.max(0, Math.min(100, parseInt(dr.score, 10))) });
+    if (dr.why !== undefined && dr.why.trim() !== (a[`explanation_${L}`] || "").trim()) await put(`/explanation/${L}`, { text: dr.why.trim() });
+    for (const lang of ["de", "fr"]) {
+      const v = dr["sum_" + lang];
+      if (v !== undefined && v.trim() !== (d.summaries[lang]?.text || "").trim()) await put(`/summary/${lang}`, { text: v.trim() });
+    }
+    state.editing = false; state.draft = {}; toast(t("saved"));
+  } catch (e) { toast(`${t("failed_action")}: ${errText(e)}`); }
+  await load();
 }
 
 /* ---------- add a ruling manually ---------- */

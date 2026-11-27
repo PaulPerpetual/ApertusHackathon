@@ -115,6 +115,9 @@ Still open for Paul:
 | GET | `/api/judgements/{slug}` | – | detail (`db.get_detail`): card + text, html (cleaned original with its formatting; null for rows imported before it existed: `python -m suva attach-html <crawl folder>`), summaries, history |
 | PUT | `/api/judgements/{slug}/score` | `{score: 0-100, editor}` | `{ok}`; logged in `edits` |
 | PUT | `/api/judgements/{slug}/status` | `{status: "new"\|"done", editor}` | `{ok}`; team-wide "Erledigt" state, logged in `edits` (unread/read is per browser) |
+| PUT | `/api/judgements/{slug}/explanation/{lang}` | `{text, editor}` | `{ok}`; edited reasoning, stored in `explanation_{lang}_human` (re-triage keeps it), logged |
+| POST | `/api/judgements/{slug}/notes` | `{text, editor}` | `{ok, id}`; team note, shown in the Notizen tab; detail returns `notes: [{id, text, editor, at}]` |
+| DELETE | `/api/judgements/{slug}/notes/{id}` | `{editor}` | `{ok}`; logged as `note_deleted` |
 | DELETE | `/api/judgements/{slug}/score` | `{editor}` | `{ok}`; reverts to AI score |
 | PUT | `/api/judgements/{slug}/summary/{de\|fr}` | `{text, editor}` | `{ok}`; logged in `edits` |
 | POST | `/api/judgements` | `{docket: "8C_123/2026", editor?}` | job `{status}`; fetch + triage + summarise |
