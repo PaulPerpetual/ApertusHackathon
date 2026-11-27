@@ -67,7 +67,20 @@ async function api(path, opts = {}) {
     if (path === "/api/status") { data.read_only = true; data.static = true; data.jobs = data.jobs || {}; }
     return data;
   }
-  const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opts });
+  // API_BASE: the page's own path prefix, so the UI also works behind a reverse-proxy prefix
+  // (https://api.robotross.art/lex/ -> "/lex"). Override with window.LEX_API_BASE (e.g. from GitHub Pages).
+  const API_BASE = window.LEX_API_BASE ?? location.pathname.replace(/\/[^/]*$/, "");
+  const send = () => {
+    const headers = { "Content-Type": "application/json" };
+    const key = store.get("lex.key", "");
+    if (key && opts.method && opts.method !== "GET") headers["X-Lex-Key"] = key;  // hosted API: writes need a key
+    return fetch(API_BASE + path, { ...opts, headers });
+  };
+  let r = await send();
+  if (r.status === 401 && opts.method && opts.method !== "GET") {
+    const key = window.prompt("Editor key (X-Lex-Key)");  // asked once, kept in this browser
+    if (key) { store.set("lex.key", key.trim()); r = await send(); }
+  }
   if (!r.ok) throw new Error(await r.text());
   return r.json();
 }
