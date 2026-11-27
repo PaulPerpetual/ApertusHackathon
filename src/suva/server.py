@@ -193,45 +193,18 @@ def status():
             "threshold": config.RELEVANCE_SUMMARY_THRESHOLD, "jobs": JOBS, "tag_vocab": tags.vocab()}
 
 
-# "Grenzfälle": rulings Apertus is unsure about. Below the list (score < 60, no human score), but the recall pass
-# (src/run_recall_pass.py, 3 samples) gave them 40-69: some samples say relevant, not enough to list them.
-# On Suva's labelled half-year this zone holds 41 rulings, 3 of them Suva picks. Read-only on recall_assessments.
-BORDERLINE = (40, 70)
-
-
-def _recall(con):
-    if not con.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='recall_assessments'").fetchone():
-        return {}
-    return {r["slug"]: r for r in con.execute("SELECT slug, score, reason_de FROM recall_assessments WHERE score IS NOT NULL")}
-
-
-def _mark_borderline(card, rc):
-    r = rc.get(card["slug"])
-    card["borderline"] = bool(r and BORDERLINE[0] <= r["score"] < BORDERLINE[1]
-                              and (card.get("score") or 0) < 60 and card.get("score_override") is None)
-    card["recall_score"] = r["score"] if r else None
-    card["recall_reason_de"] = (r["reason_de"] or "") if r else ""
-    return card
-
-
 @app.get("/api/judgements")
 def judgements():
     with db.connect() as con:
-        rc = _recall(con)
-        return [_mark_borderline(c, rc) for c in db.list_cards(con)]
+        return db.list_cards(con)
 
 
 @app.get("/api/judgements/{slug}")
 def judgement(slug: str):
     with db.connect() as con:
         d = db.get_detail(con, slug)
-        rc = _recall(con) if d else {}
     if not d:
         raise HTTPException(404, "not found")
-    a = d.get("assessment") or {}
-    ov = a.get("score_override")
-    m = _mark_borderline({"slug": slug, "score": ov if ov is not None else a.get("ai_score"), "score_override": ov}, rc)
-    d.update({k: m[k] for k in ("borderline", "recall_score", "recall_reason_de")})
     return d
 
 

@@ -2,7 +2,7 @@
    detail pane, human score overrides and summary edits with simple name attribution. */
 const I18N = {
   de: {
-    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_panel: (n) => `Grenzfall: Apertus ist unsicher (Zweitprüfung ${n}/100).`, promote: "In die Liste aufnehmen", promoted: "In die Liste aufgenommen",
+    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_hint1: "Apertus ist unsicher, eine Juristin sollte es ansehen.", promote: "Bestätigen", promoted: "Als relevant bestätigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
@@ -22,7 +22,7 @@ const I18N = {
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
-    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_panel: (n) => `Cas limite: Apertus n’est pas sûr (second examen ${n}/100).`, promote: "Ajouter à la liste", promoted: "Ajouté à la liste",
+    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_hint1: "Apertus n’est pas sûr, un juriste devrait l’examiner.", promote: "Confirmer", promoted: "Confirmé comme pertinent",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
@@ -63,12 +63,15 @@ const fmtTime = (iso) => (iso ? new Date(iso).toLocaleString(locale(), { day: "2
 const fmtDate = (d) => (d && /^\d{4}-\d{2}-\d{2}/.test(d) ? new Date(d.slice(0, 10)).toLocaleDateString(locale(), { day: "2-digit", month: "2-digit", year: "numeric" }) : d || "");
 const band = (s) => (s >= 70 ? "hi" : s >= 40 ? "mid" : "lo");
 const titleOf = (c) => (state.lang === "fr" ? c.title_fr : c.title_de) || c.subject || c.docket;
-const whyOf = (c) => (isBorder(c) && state.lang !== "fr" && c.recall_reason_de) || (state.lang === "fr" ? c.explanation_fr : c.explanation_de) || "";
+const BORDER_PREFIX = /^\s*(Grenzfall|Cas limite)\s*[–:-]\s*/i;  // finalize --tiers prefixes the Begründung; the badge says it already
+const whyOf = (c) => ((state.lang === "fr" ? c.explanation_fr : c.explanation_de) || "").replace(BORDER_PREFIX, "");
 const isDone = (c) => c.status === "done";
 const isRejected = (c) => c.status === "rejected";
 const isOpen = (c) => !isDone(c) && !isRejected(c);
-// "Grenzfälle": Apertus is unsure (server flag from the recall pass); shown at the bottom of Neu/Alle, like Junk in Mail
-const isBorder = (c) => !!c.borderline && isOpen(c);
+// "Grenzfälle" (tier 2, pass-4 review, docs/API.md): shown at the bottom of Neu/Alle, like Junk in Mail.
+// "Bestätigen" (human score) takes a ruling out; "Nicht relevant" rejects it.
+const tierOf = (c) => c.tier ?? c.assessment?.tier;
+const isBorder = (c) => tierOf(c) === 2 && (c.score_override ?? c.assessment?.score_override) == null && isOpen(c);
 const inScopeOf = (c) => ({ all: true, done: isDone(c), rejected: isRejected(c), border: isBorder(c) }[state.scope] ?? isOpen(c));
 const readOnly = () => !!state.status?.read_only;
 
@@ -162,7 +165,7 @@ function renderTagFilter() {
 /* tags: DE is the key (filter works across languages); FR label when triage delivered a 1:1 translation */
 function tagsOf(c) {
   const de = c.tags || [], fr = c.tags_fr || [];
-  return de.map((k, i) => ({ key: k, label: state.lang === "fr" && fr.length === de.length ? fr[i] : k }));
+  return de.map((k, i) => ({ key: k, label: state.lang === "fr" && fr.length === de.length ? fr[i] : k })).filter((g) => g.key !== "Grenzfall");  // shown as badge
 }
 
 // The court's own subject line ("Gegenstand"), as published, in the language of the ruling.
@@ -184,7 +187,6 @@ function visible() {
   }[state.sort];
   const dir = state.dir === "desc" ? -1 : 1;
   rows.sort((a, b) => { const x = key(a), y = key(b); return (x < y ? -1 : x > y ? 1 : 0) * dir || a.docket.localeCompare(b.docket); });
-  if (state.sort === "score") rows.sort((a, b) => isBorder(a) && isBorder(b) ? ((b.recall_score ?? 0) - (a.recall_score ?? 0)) * (state.dir === "desc" ? 1 : -1) : 0);
   return [...rows.filter((c) => !isBorder(c)), ...rows.filter(isBorder)];  // Grenzfälle always at the bottom
 }
 
@@ -366,10 +368,10 @@ async function renderPanel() {
         : `<span class="n">${score ?? "–"}</span>`}<span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
-      ${d.borderline && !done && !rejected ? `<div class="bl-note"><span>${esc(t("border_panel", d.recall_score))}${L !== "fr" && d.recall_reason_de ? ` ${fmt(d.recall_reason_de)}` : ""}</span>${readOnly() ? "" : `<button class="btn small" id="promoteBtn">${t("promote")}</button>`}</div>` : ""}
+      ${isBorder(d) ? `<div class="bl-note"><span><b>${t("border")}:</b> ${t("border_hint1")}${(d.tier_reason ?? a.tier_reason) ? ` ${fmt(d.tier_reason ?? a.tier_reason)}` : ""}</span>${readOnly() ? "" : `<button class="btn small" id="promoteBtn">${t("promote")}</button>`}</div>` : ""}
       ${(done || rejected) && d.status_by ? `<p class="muted">${esc(t(done ? "done_by" : "rejected_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
-      ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(why)}</p>`}
+      ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(String(why || "").replace(BORDER_PREFIX, ""))}</p>`}
       ${E ? tagEditor(dr.tags ?? a.tags ?? [])
         : `<div class="tags">${a.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}${a.tags_edited ? `<span class="muted small">✎</span>` : ""}</div>`}</div>
     <div class="section"><h4>${t("details")}</h4><div class="kv">
@@ -458,7 +460,7 @@ async function renderPanel() {
   on("genBtn", () => startAdd(d.docket));
   on("promoteBtn", async () => {  // "not junk": a human score of at least 60 takes it out of the Grenzfälle
     if (!(await requireName())) return;
-    await api(`/api/judgements/${encodeURIComponent(state.open)}/score`, { method: "PUT", body: JSON.stringify({ score: Math.max(60, d.recall_score ?? 0), editor: state.editor }) });
+    await api(`/api/judgements/${encodeURIComponent(state.open)}/score`, { method: "PUT", body: JSON.stringify({ score: 70, editor: state.editor }) });
     toast(t("promoted")); await load();
   });
 }
