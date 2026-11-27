@@ -39,6 +39,9 @@ def main():
     ap.add_argument("db")
     ap.add_argument("--from", dest="date_from", required=True)
     ap.add_argument("--to", dest="date_to", required=True)
+    ap.add_argument("--rewrite-text", action="store_true",
+                    help="also rewrite tags and explanations from reason_tags / explanations. Default: selection only, "
+                         "so texts from `python -m suva relabel` (Paul's house style) and human edits are kept")
     a = ap.parse_args()
     con = sqlite3.connect(a.db, timeout=30)
     con.row_factory = sqlite3.Row
@@ -84,9 +87,12 @@ def main():
                     (r["slug"], main_score, r["iv"], int(selected), rule, json.dumps(tags0, ensure_ascii=False),
                      r["explanation_de"] if r["orig_expl_de"] is None else r["orig_expl_de"],
                      r["explanation_fr"] if r["orig_expl_fr"] is None else r["orig_expl_fr"]))
-        con.execute("UPDATE assessments SET ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? WHERE slug=?",
-                    (score, json.dumps(tags, ensure_ascii=False), json.dumps(tags_fr, ensure_ascii=False),
-                     expl_de, expl_fr, r["slug"]))
+        if a.rewrite_text:
+            con.execute("UPDATE assessments SET ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? WHERE slug=?",
+                        (score, json.dumps(tags, ensure_ascii=False), json.dumps(tags_fr, ensure_ascii=False),
+                         expl_de, expl_fr, r["slug"]))
+        else:
+            con.execute("UPDATE assessments SET ai_score=? WHERE slug=?", (score, r["slug"]))
         if selected and a.date_from <= (r["decision_date"] or "") <= a.date_to:
             hit.append(r["docket"])
     con.commit()
