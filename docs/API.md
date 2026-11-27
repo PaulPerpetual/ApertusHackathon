@@ -37,7 +37,7 @@ const STATIC = location.hostname.endsWith("github.io") || window.LEX_STATIC === 
 const url = (p) => STATIC ? p.replace(/^\/api\//, "api/") + ".json" : p;   // "/api/judgements" -> "api/judgements.json"
 ```
 
-### Exporter (Miguel, to build)
+### Exporter (built in PR #3)
 
 `python -m suva export site/` writes:
 
@@ -45,17 +45,24 @@ const url = (p) => STATIC ? p.replace(/^\/api\//, "api/") + ".json" : p;   // "/
 site/api/status.json                 = GET /api/status       (+ "static": true, "generated_at")
 site/api/judgements.json             = GET /api/judgements    (db.list_cards)
 site/api/judgements/<slug>.json      = GET /api/judgements/{slug}  (db.get_detail)
+site/api/kb.json                     = all library entries (the browser filters them like GET /api/kb)
+site/api/kb/example/<slug>.json      = GET /api/kb/example/{docket}
 ```
 
-Paul: `site/` also holds the UI (a copy of `src/suva/static/` with `index.html` at the root),
-and a `pages.yml` workflow publishes `site/` on every push to `main`. Pages must be enabled
+Run it from `src/` after the pipeline: `python -m suva export` (default target `../site`), then commit `site/api/`.
+
+`.github/workflows/pages.yml` assembles the UI from `src/suva/static/` plus the committed `site/api/` and
+publishes it on every push to `main`. Static mode turns on automatically on `*.github.io`, for `file://`, or
+with `window.LEX_STATIC = true`. Pages must be enabled
 once: repo **Settings → Pages → Source: GitHub Actions** (repo admin = Paul).
 
 ## Endpoints (live mode, from `src/suva/server.py`)
 
 | Method | Path | Body | Returns |
 |---|---|---|---|
-| GET | `/api/status` | – | `{model, mock, threshold, jobs}` |
+| GET | `/api/status` | – | `{model, mock, read_only, threshold, jobs}` |
+| GET | `/api/kb?q=&tag=&kind=&lang=` | – | library search over all summaries (AI, edited, Suva examples) |
+| GET | `/api/kb/example/{docket}` | – | one Suva example summary |
 | GET | `/api/judgements` | – | list of cards (`db.list_cards`) ranked by effective score |
 | GET | `/api/judgements/{slug}` | – | detail (`db.get_detail`): card + text, summaries, history |
 | PUT | `/api/judgements/{slug}/score` | `{score: 0-100, editor}` | `{ok}`; logged in `edits` |
@@ -82,5 +89,5 @@ suva_party, model, has_summary`. The effective score is `score_override ?? ai_sc
 
 ## Runtime notes
 
-- Python **≥ 3.10** (`str | None` annotations in `server.py`). The Dockerfile already uses a recent image.
+- Python **≥ 3.9** (fixed in PR #2).
 - LLM config via `.env` (never committed): `LLM_NAME`, `LLM_BASE_URL`, `LLM_API_KEY`. See `docs/STATUS.md`.
