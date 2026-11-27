@@ -2,6 +2,7 @@
 data/runs/window (in the repo), ruling texts from entscheidsuche.ch (cached under data/period/window_cache/).
 
     python src/build_eval_db.py data/eval_window.sqlite
+    python src/build_eval_db.py data/aprjun_local.sqlite aprjun     # same for April-June (data/runs/aprjun), unlabelled
 
 Then: python src/run_recall_pass.py data/eval_window.sqlite --before 2025-10-01
       python src/eval_f2.py data/eval_window.sqlite --variants
@@ -19,8 +20,9 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 import crawl_period  # noqa: E402
 from suva import scraper  # noqa: E402
 
-RUNS = os.path.join(ROOT, "data", "runs", "window")
-CACHE = os.path.join(ROOT, "data", "period", "window_cache")
+DATASET = sys.argv[2] if len(sys.argv) > 2 else "window"
+RUNS = os.path.join(ROOT, "data", "runs", DATASET)
+CACHE = os.path.join(ROOT, "data", "period", f"{DATASET}_cache")
 
 
 def fetch(docket):
