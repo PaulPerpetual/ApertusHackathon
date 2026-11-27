@@ -6,6 +6,7 @@
   run      --days 92           scrape + triage + summarise in one go
   add      8C_145/2025         fetch, assess and summarise one judgement
   demo                         load the 54 Suva example summaries as demo cards (no bger.ch needed)
+  tags-fr                      add French tags to rulings triaged before tags_fr existed (one short LLM call each)
   eval                         recall/precision of the ranking against the Suva Excel list
   export   ../site             write static JSON mirroring the API (GitHub Pages / intranet web server)
   serve    --port 8000         start the web UI
@@ -85,6 +86,32 @@ def cmd_demo(args):
         print(f"{ex['docket']}: {a['score']}")
 
 
+def cmd_tags_fr(args):
+    """Backfill assessments.tags_fr for rows that only have German tags. Keeps the order 1:1."""
+    import json
+    from . import llm
+    with db.connect() as con:
+        rows = [dict(r) for r in con.execute(
+            "SELECT slug, tags FROM assessments WHERE tags IS NOT NULL AND tags != '[]' AND (tags_fr IS NULL OR tags_fr = '[]')")]
+    for r in rows:
+        de = json.loads(r["tags"])
+        out = llm.chat([{"role": "system", "content": "Übersetze juristische Schlagworte des Schweizer Sozialversicherungsrechts "
+                         "ins Französische (Fachbegriffe wie in BGE/ATF, z.B. Unfallversicherung = assurance-accidents). "
+                         'Antworte nur mit JSON: {"tags_fr": [...]} in derselben Reihenfolge.'},
+                        {"role": "user", "content": json.dumps({"tags": de}, ensure_ascii=False)}],
+                       temperature=0.0, max_tokens=200, json_mode=True)
+        try:
+            fr = [str(t)[:40] for t in llm.parse_json(out).get("tags_fr") or []]
+        except ValueError:
+            fr = []
+        if len(fr) != len(de):
+            print(f"! {r['slug']}: skipped (got {len(fr)} of {len(de)} tags)", file=sys.stderr)
+            continue
+        with db.connect() as con:
+            con.execute("UPDATE assessments SET tags_fr=? WHERE slug=?", (json.dumps(fr, ensure_ascii=False), r["slug"]))
+        print(f"{r['slug']}: {', '.join(fr)}")
+
+
 def cmd_eval(args):
     gt = examples.load_ground_truth()
     with db.connect() as con:
@@ -146,6 +173,7 @@ def main():
     a.add_argument("docket")
     sub.add_parser("demo")
     sub.add_parser("eval")
+    sub.add_parser("tags-fr")
     e = sub.add_parser("export")
     e.add_argument("folder", nargs="?", default=str(config.ROOT / "site"))
     s = sub.add_parser("serve")
@@ -153,7 +181,7 @@ def main():
     s.add_argument("--port", type=int, default=8000)
     args = p.parse_args()
 
-    if config.USE_MOCK_LLM and args.cmd in ("run", "import", "triage", "add", "demo"):
+    if config.USE_MOCK_LLM and args.cmd in ("run", "import", "triage", "add", "demo", "tags-fr"):
         print("! LLM_BASE_URL not set: using the MOCK model (output is labelled 'mock').", file=sys.stderr)
     if args.cmd == "import":
         cmd_import(args)
@@ -167,6 +195,8 @@ def main():
         cmd_add(args)
     elif args.cmd == "demo":
         cmd_demo(args)
+    elif args.cmd == "tags-fr":
+        cmd_tags_fr(args)
     elif args.cmd == "eval":
         cmd_eval(args)
     elif args.cmd == "export":

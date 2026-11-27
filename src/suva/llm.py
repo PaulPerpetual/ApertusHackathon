@@ -82,6 +82,7 @@ def _mock(messages, json_mode):
             "explanation_de": f"[Mock] {len(hits)} Suva-relevante Stichworte gefunden: {', '.join(hits) or 'keine'}.",
             "explanation_fr": f"[Mock] {len(hits)} mots-clés pertinents pour la Suva: {', '.join(hits) or 'aucun'}.",
             "tags": [h.capitalize() for h in hits[:5]] or ["Sozialversicherung"],
+            "tags_fr": [f"{h.capitalize()} (fr)" for h in hits[:5]] or ["Assurances sociales"],
             "suva_party": "suva" in low,
         })
     m = re.search(r"<judgement>(.*?)</judgement>", user, re.S)
