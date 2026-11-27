@@ -46,7 +46,13 @@ async def guard(request: Request, call_next):
             return Response('{"detail":"editor key required (X-Lex-Key header)"}', status_code=401,
                             media_type="application/json")
         request.state.editor = editor
-    return await call_next(request)
+    response = await call_next(request)
+    # UI files: the browser must revalidate every time (cheap 304 via ETag), so a deploy shows up
+    # on a normal reload instead of after Cmd+Shift+R.
+    p = request.url.path
+    if p.startswith("/static/") or p in ("/", "/index.html"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
 
 
 def _editor(request: Request, claimed):
