@@ -3,6 +3,7 @@
 Swap for Postgres (e.g. Azure Database for PostgreSQL) by replacing this module.
 """
 import json
+import re
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -172,15 +173,18 @@ def list_cards(con):
     return cards
 
 
-def _effective_tags(row):
+def _effective_tags(row, subject=None):
     """Tags shown and filtered on: a human's list if someone edited them, else the model's tags mapped onto
-    the fixed Suva keyword list (suva/tags.py). French labels come from the same list."""
+    the fixed Suva keyword list (suva/tags.py), plus what the court's own subject line ("Gegenstand", e.g.
+    "Invalidenversicherung (Invalidenrente; Arbeitsunfähigkeit)") maps to. French labels come from the same list."""
     from . import tags as vocab
     ai = json.loads(row.get("tags") or "[]")
     human = json.loads(row["tags_human"]) if row.get("tags_human") else None
     row["tags_ai"] = ai
     row["tags_edited"] = human is not None
-    row["tags"] = human if human is not None else vocab.normalize(ai)
+    subject = subject if subject is not None else row.get("subject")
+    court = vocab.normalize(re.split(r"[();,]", subject or ""))
+    row["tags"] = human if human is not None else vocab.normalize(list(ai) + court)
     row["tags_fr"] = vocab.french(row["tags"])
     row.pop("tags_human", None)
     return row
@@ -194,7 +198,7 @@ def get_detail(con, slug):
     a = con.execute("SELECT * FROM assessments WHERE slug=?", (slug,)).fetchone()
     d["assessment"] = dict(a) if a else None
     if a:
-        _effective_tags(d["assessment"])
+        _effective_tags(d["assessment"], d.get("subject"))
         for lang in ("de", "fr"):  # effective reasoning = human edit if any; AI text stays available
             d["assessment"][f"explanation_{lang}_ai"] = a[f"explanation_{lang}"]
             if a[f"explanation_{lang}_human"] is not None:
