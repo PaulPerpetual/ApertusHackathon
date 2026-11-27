@@ -2,7 +2,7 @@
    detail pane, human score overrides and summary edits with simple name attribution. */
 const I18N = {
   de: {
-    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant",
+    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_panel: (n) => `Grenzfall: Apertus ist unsicher (Zweitprüfung ${n}/100).`, promote: "In die Liste aufnehmen", promoted: "In die Liste aufgenommen",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
@@ -22,7 +22,7 @@ const I18N = {
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
-    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents",
+    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_panel: (n) => `Cas limite: Apertus n’est pas sûr (second examen ${n}/100).`, promote: "Ajouter à la liste", promoted: "Ajouté à la liste",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
@@ -63,11 +63,13 @@ const fmtTime = (iso) => (iso ? new Date(iso).toLocaleString(locale(), { day: "2
 const fmtDate = (d) => (d && /^\d{4}-\d{2}-\d{2}/.test(d) ? new Date(d.slice(0, 10)).toLocaleDateString(locale(), { day: "2-digit", month: "2-digit", year: "numeric" }) : d || "");
 const band = (s) => (s >= 70 ? "hi" : s >= 40 ? "mid" : "lo");
 const titleOf = (c) => (state.lang === "fr" ? c.title_fr : c.title_de) || c.subject || c.docket;
-const whyOf = (c) => (state.lang === "fr" ? c.explanation_fr : c.explanation_de) || "";
+const whyOf = (c) => (isBorder(c) && state.lang !== "fr" && c.recall_reason_de) || (state.lang === "fr" ? c.explanation_fr : c.explanation_de) || "";
 const isDone = (c) => c.status === "done";
 const isRejected = (c) => c.status === "rejected";
 const isOpen = (c) => !isDone(c) && !isRejected(c);
-const inScopeOf = (c) => ({ all: true, done: isDone(c), rejected: isRejected(c) }[state.scope] ?? isOpen(c));
+// "Grenzfälle": Apertus is unsure (server flag from the recall pass); shown at the bottom of Neu/Alle, like Junk in Mail
+const isBorder = (c) => !!c.borderline && isOpen(c);
+const inScopeOf = (c) => ({ all: true, done: isDone(c), rejected: isRejected(c), border: isBorder(c) }[state.scope] ?? isOpen(c));
 const readOnly = () => !!state.status?.read_only;
 
 /* ---------- API (live FastAPI, or static JSON export on GitHub Pages; see docs/API.md) ---------- */
@@ -171,7 +173,7 @@ function visible() {
   const q = $("#search").value.trim().toLowerCase();
   const rows = state.cards.filter((c) => {
     if (!inScopeOf(c)) return false;
-    if ((c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
+    if (!isBorder(c) && (c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
     if (state.tag && !(c.tags || []).includes(state.tag)) return false;
     if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || []), ...(c.tags_fr || [])].join(" ").toLowerCase().includes(q)) return false;
     return true;
@@ -182,7 +184,8 @@ function visible() {
   }[state.sort];
   const dir = state.dir === "desc" ? -1 : 1;
   rows.sort((a, b) => { const x = key(a), y = key(b); return (x < y ? -1 : x > y ? 1 : 0) * dir || a.docket.localeCompare(b.docket); });
-  return rows;
+  if (state.sort === "score") rows.sort((a, b) => isBorder(a) && isBorder(b) ? ((b.recall_score ?? 0) - (a.recall_score ?? 0)) * (state.dir === "desc" ? 1 : -1) : 0);
+  return [...rows.filter((c) => !isBorder(c)), ...rows.filter(isBorder)];  // Grenzfälle always at the bottom
 }
 
 function rowHtml(c) {
@@ -191,7 +194,7 @@ function rowHtml(c) {
   const unread = !readSet.has(c.slug) && isOpen(c);
   const tip = `${t("score_ai")}: ${c.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${c.score_override} (${c.override_by || ""})` : ""} · ${t("edit_score")}`;
   const edited = c.last_editor ? `<span class="edited">✎ ${esc(c.last_editor)} · ${esc(fmtTime(c.last_edit_at))}</span>` : "";
-  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${isRejected(c) ? "rejected" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
+  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${isRejected(c) ? "rejected" : ""} ${isBorder(c) ? "border" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
     <div class="m-dot">${unread ? '<span class="dot"></span>' : ""}</div>
     <div class="m-score ${overridden ? "manual" : ""}" data-score title="${esc(tip)}">
       <span class="n">${c.score ?? "–"}</span>
@@ -199,7 +202,7 @@ function rowHtml(c) {
     </div>
     <div class="m-main">
       <div class="m-top"><span class="t">${esc(titleOf(c))}</span><span class="m-date">${esc(fmtDate(c.decision_date || c.publication_date))}</span></div>
-      <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}${subjectOf(c) ? ` · <span class="subj" title="${t("subject_hint")}">${esc(subjectOf(c))}</span>` : ""}</div>
+      <div class="m-sub">${isBorder(c) ? `<span class="bl-badge">${t("border")}</span> ` : ""}${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}${subjectOf(c) ? ` · <span class="subj" title="${t("subject_hint")}">${esc(subjectOf(c))}</span>` : ""}</div>
       <p class="why">${fmt(whyOf(c))}</p>
       <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
@@ -211,11 +214,14 @@ function rowHtml(c) {
 
 function renderList() {
   const rows = visible();
-  $("#rows").innerHTML = rows.map(rowHtml).join("");
+  const firstBorder = state.scope === "border" ? -1 : rows.findIndex(isBorder);
+  const nBorderRows = rows.filter(isBorder).length;
+  $("#rows").innerHTML = rows.map((c, i) => (i === firstBorder
+    ? `<li class="sect"><b>${t("scope_border")}</b> <span class="count">${nBorderRows}</span><span class="muted">${t("border_hint")}</span></li>` : "") + rowHtml(c)).join("");
   const inScope = state.cards.filter(inScopeOf).length;
   $("#listMeta").textContent = t("n_shown", rows.length, inScope);
-  const nNew = state.cards.filter((c) => isOpen(c) && !readSet.has(c.slug) && (c.score ?? 0) >= state.minScore).length;
-  $("#cNew").textContent = nNew || ""; $("#cDone").textContent = state.cards.filter(isDone).length || ""; $("#cRej").textContent = state.cards.filter(isRejected).length || "";
+  const nNew = state.cards.filter((c) => isOpen(c) && !isBorder(c) && !readSet.has(c.slug) && (c.score ?? 0) >= state.minScore).length;
+  $("#cNew").textContent = nNew || ""; $("#cDone").textContent = state.cards.filter(isDone).length || ""; $("#cRej").textContent = state.cards.filter(isRejected).length || ""; $("#cBorder").textContent = state.cards.filter(isBorder).length || "";
   $("#empty").hidden = rows.length > 0; $("#empty").textContent = state.scope === "new" ? t("empty_new") : t("empty");
 }
 
@@ -360,6 +366,7 @@ async function renderPanel() {
         : `<span class="n">${score ?? "–"}</span>`}<span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
+      ${d.borderline && !done && !rejected ? `<div class="bl-note"><span>${esc(t("border_panel", d.recall_score))}${L !== "fr" && d.recall_reason_de ? ` ${fmt(d.recall_reason_de)}` : ""}</span>${readOnly() ? "" : `<button class="btn small" id="promoteBtn">${t("promote")}</button>`}</div>` : ""}
       ${(done || rejected) && d.status_by ? `<p class="muted">${esc(t(done ? "done_by" : "rejected_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
       ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(why)}</p>`}
@@ -449,6 +456,11 @@ async function renderPanel() {
     await load();
   });
   on("genBtn", () => startAdd(d.docket));
+  on("promoteBtn", async () => {  // "not junk": a human score of at least 60 takes it out of the Grenzfälle
+    if (!(await requireName())) return;
+    await api(`/api/judgements/${encodeURIComponent(state.open)}/score`, { method: "PUT", body: JSON.stringify({ score: Math.max(60, d.recall_score ?? 0), editor: state.editor }) });
+    toast(t("promoted")); await load();
+  });
 }
 
 // Keyword editor: chips with ×, input suggests the fixed Suva list (stored by German label, shown in the UI language).

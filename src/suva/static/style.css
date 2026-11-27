@@ -213,3 +213,18 @@ sup { font-size: 0.72em; line-height: 0; vertical-align: baseline; position: rel
 .m-act { flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; }
 .mrow.rejected .m-main, .mrow.rejected .m-score { opacity: 0.5; }
 .mrow.rejected .t { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--text) 40%, transparent); }
+
+/* "Grenzfälle" (Apertus unsure): own section at the bottom of Neu/Alle, muted like Junk in Mail */
+.mlist .sect { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; padding: 14px 14px 6px 34px; border-bottom: 1px solid var(--sep);
+  background: color-mix(in srgb, var(--text) 4%, transparent); font-size: 12px; }
+.mlist .sect .muted { font-size: 11.5px; }
+.mrow.border:not(.sel) { background: color-mix(in srgb, #b58a00 5%, transparent); }
+.mrow.border:not(.sel) .t, .mrow.border:not(.sel) .why { color: var(--muted); }
+.mrow.border:not(.sel) .m-score { opacity: 0.55; }
+.bl-badge { display: inline-block; padding: 0 6px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .02em;
+  color: #8a6500; background: color-mix(in srgb, #d4a300 20%, transparent); }
+.mrow.sel .bl-badge { color: var(--accent-ink); background: color-mix(in srgb, var(--accent-ink) 22%, transparent); }
+.bl-note { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; margin-top: 8px; padding: 8px 10px; border-radius: 6px;
+  font-size: 12.5px; background: color-mix(in srgb, #d4a300 12%, transparent); }
+.bl-note .btn { flex: none; }
+@media (prefers-color-scheme: dark) { .bl-badge { color: #e8c35a; } }
