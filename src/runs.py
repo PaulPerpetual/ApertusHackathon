@@ -160,6 +160,14 @@ def build():
                 "reason": r["explanation_de"]} for r in apr],
               "PRODUCTION (submitted): Tier 1 + Grenzfälle (adapted pass 4: procedural traps / cross-branch rules), "
               "ordered by pass-5 importance (Tier 1 score 60-99, Grenzfall 20-59).")
+    sh = os.path.join(ROOT, "data", "aprjun.sqlite")
+    con = sqlite3.connect(sh)
+    if con.execute("SELECT 1 FROM sqlite_master WHERE name='rankings_shadow'").fetchone():
+        final = dict(con.execute("SELECT j.docket, s.final FROM rankings_shadow s JOIN judgements j ON j.slug = s.slug").fetchall())
+        write_run("aprjun", "apertus70b-shadow-rank", "Apertus v1.5 70B (CSCS/Keera)",
+                  [{"docket": r["docket"], "score": round(final[r["docket"]], 1) if r["docket"] in final else None,
+                    "relevant": bool(r["selected"]), "reason": r["explanation_de"]} for r in apr],
+                  "EXPERIMENT (not live): same list as production, order from the shadow ranking (sub-scores + listwise top 15).")
     for ds, path in (("calibration40", "codex_calibration.jsonl"), ("aprjun", "codex_aprjun.jsonl")):
         p = os.path.join(ROOT, "data", "second_opinion", path)
         if os.path.exists(p):

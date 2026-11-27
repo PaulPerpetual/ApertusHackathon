@@ -3,7 +3,57 @@
 For Paul (and Paul's AI): where Miguel's side stands, what we found, what we propose.
 The API/data contract is in [`docs/API.md`](API.md).
 
-## ▶ Latest (Fri ~16:00): what changed in the data, and what it means for the UI
+## ▶ Latest (Fri ~19:30): Grenzfälle, ranking, Trefferliste, model comparison
+
+**Live:** UI <https://api.robotross.art/lex/> · **Trefferliste** `/lex/hitlist` · Suva examples `/lex/examples` ·
+model comparison `/lex/compare` · stats `/lex/stats`. Smoke test 33/33.
+
+**What Suva asked for (via Miguel):** (1) Recall: a list *ruling ID, rank, normal/Grenzfall* to compare quickly;
+(2) Top 5: the list as it is, with the top-ranked ruling already open (DAU-Filter).
+
+**Selection (which rulings are on the list): 4 Apertus passes**
+1. Triage score · 2. IV pass · 3. ATSG rescue · 4. **Critical review** (`src/run_adjudicate.py`, table `adjudications_v2`),
+   which weighs passes 1-3 and sorts into Tier 1 / Grenzfall / not relevant. Adapted so procedural traps (deadlines,
+   court holidays, objection, standing, delay of justice, duty to advise) and cross-branch rules are at least a Grenzfall.
+   Recall on Suva's 82 example rulings: 77 % (v1) → **98 %**; on the labelled window 98 %.
+- **Q2 list now: 163 rulings = 77 normal (Tier 1) + 86 Grenzfälle.** Fields `tier` / `tier_reason` in the API (docs/API.md).
+- Hit list = Tier 1 + Grenzfälle, **minus "Nicht relevant"** (status rejected) and score overrides < 40, **plus** overrides ≥ 60.
+
+**Ranking (order on the list): Apertus, after the list is complete**
+- Pass 5 (`src/run_rank_pass.py`): importance 0-100 → Tier 1 score 60-99, Grenzfall 20-59 (always below Tier 1).
+- Tie-break of the top (`src/tiebreak_top.py`): Apertus orders the tied top rulings directly (scores 99…91).
+- On the labelled window (Suva's Q4/Q1 list = yes/no, not ranked): share of our top 5 that are on Suva's list
+  34 % → **53 %**.
+- Experiment "shadow ranking" (sub-scores + listwise, `src/run_rank_shadow.py`): worse on Suva's list (top-5 20 %),
+  **not adopted**; visible in Compare as `apertus70b-shadow-rank`.
+
+**Trefferliste tab** (`/hitlist`, `GET /api/hitlist`): rank, ruling, normal/Grenzfall, score, decision date, title;
+filter, CSV download, copy line in Suva's format. Live from the DB: UI decisions apply immediately.
+
+**UI additions:** Trefferliste button + **Info dialog** (Relevanz, Grenzfälle, Neu/Erledigt/Nicht relevant, Bearbeiten,
+Trefferliste, Verweise; DE/FR) in the header; **top-ranked ruling opens on load**; `?open=<slug>` deep link.
+
+**Summaries:** S2.2 (`src/suva/summarize_v2.py`) for all 163: rule first in present tense, Dispositiv check, no wrong
+insurer, no French abbreviations in German, 1-2 "(E. x)" jump links. On Suva's examples (dev half): 92 % of Suva's legal
+points, zero error types. Hold-out confirmation running. Note: Q2 summaries are shorter than Suva's (DE median 133 vs 180
+words); for the **top 10** we plan longer versions + a manual review before submission.
+
+**Model comparison (`/compare`):** blind rankings by Codex, Gem, Muse (Clau running, Misty skipped) + a **weighted
+consensus** (`src/consensus.py`: percentile ranks, weight = prior × skill on 40 labelled rulings). Ranking view with
+top-N overlap. Finding: agents rank Suva's picks better than Apertus (calibration AUC 0.90-0.94 vs 0.75) but disagree with
+Apertus at the very top (top-10 overlap 3/10). The consensus is a yardstick only; the list and order stay 100 % Apertus.
+
+**Safety:** every DB deploy first merges human edits from the server (status, overrides, edited texts, history, notes),
+`src/merge_server_edits.py`. Code deploys automatically within ~1 min of a push to `main` (`lex-autodeploy.timer`).
+
+**Please check (Paul / team):**
+1. Trefferliste: open `/lex/hitlist`, check categories, try "Liste kopieren" and CSV.
+2. Top 5 in the UI: does the top ruling open automatically? Do the top 5 make sense legally?
+3. Grenzfälle tab: badge, "Bestätigen" / "Nicht relevant", and that "Nicht relevant" removes it from the Trefferliste.
+4. Info dialog (ⓘ) in DE and FR: wording OK for Suva's lawyers?
+5. Spot-check 3-4 summaries against the original (Erw. links, outcome, no wrong insurer).
+
+## Earlier (Fri ~16:00): what changed in the data, and what it means for the UI
 
 **Pages:** UI <https://api.robotross.art/lex/> · stats `/lex/stats` · model comparison `/lex/compare` · troubleshooting `/lex/debug`.
 Same data in the repo: `site/api/` (177 Apertus-scored rulings, refreshed now).
