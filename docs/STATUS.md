@@ -60,6 +60,32 @@ Commands: `python src/crawl_period.py --from 2026-04-01 --to 2026-06-30`, `pytho
 4. Run triage + summaries on the 177 April–June candidates with `apertus-v1-5-70b`.
 5. Build `python -m suva export site/` for GitHub Pages (see API.md).
 
+## Update (Fri 27 Nov, ~12:00): hosted API is live
+
+- **`https://api.robotross.art/lex`**: Paul's FastAPI + SQLite, deployed on the team server. Pages can't host a DB.
+  Details, security model and what the UI must change: [`API.md` → Hosted API](API.md#hosted-api-live-).
+- **Keys:** writes need a personal `X-Lex-Key`. Miguel sends Paul his key directly, **not via GitHub**.
+- **Troubleshooting:** <https://api.robotross.art/lex/debug>
+- Data on the server is currently **mock-scored**. Real Apertus 70B results replace it tonight.
+
+## UI look: make it feel like SharePoint (input from Miguel)
+
+Suva's lawyers file their judgement summaries in **SharePoint** (the Excel list links to
+`suvaprodcloud.sharepoint.com/sites/jlsm/SitePages/BGer-Urteil-…`). A UI that looks like their daily tool
+lowers the barrier for the jury. Suggested Microsoft Fluent 2 / SharePoint conventions:
+
+- **Font:** `"Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif`
+  (Segoe UI is on every Suva Windows machine; the fallbacks cover Mac and Linux).
+- **Colours:** SharePoint theme blue `#0078D4` (links, primary buttons; hover `#106EBE`), neutrals
+  `#323130` text, `#605E5C` secondary text, `#EDEBE9` borders, `#F3F2F1` page background, white cards.
+- **Layout:** a top suite bar (thin dark bar with the app name), a site header with title and navigation, then a
+  page that looks like a SharePoint **Site Page / news post**: title "BGer-Urteil 8C_123/2026 vom …",
+  sections DE / FR, "Link zum Urteil", "Autor". This mirrors their existing pages, whose titles follow
+  `BGer-Urteil <Nummer> vom <Datum>`.
+- **Components:** Fluent-style command bar (New / Edit / Share), list view with column headers and sort arrows
+  for the relevance list, details pane on the right.
+- Keep it "SharePoint-like", not a copy: **no Microsoft or Suva logos** unless Suva gives us theirs to use.
+
 ## Asks for Paul
 
 1. Static mode in `app.js` (one URL switch, read-only, see API.md) and a `pages.yml` workflow; enable Pages in repo settings.

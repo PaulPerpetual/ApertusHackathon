@@ -56,6 +56,48 @@ publishes it on every push to `main`. Static mode turns on automatically on `*.g
 with `window.LEX_STATIC = true`. Pages must be enabled
 once: repo **Settings → Pages → Source: GitHub Actions** (repo admin = Paul).
 
+## Hosted API (live) ✅
+
+**Base URL: `https://api.robotross.art/lex`** (all paths below go after it: `…/lex/api/judgements`).
+
+| | |
+|---|---|
+| Troubleshooting page | <https://api.robotross.art/lex/debug>: status, data counts, key test, raw GET |
+| Server-hosted UI (fallback) | <https://api.robotross.art/lex/>: the same UI, served by FastAPI |
+| Server | team droplet (DigitalOcean **Frankfurt**), systemd service `lex-aperta`, Caddy TLS. Demo host only, not the sovereign deployment (that's the Dockerfile) |
+| Data right now | Suva's 54 example summaries + 583 April–June rulings scored by the **mock** model. Real Apertus results replace it tonight |
+| Deploy | `deploy/robotsales.sh [--db data/suva.sqlite]` (Miguel) |
+
+### Security model
+
+- **Reads are public.** No key needed for any `GET`. The data is public court rulings plus our summaries.
+- **Writes need a personal editor key**, sent as header **`X-Lex-Key: <key>`** on every `PUT`, `DELETE` and `POST`.
+  Without it the API answers `401 {"detail": "editor key required (X-Lex-Key header)"}`.
+  - One key per person (`miguel`, `paul`). The server stores only SHA-256 hashes. The key's owner is
+    recorded as the editor in the edit log, so the `editor` field in the body can't be spoofed
+    (it is still accepted, for local mode).
+  - **Keys are never committed and never sent over GitHub** (this repo is public). Miguel passes them on
+    directly. A key can be revoked or replaced server-side without a code change.
+- **CORS:** only `https://paulperpetual.github.io` may call the API from a browser. Preflight needs no key.
+- **Apertus key** exists only in the server's `/opt/lex-aperta/.env` (0600) and Miguel's local `.env`.
+  The browser never sees it. `POST /api/judgements` (summarise another ruling) runs Apertus *on the server*,
+  limited to 2 concurrent jobs and to docket numbers like `8C_123/2026`.
+- `GET /api/status` now also returns `editor_key_required: true|false`.
+
+### What the UI needs (Paul)
+
+1. **API base.** On GitHub Pages, call the hosted API instead of static JSON. For example:
+   ```js
+   const API_BASE = window.LEX_API_BASE ?? (location.hostname.endsWith("github.io") ? "https://api.robotross.art/lex" : "");
+   // and: fetch(API_BASE + path, …); STATIC mode only if API_BASE is empty AND the page is static
+   ```
+   The server-hosted copy at `/lex/` also needs API calls relative to the page (`api/…`, not `/api/…`),
+   because it runs behind the `/lex` prefix.
+2. **Editor key.** Ask once ("Editor key"), keep it in `localStorage` (like the editor name), send it as
+   `X-Lex-Key` on writes. On `401`, clear it and ask again. If `editor_key_required` is true and no key is set,
+   show the UI read-only.
+3. **Static export** stays useful as an offline / air-gapped fallback, but it's no longer the main path.
+
 ## Endpoints (live mode, from `src/suva/server.py`)
 
 | Method | Path | Body | Returns |
