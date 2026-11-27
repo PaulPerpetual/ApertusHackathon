@@ -300,6 +300,9 @@ function anchorHtml(root) {
   }
 }
 
+// macOS "square.and.pencil" (the usual edit symbol in Mail, Notes, Finder), drawn inline so it follows the text colour
+const EDIT_ICON = `<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M7.5 2.5H3.8A1.3 1.3 0 0 0 2.5 3.8v8.4a1.3 1.3 0 0 0 1.3 1.3h8.4a1.3 1.3 0 0 0 1.3-1.3V8.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.2 1.9a1.3 1.3 0 0 1 1.9 1.9L8.4 9.5l-2.5.6.6-2.5z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
+
 /* ---------- detail pane ---------- */
 async function openPanel(slug) {
   state.open = slug; state.editing = false; state.draft = {}; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
@@ -319,7 +322,7 @@ async function renderPanel() {
   const E = state.editing && !readOnly();
   const dr = state.draft || (state.draft = {});
   $("#pEdit").hidden = readOnly();
-  $("#pEdit").textContent = E ? t("save") : "✎ " + t("edit");
+  $("#pEdit").innerHTML = E ? esc(t("save")) : `${EDIT_ICON}<span>${esc(t("edit"))}</span>`;
   $("#pEdit").onclick = E ? () => saveAll(d) : async () => { if (await requireName()) { state.editing = true; state.draft = {}; renderPanel(); } };
   $("#pCancel").hidden = !E; $("#pCancel").textContent = t("cancel");
   $("#pCancel").onclick = () => { state.editing = false; state.draft = {}; renderPanel(); };
