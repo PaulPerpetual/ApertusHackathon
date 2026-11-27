@@ -171,6 +171,41 @@ def examples_compare():
     return FileResponse(path, media_type="application/json", headers=NO_CACHE)
 
 
+@app.get("/hitlist")
+def hitlist_page():
+    """For Suva: ranked hit list (rank, ruling, normal/Grenzfall), live from the DB."""
+    return FileResponse(STATIC / "hitlist.html")
+
+
+@app.get("/api/hitlist")
+def hitlist(date_from: str = "2026-04-01", date_to: str = "2026-06-30"):
+    """Tier 1 + Grenzfall, minus 'Nicht relevant' (status rejected) and overrides < 60, plus overrides >= 60;
+    ranked by effective score (Tier 1 60-99, Grenzfall 20-59, see src/finalize.py)."""
+    with db.connect() as con:
+        rows = con.execute("""SELECT j.docket, j.slug, j.decision_date, COALESCE(j.status, 'new') AS status, a.tier,
+                   a.ai_score, a.score_override, COALESCE(a.score_override, a.ai_score) AS score, a.title_de, a.title_fr
+            FROM judgements j JOIN assessments a ON a.slug = j.slug
+            WHERE j.decision_date BETWEEN ? AND ?""", (date_from, date_to)).fetchall()
+    out = []
+    for r in rows:
+        on = r["tier"] in (1, 2)
+        if r["score_override"] is not None:
+            on = r["score_override"] >= 60
+        if r["status"] == "rejected":
+            on = False
+        if on:
+            out.append({"docket": r["docket"], "slug": r["slug"], "decision_date": r["decision_date"],
+                        "category": "Grenzfall" if r["tier"] == 2 and r["score_override"] is None else "normal",
+                        "score": r["score"], "title_de": r["title_de"], "title_fr": r["title_fr"],
+                        "human": r["score_override"] is not None})
+    out.sort(key=lambda x: (-(x["score"] or 0), x["decision_date"] or ""), reverse=False)
+    for i, x in enumerate(out, 1):
+        x["rank"] = i
+    return {"from": date_from, "to": date_to, "count": len(out),
+            "normal": sum(x["category"] == "normal" for x in out), "grenzfall": sum(x["category"] == "Grenzfall" for x in out),
+            "items": out}
+
+
 @app.get("/debug")
 def debug_page():
     """Troubleshooting page for the hosted API (status, data counts, key test)."""

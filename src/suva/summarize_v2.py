@@ -55,8 +55,9 @@ STYLE = {
   im Urteil), ohne Daten, Orte und Namen; vom Leiden nur, worauf es rechtlich ankommt. Statt des Rechtsbegehrens
   das Kernargument der beschwerdeführenden Partei, auf das das Bundesgericht antwortet.
 - Dann die tragende Begründung; Voraussetzungen, Ausnahmen und offengelassene Fragen bewahren.
-- Länge: in der Regel 150-250 Wörter, 2-3 Absätze, eher lange Sätze, Fliesstext. Nur wenn das Urteil eine einzige
-  prozessuale Frage betrifft: 40-100 Wörter. Alle Rechtssätze aus RECHTSSÄTZE, die für die Suva gelten, aufnehmen.
+- Länge (S2.2): in der Regel 180-240 Wörter, 2-3 Absätze, eher lange Sätze, Fliesstext. Nur wenn das Urteil eine
+  einzige prozessuale Frage betrifft: 40-100 Wörter. JEDEN Rechtssatz aus RECHTSSÄTZE aufnehmen, der für die Suva gilt
+  (auch Nebenfragen zu Verfahren und Beweis), mit seinen Voraussetzungen; lieber vollständig als knapp.
 - Keine Gerichtskosten, Parteientschädigungen, Geburtsjahre, Unfalldaten oder Aktenzeichen der Vorinstanz.
   Nie E. 1 (Eintreten) oder die Kostenfolgen zitieren.
 - Das Bundesgericht höchstens einmal nennen. 1-2 Verweise "(E. 5.2)" beim zentralen Rechtssatz.
@@ -75,8 +76,9 @@ STYLE = {
   lieux ni noms; de l'atteinte, seulement ce qui compte juridiquement. Au lieu des conclusions, l'argument central
   de la partie recourante auquel le Tribunal fédéral répond.
 - Ensuite le raisonnement déterminant; conserver conditions, exceptions et questions laissées ouvertes.
-- Longueur: en règle générale 180-290 mots, 2-3 paragraphes, phrases plutôt longues, texte suivi. Seulement pour une
-  unique question procédurale: 50-120 mots. Reprendre toutes les règles pertinentes pour la Suva.
+- Longueur (S2.2): en règle générale 220-290 mots, 2-3 paragraphes, phrases plutôt longues, texte suivi. Seulement pour
+  une unique question procédurale: 50-120 mots. Reprendre CHAQUE règle pertinente pour la Suva (y compris questions
+  annexes de procédure et de preuve) avec ses conditions; plutôt complet que bref.
 - Pas de frais judiciaires, dépens, années de naissance, dates d'accident ni références de l'instance précédente.
   Ne jamais citer le consid. 1 (recevabilité) ni les frais.
 - Nommer le Tribunal fédéral au plus une fois. 1-2 renvois "(consid. 5.2)" sur la règle centrale.
@@ -148,6 +150,7 @@ def write(j, notes, examples, lang):
         out = llm.chat(msgs + [{"role": "assistant", "content": out},
                                {"role": "user", "content": "Korrigiere: " + "; ".join(problems) + ". Nur der Text."}],
                        temperature=0.2, max_tokens=900).strip()
+    # (S2.3 mechanical lengthening removed: longer text but fewer Suva points and new errors on the dev set)
     out = PLACEHOLDER.sub("", out)
     if re.search(r"\b(Suva|SUVA|CNA|INSAI)\b", text):
         out = SUVA_ALIAS.sub("Suva", out)

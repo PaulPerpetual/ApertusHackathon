@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lex Aperta Trefferliste</title>
+<style>
+  :root { --bg:#f3f2f1; --card:#fff; --fg:#323130; --muted:#605e5c; --line:#edebe9; --accent:#0078d4; --amber:#8a5a00; --amberbg:#fff4ce; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --amber:#f2c661; --amberbg:#3d3420; } }
+  :root[data-theme="dark"] { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --amber:#f2c661; --amberbg:#3d3420; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; }
+  .suite { background:#201f1e; color:#fff; padding:8px 16px; font-weight:600; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .suite a { color:#c8c6c4; text-decoration:none; font-weight:400; font-size:13px; } .suite a.on { color:#fff; font-weight:600; }
+  main { max-width:1100px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:24px; font-weight:600; margin:0 0 2px; } .sub { color:var(--muted); }
+  .bar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:14px 0; }
+  button, a.btn { font:inherit; padding:6px 12px; border:1px solid var(--line); border-radius:2px; background:var(--card); color:var(--fg); cursor:pointer; text-decoration:none; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .kpis { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:10px 12px; } .kpi b { display:block; font-size:22px; } .kpi span { font-size:12px; color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:0; box-shadow:0 1.6px 3.6px rgba(0,0,0,.08); overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; position:sticky; top:0; background:var(--card); } td.n, th.n { text-align:right; white-space:nowrap; }
+  .gf { display:inline-block; padding:1px 8px; border-radius:10px; font-size:12px; font-weight:600; background:var(--amberbg); color:var(--amber); }
+  .nm { display:inline-block; padding:1px 8px; border-radius:10px; font-size:12px; color:var(--muted); background:var(--line); }
+  .line { font:12px ui-monospace, Menlo, monospace; background:var(--card); border:1px solid var(--line); border-radius:4px; padding:10px; word-break:break-word; max-height:120px; overflow:auto; }
+  .seg button.on { border-color:var(--accent); color:var(--accent); font-weight:600; } a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="suite">Lex Aperta <a href="./">Urteilsradar</a><a class="on" href="hitlist">Trefferliste</a><a href="stats">Statistik</a><a href="compare">Vergleich</a><a href="examples">Suva-Beispiele</a></div>
+<main>
+  <h1>Trefferliste Q2 2026</h1>
+  <div class="sub">Bundesgerichtsurteile 1.4.–30.6.2026, die für die Suva relevant sind, nach Wichtigkeit gerangt (Apertus v1.5 70B).
+    <b>normal</b> = klar relevant · <b>Grenzfall</b> = möglicherweise relevant, bitte prüfen. Entscheide im Urteilsradar
+    („Nicht relevant", Score) wirken sofort auf diese Liste.</div>
+  <div class="kpis" id="kpis" style="margin-top:14px"></div>
+  <div class="bar">
+    <div class="seg"><button data-f="all" class="on">Alle</button><button data-f="normal">Nur normal</button><button data-f="Grenzfall">Nur Grenzfälle</button></div>
+    <button class="primary" id="copy">Liste kopieren (8C_…, 9C_…)</button>
+    <button id="csv">CSV herunterladen</button>
+    <span class="sub" id="msg"></span>
+  </div>
+  <div class="line" id="line">…</div>
+  <div class="card" style="margin-top:14px"><table id="t"><tr><td>Lade …</td></tr></table></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let D = null, F = "all";
+const rows = () => D.items.filter((x) => F === "all" || x.category === F);
+function render() {
+  document.querySelectorAll(".seg button").forEach((b) => b.classList.toggle("on", b.dataset.f === F));
+  $("kpis").innerHTML = [[D.count, "Urteile auf der Liste"], [D.normal, "normal"], [D.grenzfall, "Grenzfälle"]]
+    .map(([v, l]) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join("");
+  const r = rows();
+  $("line").textContent = r.map((x) => x.docket).join(", ");
+  $("t").innerHTML = `<tr><th class="n">Rang</th><th>Urteil</th><th>Kategorie</th><th class="n">Score</th><th>Entscheid</th><th>Titel</th></tr>` +
+    r.map((x) => `<tr><td class="n">${x.rank}</td><td><a href="./?open=${encodeURIComponent(x.slug)}">${esc(x.docket)}</a></td>
+      <td>${x.category === "Grenzfall" ? '<span class="gf">Grenzfall</span>' : '<span class="nm">normal</span>'}${x.human ? ' <span class="sub" title="von einer Juristin gesetzt">✎</span>' : ""}</td>
+      <td class="n">${x.score ?? "–"}</td><td>${esc(x.decision_date)}</td><td>${esc(x.title_de)}</td></tr>`).join("");
+}
+$("copy").onclick = async () => { try { await navigator.clipboard.writeText($("line").textContent); $("msg").textContent = "kopiert"; } catch { $("msg").textContent = "bitte manuell markieren und kopieren"; } };
+$("csv").onclick = () => {
+  const lines = [["rank", "urteil", "kategorie", "score", "entscheid", "titel"], ...rows().map((x) => [x.rank, x.docket, x.category, x.score ?? "", x.decision_date ?? "", x.title_de ?? ""])];
+  const csv = lines.map((l) => l.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "lex-aperta-trefferliste-q2-2026.csv"; a.click();
+};
+document.querySelectorAll(".seg button").forEach((b) => b.onclick = () => { F = b.dataset.f; render(); });
+fetch("api/hitlist", { cache: "no-store" }).then((r) => r.json()).then((d) => { D = d; render(); })
+  .catch((e) => { $("t").innerHTML = `<tr><td>Fehler: ${esc(e.message)}</td></tr>`; });
+</script>
+</body>
+</html>

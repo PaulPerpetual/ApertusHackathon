@@ -566,7 +566,12 @@ function init() {
     }
   });
   api("/api/status").then((s) => { state.status = s; state.dataVersion = s.data_version; renderChrome(); renderList(); }).catch(() => {});
-  load();
+  load().then(() => {
+    /* DAU-Filter (Suva): open the top-ranked ruling right away, or the one requested via ?open=<slug> (Trefferliste link) */
+    const want = new URLSearchParams(location.search).get("open");
+    const first = want || (state.cards && state.cards.length ? [...state.cards].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0].slug : null);
+    if (first && !state.open) openPanel(first);
+  }).catch(() => {});
   /* Auto-refresh: reload list + open panel when the server's data_version changes (new pipeline data or
      someone else's edit). Paused while editing, while a field has focus, or while the tab is hidden. */
   if (!STATIC) setInterval(async () => {

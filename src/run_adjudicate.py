@@ -20,10 +20,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("db")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--table", default="adjudications", help="result table, e.g. adjudications_v2 to keep v1 for comparison")
     a = ap.parse_args()
     con = sqlite3.connect(a.db, timeout=30)
     con.row_factory = sqlite3.Row
-    con.execute("CREATE TABLE IF NOT EXISTS adjudications (slug TEXT PRIMARY KEY, tier INTEGER, reason TEXT, model TEXT, created_at TEXT)")
+    con.execute(f"CREATE TABLE IF NOT EXISTS {a.table} (slug TEXT PRIMARY KEY, tier INTEGER, reason TEXT, model TEXT, created_at TEXT)")
     con.commit()
     t = {r[0] for r in con.execute("SELECT name FROM sqlite_master")}
     q = f"""SELECT j.slug, j.docket, j.subject, j.text,
@@ -38,7 +39,7 @@ def main():
             {'LEFT JOIN final_selection f ON f.slug = j.slug' if 'final_selection' in t else ''}
             {'LEFT JOIN iv_assessments i ON i.slug = j.slug' if 'iv_assessments' in t else ''}
             {'LEFT JOIN rescue_assessments r ON r.slug = j.slug' if 'rescue_assessments' in t else ''}"""
-    done = {r[0] for r in con.execute("SELECT slug FROM adjudications")}
+    done = {r[0] for r in con.execute(f"SELECT slug FROM {a.table}")}
     rows = [dict(r) for r in con.execute(q)]
     todo = [r for r in rows if r["slug"] not in done and triage.classify({"subject": r["subject"], "text": r["text"]})["areas"]]
     print(f"{len(todo)} candidates to adjudicate", flush=True)
@@ -50,7 +51,7 @@ def main():
             except Exception as e:  # noqa: BLE001
                 print("!", e, file=sys.stderr, flush=True)
                 continue
-            con.execute("INSERT OR REPLACE INTO adjudications VALUES (?,?,?,?,?)",
+            con.execute(f"INSERT OR REPLACE INTO {a.table} VALUES (?,?,?,?,?)",
                         (r["slug"], x["tier"], x["reason"], llm.model_name(), datetime.now(timezone.utc).isoformat(timespec="seconds")))
             con.commit()
             print(f"{r['docket']}: tier {x['tier']}", flush=True)

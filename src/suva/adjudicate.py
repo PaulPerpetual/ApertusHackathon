@@ -19,16 +19,24 @@ Erfahrungswerte der Suva: von 100 Urteilen in Unfall-, Invaliden- und Taggeldver
 - Invalidenversicherung: rund 1 von 12, nämlich wenn ein Rechtssatz geklärt oder ausdrücklich in Erinnerung gerufen
   wird, den auch ein Unfallversicherer anwenden muss (ATSG-Verfahren, Gutachten/Beweis, Revision Art. 17 ATSG,
   Einkommensvergleich/Tabellenlöhne, Hilflosigkeit, öffentliche Verhandlung, Legitimation, Fristen).
-Nicht zusammengefasst: Routine-Anwendung gefestigter Rechtsprechung auf Tatsachen eines Einzelfalls, reine
-IV-Spezialfragen (Eingliederung, Assistenzbeitrag, Hilfsmittel), reine Kosten- oder Nichteintretensentscheide ohne
-Grundsatz. Ein wörtliches Zitat, das nur bekannte Rechtsprechung wiedergibt, ist noch keine Klärung.
+- Verfahrensfallen schätzt die Suva besonders ("cavete collegae"): Fristen und Fristenstillstand (Art. 46 BGG,
+  Art. 38 ATSG), Anfechtungsobjekt und Einsprache (Art. 52 ATSG), Legitimation (z.B. Sozialhilfebehörde), Vertretung
+  und Zustellung (Art. 37 ATSG), Rechtsverzögerung, Aufklärungs- und Beratungspflicht (Art. 27 ATSG). Ein solches
+  Urteil ist MINDESTENS TIER 2, auch wenn es "nur prozessual" ist oder aus der IV stammt.
+- Regeln aus Nachbarzweigen (IV, Krankentaggeld nach VVG, BVG) zählen, wenn sie auch einen Unfallversicherer binden
+  (z.B. Schadenminderungspflicht mit Berufswechsel und Übergangsfrist, Soziallohn, Einkommensvergleich): mindestens TIER 2.
+- Prüfe ALLE Rechtsfragen des Urteils, nicht nur die Hauptfrage: oft steckt der Grund für die Suva in einer
+  Vorfrage (z.B. Legitimation), während der Rest Beweiswürdigung ist.
+Nicht zusammengefasst: Routine-Anwendung gefestigter Rechtsprechung auf Tatsachen eines Einzelfalls ohne solche
+Verfahrens- oder Querschnittsfrage, reine IV-Spezialfragen (Eingliederung, Assistenzbeitrag, Hilfsmittel), reine
+Kostenentscheide. Ein wörtliches Zitat, das nur bekannte Rechtsprechung wiedergibt, ist noch keine Klärung.
 
 Prüfe die Argumente der Assistenten am Urteil selbst. Ordne dann ein:
 TIER 1 = die Suva würde es sehr wahrscheinlich zusammenfassen.
 TIER 2 = Grenzfall: ernsthaft möglich, eine Juristin sollte es ansehen.
 TIER 3 = nicht relevant für die Suva.
 Ein verpasstes relevantes Urteil ist schlimmer als ein Grenzfall zu viel: im Zweifel TIER 2 statt TIER 3.
-Aber nicht alles ist ein Grenzfall: Routine und IV-Spezialfragen sind TIER 3.
+Aber nicht alles ist ein Grenzfall: reine Routine-Beweiswürdigung und IV-Spezialfragen sind TIER 3.
 
 Antworte genau so:
 TIER: 1 | 2 | 3

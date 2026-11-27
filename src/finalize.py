@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--recall-pass", type=int, metavar="CUTOFF", default=None,
                     help="also select rulings the recall pass (src/run_recall_pass.py) scored >= CUTOFF, and five-judge "
                          "rulings. Off by default; turn on once `eval_f2.py --variants` shows a better F2")
+    ap.add_argument("--adj-table", default="adjudications", help="pass-4 table (adjudications_v2 = adapted prompt)")
     ap.add_argument("--tiers", action="store_true",
                     help="Tier 1 = v1; Tier 2 'Grenzfall' = other candidates kept by pass 4 (src/run_adjudicate.py); "
                          "hit list = Tier 1+2 minus status 'rejected' / score override < 40, plus overrides >= 60")
@@ -65,10 +66,12 @@ def main():
     for name, ddl in (("tier", "INTEGER"), ("tier_reason", "TEXT")):  # same migration as db._migrate
         if name not in acols:
             con.execute(f"ALTER TABLE assessments ADD COLUMN {name} {ddl}")
-    rows = [dict(r) for r in con.execute("""
+    con.execute("CREATE TABLE IF NOT EXISTS rankings (slug TEXT PRIMARY KEY, importance INTEGER, reason TEXT, model TEXT, created_at TEXT)")
+    con.execute(f"CREATE TABLE IF NOT EXISTS {a.adj_table} (slug TEXT PRIMARY KEY, tier INTEGER, reason TEXT, model TEXT, created_at TEXT)")
+    rows = [dict(r) for r in con.execute(f"""
         SELECT j.slug, j.docket, j.decision_date, j.subject, j.text, COALESCE(j.status, 'new') AS status,
                a.score_override, a.tags_fr, a.ai_score, a.tags, a.suva_party, a.model,
-               ad.tier AS adj_tier, ad.reason AS adj_reason,
+               ad.tier AS adj_tier, ad.reason AS adj_reason, rk.importance AS importance,
                a.explanation_de, a.explanation_fr, i.score AS iv, i.principle,
                f.main_score AS f_main, f.orig_tags, f.orig_expl_de, f.orig_expl_fr,
                rc.score AS rc_score, rc.leading AS rc_leading, rt.grounds AS rt_grounds, rt.outcome AS rt_outcome, ex.de AS ex_de, ex.fr AS ex_fr
@@ -76,7 +79,7 @@ def main():
         LEFT JOIN reason_tags rt ON rt.slug = j.slug LEFT JOIN explanations ex ON ex.slug = j.slug
         LEFT JOIN recall_assessments rc ON rc.slug = j.slug
         LEFT JOIN iv_assessments i ON i.slug = j.slug LEFT JOIN final_selection f ON f.slug = j.slug
-        LEFT JOIN adjudications ad ON ad.slug = j.slug""")]
+        LEFT JOIN {a.adj_table} ad ON ad.slug = j.slug LEFT JOIN rankings rk ON rk.slug = j.slug""")]
     hit = []
     for r in rows:
         main_score = r["f_main"] if r["f_main"] is not None else r["ai_score"]
@@ -137,10 +140,14 @@ def main():
                 e_de = f"Grenzfall – {why}"
                 if not e_fr.startswith("Cas limite"):
                     e_fr = "Cas limite – " + e_fr
-                score = min(score or 0, 50) if (score or 0) < MAIN_CUTOFF else score
                 score = 50
             elif e_fr.startswith("Cas limite – "):
                 e_fr = e_fr[len("Cas limite – "):]
+            # ranking (pass 5, src/run_rank_pass.py): Tier 1 -> 60-99, Grenzfall -> 20-59, so sorting by score = our rank
+            if r["importance"] is not None and tier == 1:
+                score = 60 + round(r["importance"] * 0.39)
+            elif r["importance"] is not None and tier == 2:
+                score = 20 + round(r["importance"] * 0.39)
             con.execute("UPDATE assessments SET tier=?, tier_reason=?, ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? "
                         "WHERE slug=?", (tier, tier_reason, score, json.dumps(t_de, ensure_ascii=False),
                                          json.dumps(t_fr, ensure_ascii=False), e_de, e_fr, r["slug"]))
@@ -160,6 +167,19 @@ def main():
         ch, n, y = re.match(r"(\d[A-Z])_(\d+)/(\d{4})", d).groups()
         return (ch, int(y), int(n))
     hit = sorted(set(hit), key=key)
+    if a.tiers:  # ranked list for Suva: rank, ruling, Normal/Grenzfall, score (same order as the UI)
+        import csv
+        ranked = con.execute("""SELECT j.docket, j.decision_date, a.tier, COALESCE(a.score_override, a.ai_score) AS score, a.title_de
+            FROM judgements j JOIN assessments a ON a.slug = j.slug JOIN final_selection f ON f.slug = j.slug
+            WHERE f.selected = 1 AND j.decision_date BETWEEN ? AND ? ORDER BY score DESC, j.decision_date DESC""",
+                             (a.date_from, a.date_to)).fetchall()
+        path = os.path.join(ROOT, "data", "submission", f"hitlist_ranked_{a.date_from}_{a.date_to}.csv")
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(["rank", "urteil", "kategorie", "score", "entscheid", "titel"])
+            for i, r in enumerate(ranked, 1):
+                w.writerow([i, r["docket"], "Grenzfall" if r["tier"] == 2 else "normal", r["score"], r["decision_date"], r["title_de"]])
+        print(f"ranked list -> {path}")
     os.makedirs(os.path.join(ROOT, "data", "submission"), exist_ok=True)
     out = os.path.join(ROOT, "data", "submission", f"hitlist_{a.date_from}_{a.date_to}.txt")
     open(out, "w").write(", ".join(hit) + "\n")
