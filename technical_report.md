@@ -1,4 +1,4 @@
-# Technical report — `project name`, `team name`
+# Technical report — Lex Aperta, Ursus Fleet
 
 A deeper write-up than the README: what you built, how it works, and what the
 numbers say.

@@ -4,7 +4,7 @@
 
 ### Identification of relevant Federal Court judgements and preparation of a legal summary
 
-`Add your team name`
+**Lex Aperta** — Team: Ursus Fleet
 <br>
 <br>
 
