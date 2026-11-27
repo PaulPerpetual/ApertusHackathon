@@ -1,0 +1,6 @@
+[Unit]
+Description=Lex Aperta: deploy new commits on main
+
+[Service]
+Type=oneshot
+ExecStart=/opt/lex-aperta/deploy/autodeploy.sh
