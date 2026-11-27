@@ -41,11 +41,12 @@ Codex (GPT-6, development reference only, blind) is better at telling a *general
 application* (on 40 labelled rulings: F2 0.84 vs Apertus 0.78). Two attempts to teach Apertus that distinction
 (v2, v3) made it say "yes" to almost everything, so **v1 stays**. All runs are on `/compare`.
 
-**Recall pass (new, 27 Nov, not yet evaluated):** `src/suva/recall_pass.py` re-assesses every subject-area
+**Recall pass (new, 27 Nov):** five-judge signal alone (no LLM) already lifts the window from F2 0.736 to **0.757** (recall 84 % -> 88 %, +4 listed, +2 hits). LLM part not yet evaluated. `src/suva/recall_pass.py` re-assesses every subject-area
 candidate below the cutoff with (1) five-judge panel as leading-case signal, (2) 3 samples at temperature 0.7,
 highest counts, (3) the 3 most similar rulings Suva did / did not summarise (tf-idf, leave-one-out), (4) Suva
 summaries of IV / procedural / Taggeld rulings decided before the window as illustrations. Run and compare:
 
+    python src/build_eval_db.py data/eval_window.sqlite   # rebuilds the labelled DB from data/runs/window + entscheidsuche.ch
     python src/run_recall_pass.py data/eval_window.sqlite --before 2025-10-01
     python src/eval_f2.py data/eval_window.sqlite --variants        # cutoffs 60/50/40, with and without
     # if F2 improves: same for April-June, then finalize with the chosen cutoff

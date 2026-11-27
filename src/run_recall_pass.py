@@ -42,19 +42,39 @@ def references(ref_db):
     return refs
 
 
+MONTHS = {m: i + 1 for i, names in enumerate([
+    ("januar", "janvier", "gennaio"), ("februar", "février", "febbraio"), ("märz", "mars", "marzo"),
+    ("april", "avril", "aprile"), ("mai", "maggio"), ("juni", "juin", "giugno"), ("juli", "juillet", "luglio"),
+    ("august", "août", "agosto"), ("september", "septembre", "settembre"), ("oktober", "octobre", "ottobre"),
+    ("november", "novembre"), ("dezember", "décembre", "dicembre")]) for m in names}
+
+
+def _date_from_title(title):
+    m = re.search(r"(\d{1,2})\.?\s*(?:er\s+)?([A-Za-zäéû]+)\s+(\d{4})", title or "")
+    if not m or m.group(2).lower() not in MONTHS:
+        return ""
+    return f"{m.group(3)}-{MONTHS[m.group(2).lower()]:02d}-{int(m.group(1)):02d}"
+
+
 def illustrations(before):
     """Suva summaries of the types the main triage misses (IV, procedural accident, daily allowance),
-    decided before `before` (no label leakage on the evaluation window)."""
-    from run_iv_pass import example_dates
-    dates = example_dates()
+    decided before `before` (no label leakage on the evaluation window). Date from the summary's title,
+    subject line from data/examples_compare.json or the crawled ruling in data/bger/."""
+    subjects = {}
+    p = os.path.join(ROOT, "data", "examples_compare.json")
+    if os.path.exists(p):
+        subjects = {x["docket"]: x.get("subject") or "" for x in json.load(open(p, encoding="utf-8"))["items"]}
     out = []
     for ex in examples.load_examples():
-        d = dates.get(ex["docket"]) or ""
-        f = os.path.join(ROOT, "data/bger", ex["docket"].replace("/", "_") + ".html")
-        if not d or d >= before or not os.path.exists(f):
+        d = _date_from_title(ex.get("title"))
+        if not d or d >= before:
             continue
-        text = re.sub("<[^>]+>", " ", open(f, encoding="utf-8", errors="ignore").read())
-        c = triage.classify({"text": text})
+        subject = subjects.get(ex["docket"], "")
+        f = os.path.join(ROOT, "data/bger", ex["docket"].replace("/", "_") + ".html")
+        if not subject and os.path.exists(f):
+            c = triage.classify({"text": re.sub("<[^>]+>", " ", open(f, encoding="utf-8", errors="ignore").read())})
+        else:
+            c = triage.classify({"subject": subject})
         if "invalidity" in c["areas"] or "daily_allowance" in c["areas"] or c["procedural"]:
             out.append(ex)
     return out[:8]
