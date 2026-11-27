@@ -122,10 +122,18 @@ def scrape(days=92, end=None, divisions=None, with_text=True, log=print):
 SUBJECT_RE = re.compile(r"\b(Gegenstand|Objet|Oggetto)\s+(.{0,250}?)(Beschwerde gegen|recours contre|ricorso contro|$)")
 
 
+_INLINE = ["a", "span", "b", "strong", "i", "em", "u", "sup", "sub", "font", "abbr"]
+
+
 def _html_text(raw):
+    """Plain text with line breaks only at block elements. Inline tags (bger.ch links every statute
+    reference) are unwrapped first, otherwise "(art. 90 LTF)" became "(\\nart. 90 LTF\\n)"."""
     soup = BeautifulSoup(raw, "html.parser")
     for t in soup.find_all(["script", "style"]):
         t.decompose()
+    for t in soup.find_all(_INLINE):
+        t.unwrap()
+    soup.smooth()
     return re.sub(r"\n{3,}", "\n\n", soup.get_text("\n", strip=True))
 
 

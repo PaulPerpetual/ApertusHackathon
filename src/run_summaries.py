@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--month", default="", help="only rulings decided in this month, e.g. 2026-06")
     ap.add_argument("--redo", action="store_true", help="regenerate even if summaries exist")
+    ap.add_argument("--only", default="", help="file with one docket per line (implies --redo for those)")
     a = ap.parse_args()
     os.environ["SUVA_DB"] = os.path.abspath(a.db)  # before importing suva.config
     from suva import db, examples, llm, summarize
@@ -36,6 +37,13 @@ def main():
         WHERE f.selected = 1 AND (? OR (SELECT COUNT(*) FROM summaries s WHERE s.slug = j.slug) < 2)
         ORDER BY substr(j.decision_date, 1, 7) DESC, a.ai_score DESC, j.decision_date DESC""", (int(a.redo),))]
     con.close()
+    if a.only:
+        only = {l.strip() for l in open(a.only) if l.strip()}
+        con = sqlite3.connect(a.db, timeout=30)
+        con.row_factory = sqlite3.Row
+        rows = [dict(r) for r in con.execute("""SELECT j.*, a.ai_score FROM judgements j JOIN assessments a ON a.slug = j.slug""")
+                if r["docket"] in only]
+        con.close()
     if a.month:
         rows = [r for r in rows if (r["decision_date"] or "").startswith(a.month)]
     if a.limit:
