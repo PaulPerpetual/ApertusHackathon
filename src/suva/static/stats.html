@@ -129,7 +129,7 @@ function columns(el, groups, keys) {   // groups: [{label, values:{k:v}}], keys:
   el.innerHTML = s + `</svg><div class="legend">${keys.map(([, l, c]) => `<span><i style="background:${c};height:10px"></i>${esc(l)}</span>`).join("")}</div>`;
 }
 
-fetch("api/stats").then((r) => r.json()).then((s) => {
+fetch("api/stats", { cache: "no-store" }).then((r) => r.json()).then((s) => {
   $("gen").textContent = `Generated ${s.generated_at} · Apertus v1.5 70B via CSCS / Keera`;
   const w = s.window || {}, p = s.aprjun || {};
   const sel = (w.comparison || []).find((c) => /selected rule/.test(c.name)) || {};

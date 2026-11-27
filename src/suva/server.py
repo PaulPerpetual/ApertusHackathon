@@ -19,6 +19,8 @@ STATIC = Path(__file__).parent / "static"
 app = FastAPI(title="Suva judgement triage")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
+NO_CACHE = {"Cache-Control": "no-cache, must-revalidate"}  # data files change on every pipeline run
+
 JOBS = {}  # docket -> {"status": "running"|"done"|"error", "message": str}
 
 
@@ -119,7 +121,7 @@ def stats_json():
     path = config.ROOT / "data" / "stats.json"
     if not path.exists():
         raise HTTPException(404, "stats not built yet")
-    return FileResponse(path, media_type="application/json")
+    return FileResponse(path, media_type="application/json", headers=NO_CACHE)
 
 
 @app.get("/compare")
@@ -133,7 +135,7 @@ def runs_index():
     path = config.ROOT / "data" / "runs" / "index.json"
     if not path.exists():
         raise HTTPException(404, "no runs yet")
-    return FileResponse(path, media_type="application/json")
+    return FileResponse(path, media_type="application/json", headers=NO_CACHE)
 
 
 @app.get("/api/runs/{dataset}/{run_id}")
@@ -146,7 +148,7 @@ def run_rows(dataset: str, run_id: str):
     if not path.exists():
         raise HTTPException(404, "unknown run")
     if name.endswith(".json"):
-        return FileResponse(path, media_type="application/json")
+        return FileResponse(path, media_type="application/json", headers=NO_CACHE)
     meta, rows = {}, []
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.strip():
@@ -166,7 +168,7 @@ def examples_compare():
     path = config.ROOT / "data" / "examples_compare.json"  # built by src/build_examples_compare.py
     if not path.exists():
         raise HTTPException(404, "not built yet")
-    return FileResponse(path, media_type="application/json")
+    return FileResponse(path, media_type="application/json", headers=NO_CACHE)
 
 
 @app.get("/debug")
