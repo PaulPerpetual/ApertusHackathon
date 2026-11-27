@@ -1,21 +1,121 @@
 {
- "n": 0,
+ "n": 2,
  "summary": {
   "de": {
-   "words_suva": null,
-   "words_ours": null,
-   "refs_suva": null,
-   "refs_ours": null,
-   "overlap": null
+   "words_suva": 222.5,
+   "words_ours": 189.5,
+   "refs_suva": 0.5,
+   "refs_ours": 4.0,
+   "overlap": 0.16
   },
   "fr": {
-   "words_suva": null,
-   "words_ours": null,
-   "refs_suva": null,
-   "refs_ours": null,
-   "overlap": null
+   "words_suva": 296.5,
+   "words_ours": 250.5,
+   "refs_suva": 0.0,
+   "refs_ours": 5.0,
+   "overlap": 0.177
   }
  },
- "flagged_relevant": 0,
- "items": []
+ "flagged_relevant": 2,
+ "items": [
+  {
+   "docket": "8C_129/2025",
+   "date": "2025-11-11",
+   "language": "fr",
+   "subject": "Assurance-accidents (CNA; obligation d'assurance personnel de nettoyage),",
+   "url": "https://search.bger.ch/ext/eurospider/live/de/php/aza/http/index.php?highlight_docid=aza://11-11-2025-8C_129-2025&lang=de&zoom=&type=show_document",
+   "score": 60,
+   "title": {
+    "de": "Keine Ausnahme für Reinigungsunternehmen: Affiliation bei der Suva gemäss Art. 73 lit. b OLAA auch bei Innenreinigung und Concierge-Dienstleistungen",
+    "fr": "Aucune exception pour les entreprises de nettoyage: affiliation obligatoire à la CNA selon l'art. 73 let. b OLAA, y compris pour le nettoyage intérieur et les services de conciergerie"
+   },
+   "begruendung": {
+    "de": "Obligatorische Versicherung bei der Suva für Reinigungsunternehmen (Art. 66 Abs. 1 lit. b UVG i.V.m. Art. 73 lit. b UVV): Das Bundesgericht bestätigt, dass Reinigungsunternehmen ohne Unterscheidung zwischen Innen- und Aussenreinigung obligatorisch bei der Suva versichert sind (E. 5.2.3). Für die Suva bedeutet dies, dass die bisherige Praxis beibehalten wird und Reinigungsunternehmen grundsätzlich als Bauunternehmungen gelten, unabhängig von spezifischen Dienstleistungen wie Endreinigungen oder Einsatz von Kundenprodukten.",
+    "fr": "Affiliation obligatoire à la CNA pour les entreprises de nettoyage (art. 66 al. 1 let. b LAA en lien avec art. 73 let. b OLAA) : Le Tribunal fédéral confirme que les entreprises de nettoyage sont assurées obligatoirement à la CNA sans distinction entre le nettoyage intérieur et extérieur (consid. 5.2.3). Pour la Suva, cette jurisprudence confirme la pratique actuelle : les entreprises de nettoyage sont considérées comme des entreprises du bâtiment, indépendamment de leurs prestations spécifiques ou de l'utilisation de produits fournis par les clients."
+   },
+   "tags": {
+    "de": [
+     "UVG"
+    ],
+    "fr": []
+   },
+   "suva": {
+    "de": "Die Reinigung von Wohnungen und Büros fällt unter Art. 73 lit. b OLAA, und dieser Artikel steht im Einklang mit dem Gesetz. Es gibt keine Unterscheidung zwischen Reinigungsunternehmen, die innerhalb oder ausserhalb von Gebäuden tätig sind, da diese Tätigkeiten miteinander verbunden wären. Es ist nicht ausschlaggebend, ob ein Unternehmen eine Endreinigung (im Falle eines Umzugs) oder nur wöchentliche Reinigungsarbeiten durchführt, ebenso wenig wie die Frage, welche Reinigungsmittel verwendet werden oder ob das Unternehmen die vom Kunden zur Verfügung gestellten Reinigungsmittel verwendet oder nicht. Denn im umgekehrten Fall müsste das Unternehmen, das sein Angebot regelmässig der Kundennachfrage anpasst, mehrmals den Versicherer wechseln, was der Rechtsprechung des Bundesgerichts zuwiderliefe, wonach nach Möglichkeit eine dauerhafte Unterstellung gewährleistet sein sollte. Der Lohnunterschied nach dem GAV zwischen der Baureinigung und der Unterhaltsreinigung ist für die Unterstellung unter die Suva nicht relevant. Der Vergleich mit dem Reinigungsdienst im Rahmen des Betriebes eines Hotels ist falsch, da es sich bei diesem Dienst um ein Zubehörteil handelt. Auch wenn sich die Beschwerdeführerin als Lösung gegen Schwarzarbeit darstellt, übt sie in der Praxis eine Tätigkeit der professionellen Reinigung aus. Des Weiteren ist es möglich, die Prämien risikobezogen festzulegen.",
+    "fr": "Le nettoyage des appartements et des bureaux tombe sous l'art. 73 let. b OLAA et cet article est conforme à la loi. On ne distingue pas les entreprises de nettoyage selon qu'elles intervenaient à l'extérieur ou à l'intérieur de bâtiments, tant ces activités étaient liées entre elles. Le fait de savoir si une entreprise effectue des nettoyages finaux (en cas de déménagement) ou uniquement des travaux de nettoyage hebdomadaires n'est pas déterminant, pas plus que la question de savoir quels produits de nettoyage sont employés ou si l'entreprise utilise ou n'utilise pas les produits de nettoyage mis à disposition par les clients. En effet, dans le cas inverse, l'entreprise qui adapte régulièrement son offre à la demande des clients devrait changer plusieurs fois d'assureur, ce qui serait contraire à la jurisprudence du Tribunal fédéral selon laquelle des assujettissements durables devraient être garantis dans la mesure du possible. La différence de salaire selon la CCT entre les activités de nettoyage spécifique ou de chantier et les nettoyages d'entretien n’est pas en quoi cette différence serait pertinente en matière d'assujettissement à la Suva. La comparaison avec le service de nettoyage dans le cadre de l'exploitation d'un hôtel est faussée dès lors que, ce service est accessoire. Même si la recourante se présente comme une solution contre le travail au noir, elle exerce concrètement une activité de nettoyage professionnel. Il reste possible de fixer es primes en fonction du risque.",
+    "author": "Frei Thomas (FRT), Rechtsanwalt"
+   },
+   "ours": {
+    "de": "Die Reinigungsfirma, eine in ansässige Gesellschaft, wurde von der CNA per 1. Januar 2022 der obligatorischen Versicherung unterstellt. Die Gesellschaft führt Beschwerde gegen den Entscheid des Bundesverwaltungsgerichts, der die Unterstellung bestätigt.\n\nStreitig ist die Frage, ob eine Reinigungsfirma gemäss Art. 73 lit. b OLAA als \"Unternehmen der Bauindustrie, von Installations- und Leitungsbauunternehmen\" gilt und somit obligatorisch bei der CNA versichert sein muss.\n\nDas Bundesgericht bestätigte den Entscheid des Bundesverwaltungsgerichts und wies die Beschwerde ab. Es hielt fest, dass Art. 73 lit. b OLAA Unternehmen erfasst, die \"Gebäude, Strassen, öffentliche Plätze und Anlagen reinigen\" (E. 5.2.1). Der Begriff umfasst sowohl Reinigungsarbeiten im Gebäudeinneren als auch aussen; eine Unterscheidung nach Risiko ist unter der LAA nicht mehr massgeblich (E. 5.2.2). Der Unterschied im Lohnniveau zwischen spezifischen Reinigungsarbeiten und Unterhaltsreinigung ist für die Unterstellung unter die CNA irrelevant, da die LAA keine soziale Funktion mehr hat (E. 7.2.2). Ein Vergleich mit einem Hotelier ist unzutreffend, da das Reinigen bei einem Hotel eine Nebentätigkeit ist, während die Reinigung das Hauptgeschäft der Gesellschaft darstellt (E. 8.3). Ein Abweichen von der etablierten Rechtsprechung ist nicht angezeigt (E. 8.4). Die CNA war daher durch ihre Verfügung vom 23. November 2021 zur obligatorischen Versicherung der Arbeitnehmenden der Gesellschaft berechtigt. Die Beschwerde wird abgewiesen (E. 9).",
+    "fr": "La recourante, une entreprise de nettoyage, conteste son assujettissement obligatoire à la Caisse nationale suisse d'assurance en cas d'accidents (CNA) dès le 1\ner\njanvier 2022. Le Tribunal administratif fédéral a confirmé cette affiliation, décision que l'entreprise conteste devant le Tribunal fédéral.\n\nLe litige porte sur l'interprétation de l'art. 66 al. 1 let. b OLAA, qui soumet à l'assurance obligatoire auprès de la CNA les travailleurs des entreprises qui nettoient des bâtiments, des routes, des places publiques et des installations. Le Tribunal administratif fédéral a retenu que l'activité de nettoyage, qu'elle soit intérieure ou extérieure, relève de cette disposition (consid. 5.2.1 et 5.2.2). Il a également précisé que la distinction entre travaux de nettoyage spécifiques et entretien n'est pas déterminante dans le cadre de la LAA, qui ne poursuit plus de but social (consid. 7.2.2). La recourante argue que son activité ne correspond pas à celle typique des entreprises de la construction ou de l'installation et critique la différence de traitement avec un hôtelier ou un magasinier (consid. 8.3). Elle soutient également que son assujettissement créerait une distorsion de concurrence et qu'elle ne réalise pas de salaire social (consid. 8.5 et 8.6).\n\nLe Tribunal fédéral rappelle que l'art. 49 let. c PA ne permet pas de revoir l'opportunité de la décision lorsque la norme applicable ne laisse aucun pouvoir d'appréciation (consid. 7.1.2). Il confirme que l'activité de nettoyage des bâtiments et espaces publics entre dans le champ d'application de l'art. 66 al. 1 let. b OLAA, indépendamment du niveau de salaire ou de la nature des tâches effectuées (consid. 5.2.2). Un changement de jurisprudence n'est pas justifié (consid. 8.4). En conséquence, la CNA était fondée à assujettir l'entreprise à l'assurance obligatoire. Le recours est rejeté (consid. 9)."
+   },
+   "metrics": {
+    "de": {
+     "words_suva": 189,
+     "words_ours": 207,
+     "refs_suva": 0,
+     "refs_ours": 6,
+     "overlap": 0.206
+    },
+    "fr": {
+     "words_suva": 237,
+     "words_ours": 287,
+     "refs_suva": 0,
+     "refs_ours": 8,
+     "overlap": 0.207
+    }
+   }
+  },
+  {
+   "docket": "8C_135/2025",
+   "date": "2025-08-21",
+   "language": "it",
+   "subject": "Assicurazione contro gli infortuni (rendita d'invalidità),",
+   "url": "https://search.bger.ch/ext/eurospider/live/de/php/aza/http/index.php?highlight_docid=aza://21-08-2025-8C_135-2025&lang=de&zoom=&type=show_document",
+   "score": 80,
+   "title": {
+    "de": "Rückweisung zur Neuberechnung des Valideneinkommens und des Invalideneinkommens bei APF im Bereich Hauswirtschaft",
+    "fr": "Renvoi pour recalculer le revenu sans invalidité et le revenu d'invalide pour un titulaire d'un APF en économie domestique"
+   },
+   "begruendung": {
+    "de": "Reddito da valido (art. 16 LPGA): Applicazione del livello di competenze 3 confermata per l'assicurata, poiché il suo percorso professionale e la formazione quale responsabile del settore alberghiero - economia domestica APF permettono di ritenere, con il grado della verosimiglianza preponderante, che avrebbe potuto accedere a tale funzione prima dell'infortunio (E. 4.3.1). Relevanz für die Suva: Bestätigung der Praxis, dass bei vorhandenem spezifischem Ausbildungsabschluss und breitem Praxiserfahrungshintergrund im entsprechenden Bereich der LSE-Kompetenzniveau 3 für die Bemessung des Valideneinkommens massgeblich ist, selbst wenn die spezifische Führungsfunktion noch nicht ausgeübt wurde.",
+    "fr": "Revenu d'invalide (art. 16 LPGA) : Confirmation de l'application du niveau de compétences 3 pour l'assurée, car son parcours professionnel et sa formation de responsable du secteur hôtelier - économie domestique APF permettent de retenir, au degré de la vraisemblance prépondérante, qu'elle aurait pu accéder à cette fonction avant l'accident (consid. 4.3.1). Relevance pour la Suva : Confirmation de la pratique selon laquelle, en présence d'un diplôme spécifique et d'une vaste expérience pratique dans le domaine concerné, le niveau de compétences 3 de l'ESS est déterminant pour la fixation du revenu sans invalidité, même si la fonction de direction n'était pas encore exercée."
+   },
+   "tags": {
+    "de": [
+     "UVG",
+     "Invalidenrente",
+     "Valideneinkommen",
+     "Invalideneinkommen / LSE",
+     "Beweiswert Gutachten",
+     "Einkommensvergleich"
+    ],
+    "fr": []
+   },
+   "suva": {
+    "de": "Die Suva verglich den Verdienst ohne Unfall aufgrund der TA1, Zweig 77.78-82 (ohne 78), Kompetenzniveau 2 mit einem zumutbaren Verdienst aufgrund des Totals der TA1, Kompetenzniveau 2.\n\nDie Versicherte erwarb das eidgenössische Fähigkeitszeugnis zur Hauswirtschaft (2008) und das Berufszeugnis zur Verantwortlichen im Hotelgewerbe (2016). Sie absolvierte ausserdem einen Lehrlingsausbildungskurs (2009). Von September 2008 bis März 2010 arbeitete die Versicherte weiter für die Stiftung, wo sie als Stellvertreterin in den verschiedenen Bereichen des Hotelgewerbes (Hausmeisterin, Wäscherin und Küchenhelferin) eine Lehre absolvierte. Von April 2010 bis September 2011 war die versicherte Person in einem Hotel als Hausangestellte tätig. Sie kümmerte sich um das Mise en Place und die Raumvorbereitung für den Service à la carte, Kundenempfang, Auftragsannahme, Kundenbetreuung und -abrechnung, Schwimmbadservice, Erstellung von Sicherheitsdatenblättern am Arbeitsplatz, Roomservice, Zimmerreinigung und Wäscherei. Von Oktober 2013 bis November 2015 war die versicherte Person in einem Seniorenheim zunächst als Hausangestellte und dann als Haushälterin tätig. Sie unterbrach ihre Arbeit wegen Mutterschaft und meldete sich 2020 bei der Arbeitslosenkasse an.\n\nDas BGer bestätigt, dass hinsichtlich des Arbeitsentgelts aufgrund der von der versicherten Person erworbenen Diplome das Kompetenzniveau 3 zugrunde zu legen ist, auch wenn sie noch nie eine derartig qualifizierte Tätigkeit ausgeübt hat (E. 4.3.1).\n\nDas BGer weist die Sache an die Vorinstanz zurück, um das Invalideneinkommen zu prüfen, da die Suva im Rahmen des Beschwerdeverfahrens subsidiär geltend gemacht hat, dass bei der Berücksichtigung des Kompetenzniveaus 3 kein Nachteil entstehe, da die Versicherte angesichts der bestehenden funktionellen Einschränkungen in der Lage sei, eine qualifizierte Arbeit ungehindert zu verrichten, und daher keine Nachteile erleide.",
+    "fr": "La Suva a procédé à la comparaison des revenus sur des bases théoriques en se référant, pour le gain sans accident, au TA1, branche 77,78–82 (sans 78), niveau de compétences 2 et, pour le gain théorique exigible au TA1, total, niveau de compétences 2.\n\nL’assurée a obtenu l’attestation fédérale de capacité d’employée d’économie domestique (2008) et l’attestation professionnelle de responsable du secteur hôtelier (2016). Elle a également suivi un cours de formateur d’apprentis (2009). De septembre 2008 à mars 2010, l’assurée a continué à travailler pour la fondation où elle a effectué son apprentissage en tant que membre suppléant dans les différents secteurs du service hôtelier (employée dans le nettoyage général, employée dans la buanderie et aide à la cuisine). D’avril 2010 à septembre 2011, l’assurée a été active dans un hôtel en tant qu’employée d’économie domestique en s’occupant de la mise en place et de la préparation de la salle pour le service à la carte, l’accueil des clients, la prise des commandes, le service et la clôture des comptes des clients, le service de piscine, la création de fiches pour la sécurité sur le site de travail, le service de chambre, le nettoyage des chambres et la buanderie. D’octobre 2013 à novembre 2015, l’assurée a été active dans une maison de retraite en tant qu’employée d’économie domestique, puis en tant que gouvernante. Elle a cessé de travailler pour cause de maternité et s’est inscrite à l’assurance chômage en 2020.\n\nLe TF a confirmé que, en ce qui concerne le gain sans accident, il doit relever du niveau de compétences 3 compte tenu des diplômes obtenus par l’assurée, même si celle-ci n’a jamais exercé d’activités qualifiées (voir point 4.3.1).\n\nLe TF a renvoyé le dossier au TCA-TI en lui demandant d’examiner le gain d’invalidité parce que, dans le cadre de la procédure de recours, la Suva a soutenu, à titre subsidiaire, qu’il n’en résulterait aucun préjudice lors de la prise en compte du niveau de compétences 3 dans la mesure où l’assuré, compte tenu des limitations fonctionnelles en question, est en mesure d’effectuer un travail qualifié sans aucun obstacle et ne subit donc aucun préjudice.",
+    "author": "Frei Thomas (FRT), Rechtsanwalt"
+   },
+   "ours": {
+    "de": "Die Versicherte stürzte am 14. November 2020 beim Aussteigen aus dem Auto und am 4. Dezember 2020 auf einer Treppe und verletzte sich. Der Unfallversicherer anerkannte seine Leistungspflicht und erbrachte die gesetzlichen Leistungen. Nach medizinischen Abklärungen und einer externen Begutachtung verneinte der Unfallversicherer einen Rentenanspruch, was kantonal bestätigt wurde. Das Bundesgericht hebt das kantonale Urteil auf und weist die Sache zur Neubeurteilung an das kantonale Gericht zurück.\n\nStreitig waren die Ermittlung des Valideneinkommens und die Berechnung des Invaliditätsgrades. Das Bundesgericht bestätigt, dass dem beruflichen Werdegang der Versicherten folgend das Kompetenzniveau 3 anzuwenden ist (E. 4.3.1). Es hält fest, dass das kantonale Gericht die funktionellen Einschränkungen und deren Auswirkung auf das Kompetenzniveau sowie die Berechnung des Invalideneinkommens nicht geprüft hat (E. 4.3.3). Da dies eine Rechtsfrage darstellt, muss die Sache zur neuen Entscheidung im Sinne der Erwägungen an die Vorinstanz zurückgewiesen werden.\n\nDie Beschwerde wird teilweise gutgeheissen. Das Urteil des kantonalen Gerichts wird aufgehoben und die Sache zur neuen Entscheidung an das kantonale Gericht zurückgewiesen. Gerichtskosten von Fr. 800.- werden der Beschwerdegegnerin auferlegt.",
+    "fr": "L'assurée, au chômage et assurée contre les accidents, chute le 14 novembre 2020 en sortant de sa voiture puis le 4 décembre 2020 dans les escaliers, se blessant notamment au niveau de la colonne vertébrale et de l'épaule gauche. L'INSAI prend en charge les prestations. Après une expertise externe ordonnée par le tribunal cantonal, l'assureur refuse une rente d'invalidité par décision sur opposition confirmée le 4 septembre 2024. Le Tribunal cantonal des assurances admet le recours de l'assurée et lui octroie une rente d'invalidité de 18 % dès le 1er mars 2022. L'INSAI recourt au Tribunal fédéral, contestant uniquement le calcul du revenu sans invalidité.\n\nLe Tribunal fédéral admet partiellement le recours. Il confirme que le parcours professionnel de l'assurée justifie l'application du niveau de compétences 3 pour déterminer le revenu sans invalidité (consid. 4.3.1). Cependant, la juridiction cantonale aurait dû examiner si des moyens auxiliaires permettaient de compenser les limitations fonctionnelles pour le calcul du revenu d'invalide (consid. 4.3.3). Les constatations médicales ne sont pas remises en cause, mais l'instruction sur les moyens auxiliaires est incomplète. La cause est renvoyée à l'autorité précédente pour nouvelle décision dans le sens des considérants.\n\nLe recours de l'assurée est rejeté pour le surplus. Les frais judiciaires de 800 fr. sont mis à la charge de l'opposante."
+   },
+   "metrics": {
+    "de": {
+     "words_suva": 256,
+     "words_ours": 172,
+     "refs_suva": 1,
+     "refs_ours": 2,
+     "overlap": 0.113
+    },
+    "fr": {
+     "words_suva": 356,
+     "words_ours": 214,
+     "refs_suva": 0,
+     "refs_ours": 2,
+     "overlap": 0.148
+    }
+   }
+  }
+ ]
 }
