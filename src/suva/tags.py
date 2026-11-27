@@ -8,26 +8,32 @@ import re
 
 VOCAB = [
     # (DE label, FR label, regex on the normalised free tag)
-    ("UVG", "LAA", r"^(uvg|laa|unfallversicherung|assurance accidents)$"),
-    ("IV", "AI", r"^(iv|ai|ivg|lai|invalidenversicherung|assurance invalidit)"),
+    ("UVG", "LAA", r"^(uvg|laa|unfallversicherung|assurance accidents|assicurazione contro gli infortuni)$"),
+    ("IV", "AI", r"^(iv|ai|ivg|lai|invalidenversicherung|assurance invalidit|assicurazione per l.?invalidit)"),
+    # neighbouring social insurances: matter to Suva for coordination, named as areas like the court does
+    ("BVG", "LPP", r"^(bvg|lpp|berufliche vorsorge|prévoyance professionnelle|previdenza professionale)"),
+    ("KVG", "LAMal", r"^(kvg|lamal|krankenversicherung|assurance maladie|assicurazione malattia)"),
+    ("ALV", "AC", r"^(alv|avig|arbeitslosenversicherung|assurance chômage|assicurazione contro la disoccupazione)"),
+    ("AHV / EL", "AVS / PC", r"^(ahv|avs|alters und hinterlassenen|assurance vieillesse|ergänzungsleistung|prestations? complémentaire)"),
+    ("Militärversicherung", "Assurance militaire", r"^(mvg|militärversicherung|assurance militaire)"),
     ("Unfallbegriff", "Notion d'accident", r"unfallbegriff|ungewöhnlich.*äusser|notion d.?accident"),
-    ("Natürliche Kausalität", "Causalité naturelle", r"natürlich.*kausal|causalit.*naturel"),
-    ("Adäquate Kausalität", "Causalité adéquate", r"adäquat|causalit.*adéquat"),
+    ("Natürliche Kausalität", "Causalité naturelle", r"natürlich.*kausal|causalit.*naturel|nesso causale naturale"),
+    ("Adäquate Kausalität", "Causalité adéquate", r"adäquat|causalit.*adéquat|nesso causale adeguato"),
     ("Vorzustand / Status quo ante", "État antérieur / statu quo ante", r"status quo|vorzustand|statu quo|état antérieur|vorbestehend"),
-    ("Rückfall / Spätfolgen", "Rechute / séquelles tardives", r"rückfall|spätfolge|rechute|séquelle"),
+    ("Rückfall / Spätfolgen", "Rechute / séquelles tardives", r"rückfall|spätfolge|rechute|séquelle|ricaduta"),
     ("Berufskrankheit", "Maladie professionnelle", r"berufskrankheit|maladie professionnelle"),
     ("Unfallähnliche Körperschädigung", "Lésion assimilée à un accident", r"unfallähnlich|listenverletzung|lésion.*assimilée|art\.? ?6 ?abs\.? ?2"),
     ("Psychische Unfallfolgen", "Troubles psychiques", r"psych"),
     ("HWS / Schleudertrauma", "Traumatisme cervical", r"hws|schleuder|whiplash|cervical"),
     ("Heilbehandlung", "Traitement médical", r"heilbehandlung|traitement médical|heilungskosten"),
-    ("Taggeld", "Indemnités journalières", r"taggeld|indemnit.*journali"),
-    ("Invalidenrente", "Rente d'invalidité", r"invalidenrente|rente d.?invalidit|rentenanspruch|komplementärrente|rente complémentaire"),
-    ("Einkommensvergleich", "Comparaison des revenus", r"einkommensvergleich|comparaison des revenus|invaliditätsgrad|taux d.?invalidit"),
-    ("Valideneinkommen", "Revenu sans invalidité", r"valideneinkommen|revenu sans invalidit"),
-    ("Invalideneinkommen / LSE", "Revenu d'invalide / ESS", r"invalideneinkommen|tabellenl|\blse\b|\bess\b|revenu d.?invalide"),
+    ("Taggeld", "Indemnités journalières", r"taggeld|indemnit.*journali|indennit.*giornalier"),
+    ("Invalidenrente", "Rente d'invalidité", r"invalidenrente|rente d.?invalidit|rendita d.?invalidit|rentenanspruch|komplementärrente|rente complémentaire"),
+    ("Einkommensvergleich", "Comparaison des revenus", r"einkommensvergleich|comparaison des revenus|confronto dei redditi|invaliditätsgrad|taux d.?invalidit|grado d.?invalidit"),
+    ("Valideneinkommen", "Revenu sans invalidité", r"valideneinkommen|revenu sans invalidit|reddito da valido"),
+    ("Invalideneinkommen / LSE", "Revenu d'invalide / ESS", r"invalideneinkommen|tabellenl|\blse\b|\bess\b|revenu d.?invalide|reddito da invalido"),
     ("Leidensabzug", "Abattement", r"leidensabzug|abattement"),
     ("Zumutbarkeit / Verwertbarkeit", "Exigibilité", r"zumutbar|verwertbar|restarbeitsf|arbeitsfähigkeit|exigib|capacité de travail"),
-    ("Integritätsentschädigung", "Indemnité pour atteinte à l'intégrité", r"integrität|intégrité"),
+    ("Integritätsentschädigung", "Indemnité pour atteinte à l'intégrité", r"integrität|intégrité|integrità"),
     ("Hilflosenentschädigung", "Allocation pour impotent", r"hilflos|impotent"),
     ("Rentenrevision", "Révision de la rente", r"revision|révision"),
     ("Leistungskürzung", "Réduction des prestations", r"kürzung|wagnis|grobfahrl|réduction|entreprise téméraire"),
@@ -35,13 +41,17 @@ VOCAB = [
     ("Koordination", "Coordination", r"koordination|coordination|überentschädigung|surindemnisation"),
     ("Versicherteneigenschaft", "Qualité d'assuré", r"versichertenei|versicherungsdeckung|nachdeckung|qualité d.?assuré|couverture d.?assurance"),
     ("Beweiswert Gutachten", "Valeur probante des expertises", r"gutachten|expertise|beweiswert|valeur probante"),
-    ("Untersuchungsgrundsatz", "Maxime inquisitoire", r"untersuchungsgrundsatz|abklärung|maxime inquisitoire|instruction"),
+    ("Untersuchungsgrundsatz", "Maxime inquisitoire", r"untersuchungsgrundsatz|maxime inquisitoire|ungenügend abgekl|instruction insuffisante"),
     ("Rechtliches Gehör", "Droit d'être entendu", r"rechtliches gehör|droit d.?être entendu"),
     ("Öffentliche Verhandlung (EMRK)", "Débats publics (CEDH)", r"verhandlung|emrk|cedh|débats publics"),
-    ("Verfahren / Fristen", "Procédure / délais", r"frist|zustellung|verfahren|délai|procédure|legitimation|vertretung"),
+    ("Verfahren / Fristen", "Procédure / délais", r"frist|zustellung|verfahrensfrage|délai|legitimation|vertretung|nichteintreten|irrecevabilit"),
     ("Kosten / Parteientschädigung", "Frais / dépens", r"kosten|parteientsch|dépens|frais|unentgeltlich|assistance judiciaire"),
 ]
 FR = {de: fr for de, fr, _ in VOCAB}
+AREAS = ["UVG", "IV", "BVG", "KVG", "ALV", "AHV / EL", "Militärversicherung"]
+PROCEDURAL = {"Untersuchungsgrundsatz", "Rechtliches Gehör", "Öffentliche Verhandlung (EMRK)", "Verfahren / Fristen",
+              "Kosten / Parteientschädigung"}
+MAX_TAGS = 5
 _COMPILED = [(de, re.compile(p, re.I)) for de, _, p in VOCAB]
 
 
@@ -104,3 +114,19 @@ def lang_ok(text, lang):
     if sum(counts.values()) < 3:
         return True
     return counts[lang] >= max(v for k, v in counts.items() if k != lang)
+
+
+def combine(ai, subject):
+    """Tags for a ruling: the area(s) from the court's subject line first (it is reliable), then the model's legal
+    topics, then the court's topics. Procedural tags only on social-insurance rulings (otherwise they flood the
+    filter with criminal and civil cases) and after the substantive ones; at most MAX_TAGS."""
+    court = normalize(re.split(r"[();,]", subject or ""))
+    model = normalize(ai)
+    areas = [t for t in court + model if t in AREAS]
+    topics = [t for t in model + court if t not in AREAS and t not in PROCEDURAL]
+    proc = [t for t in model + court if t in PROCEDURAL] if areas else []
+    out = []
+    for t in areas + topics + proc:
+        if t not in out:
+            out.append(t)
+    return out[:MAX_TAGS]

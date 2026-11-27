@@ -183,8 +183,7 @@ def _effective_tags(row, subject=None):
     row["tags_ai"] = ai
     row["tags_edited"] = human is not None
     subject = subject if subject is not None else row.get("subject")
-    court = vocab.normalize(re.split(r"[();,]", subject or ""))
-    row["tags"] = human if human is not None else vocab.normalize(list(ai) + court)
+    row["tags"] = human if human is not None else vocab.combine(ai, subject)
     row["tags_fr"] = vocab.french(row["tags"])
     row.pop("tags_human", None)
     return row
