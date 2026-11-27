@@ -1,0 +1,159 @@
+"""SQLite storage. One file, no server: works on-prem, air-gapped and in a container.
+
+Swap for Postgres (e.g. Azure Database for PostgreSQL) by replacing this module.
+"""
+import json
+import sqlite3
+from contextlib import contextmanager
+from datetime import datetime, timezone
+
+from . import config
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS judgements (
+    slug TEXT PRIMARY KEY,          -- 8C_145_2025
+    docket TEXT NOT NULL,           -- 8C_145/2025
+    decision_date TEXT,
+    publication_date TEXT,
+    division TEXT,
+    language TEXT,
+    subject TEXT,                   -- Rechtsgebiet / short title from the bger.ch list
+    url TEXT,
+    text TEXT,
+    source TEXT DEFAULT 'bger',     -- bger | demo | manual
+    fetched_at TEXT
+);
+CREATE TABLE IF NOT EXISTS assessments (
+    slug TEXT PRIMARY KEY REFERENCES judgements(slug),
+    ai_score INTEGER,
+    prefilter_score INTEGER,
+    title_de TEXT, title_fr TEXT,
+    explanation_de TEXT, explanation_fr TEXT,
+    tags TEXT,                      -- JSON list
+    suva_party INTEGER,
+    model TEXT,
+    created_at TEXT,
+    score_override INTEGER,
+    override_by TEXT,
+    override_at TEXT
+);
+CREATE TABLE IF NOT EXISTS summaries (
+    slug TEXT REFERENCES judgements(slug),
+    lang TEXT,                      -- de | fr
+    ai_text TEXT,
+    text TEXT,                      -- current text (= ai_text until a human edits it)
+    model TEXT,
+    created_at TEXT,
+    edited_by TEXT,
+    edited_at TEXT,
+    PRIMARY KEY (slug, lang)
+);
+CREATE TABLE IF NOT EXISTS edits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT,
+    field TEXT,                     -- score | summary_de | summary_fr | revert_score
+    old_value TEXT,
+    new_value TEXT,
+    editor TEXT,
+    at TEXT
+);
+"""
+
+
+def now():
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def slugify(docket):
+    return docket.replace("/", "_").replace(" ", "")
+
+
+@contextmanager
+def connect():
+    config.DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(config.DB_PATH)
+    con.row_factory = sqlite3.Row
+    con.executescript(SCHEMA)
+    try:
+        yield con
+        con.commit()
+    finally:
+        con.close()
+
+
+def upsert_judgement(con, j):
+    j = {"source": "bger", "fetched_at": now(), **j}
+    j["slug"] = slugify(j["docket"])
+    cols = ["slug", "docket", "decision_date", "publication_date", "division", "language",
+            "subject", "url", "text", "source", "fetched_at"]
+    vals = [j.get(c) for c in cols]
+    con.execute(
+        f"INSERT INTO judgements ({','.join(cols)}) VALUES ({','.join('?' * len(cols))}) "
+        f"ON CONFLICT(slug) DO UPDATE SET " + ",".join(f"{c}=COALESCE(excluded.{c},{c})" for c in cols[1:]),
+        vals)
+    return j["slug"]
+
+
+def save_assessment(con, slug, a, model, prefilter_score):
+    con.execute(
+        """INSERT INTO assessments (slug, ai_score, prefilter_score, title_de, title_fr, explanation_de,
+               explanation_fr, tags, suva_party, model, created_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?)
+           ON CONFLICT(slug) DO UPDATE SET ai_score=excluded.ai_score, prefilter_score=excluded.prefilter_score,
+               title_de=excluded.title_de, title_fr=excluded.title_fr, explanation_de=excluded.explanation_de,
+               explanation_fr=excluded.explanation_fr, tags=excluded.tags, suva_party=excluded.suva_party,
+               model=excluded.model, created_at=excluded.created_at""",
+        (slug, a.get("score"), prefilter_score, a.get("title_de"), a.get("title_fr"), a.get("explanation_de"),
+         a.get("explanation_fr"), json.dumps(a.get("tags") or [], ensure_ascii=False),
+         int(bool(a.get("suva_party"))), model, now()))
+
+
+def save_summary(con, slug, lang, text, model):
+    """Store an AI summary. Keeps a human-edited text if one exists."""
+    con.execute(
+        """INSERT INTO summaries (slug, lang, ai_text, text, model, created_at) VALUES (?,?,?,?,?,?)
+           ON CONFLICT(slug, lang) DO UPDATE SET ai_text=excluded.ai_text, model=excluded.model,
+               created_at=excluded.created_at,
+               text=CASE WHEN summaries.edited_by IS NULL THEN excluded.text ELSE summaries.text END""",
+        (slug, lang, text, text, model, now()))
+
+
+def log_edit(con, slug, field, old, new, editor):
+    con.execute("INSERT INTO edits (slug, field, old_value, new_value, editor, at) VALUES (?,?,?,?,?,?)",
+                (slug, field, None if old is None else str(old), None if new is None else str(new), editor, now()))
+
+
+def list_cards(con):
+    rows = con.execute(
+        """SELECT j.slug, j.docket, j.decision_date, j.publication_date, j.division, j.subject, j.url, j.source,
+                  a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
+                  a.explanation_de, a.explanation_fr, a.tags, a.suva_party, a.model,
+                  (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,
+                  (SELECT e.editor FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_editor,
+                  (SELECT e.at FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_edit_at
+           FROM judgements j JOIN assessments a ON a.slug=j.slug""").fetchall()
+    cards = []
+    for r in rows:
+        c = dict(r)
+        c["tags"] = json.loads(c["tags"] or "[]")
+        c["score"] = c["score_override"] if c["score_override"] is not None else c["ai_score"]
+        cards.append(c)
+    # ties: the most recently human-placed card first (so drag-and-drop between equal scores sticks)
+    cards.sort(key=lambda c: c["docket"])
+    cards.sort(key=lambda c: c["override_at"] or "", reverse=True)
+    cards.sort(key=lambda c: -(c["score"] or 0))
+    return cards
+
+
+def get_detail(con, slug):
+    j = con.execute("SELECT * FROM judgements WHERE slug=?", (slug,)).fetchone()
+    if not j:
+        return None
+    d = dict(j)
+    a = con.execute("SELECT * FROM assessments WHERE slug=?", (slug,)).fetchone()
+    d["assessment"] = dict(a) if a else None
+    if a:
+        d["assessment"]["tags"] = json.loads(a["tags"] or "[]")
+    d["summaries"] = {r["lang"]: dict(r) for r in con.execute("SELECT * FROM summaries WHERE slug=?", (slug,))}
+    d["history"] = [dict(r) for r in con.execute("SELECT * FROM edits WHERE slug=? ORDER BY id DESC", (slug,))]
+    return d

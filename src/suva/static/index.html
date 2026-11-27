@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suva Urteilsradar</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">S</span><span data-i18n="app_title">Urteilsradar</span></div>
+  <input id="search" type="search" data-i18n-placeholder="search">
+  <label class="toggle"><input id="showLow" type="checkbox"> <span data-i18n="show_low">Wenig relevante zeigen</span></label>
+  <div class="spacer"></div>
+  <span id="modelBadge" class="badge"></span>
+  <button id="addBtn" class="btn primary" data-i18n="add">+ Urteil zusammenfassen</button>
+  <button id="editorChip" class="chip" title=""></button>
+  <div class="lang" role="group" aria-label="Sprache / langue">
+    <button data-lang="de" class="on">DE</button><button data-lang="fr">FR</button>
+  </div>
+</header>
+
+<main id="layout">
+  <section id="listPane">
+    <div id="listMeta" class="meta"></div>
+    <ol id="cards"></ol>
+  </section>
+  <aside id="panel" hidden>
+    <div class="panel-head">
+      <div>
+        <div id="pDocket" class="docket"></div>
+        <h2 id="pTitle"></h2>
+      </div>
+      <button id="closePanel" class="icon" aria-label="close">✕</button>
+    </div>
+    <div id="pBody"></div>
+  </aside>
+</main>
+
+<dialog id="nameDlg">
+  <form method="dialog">
+    <h3 data-i18n="who">Wer bearbeitet?</h3>
+    <p class="muted" data-i18n="who_hint">Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.</p>
+    <input id="nameInput" required maxlength="60" autocomplete="name">
+    <div class="row"><button value="cancel" class="btn" data-i18n="cancel" formnovalidate>Abbrechen</button>
+      <button id="nameOk" value="ok" class="btn primary">OK</button></div>
+  </form>
+</dialog>
+
+<dialog id="addDlg">
+  <form method="dialog">
+    <h3 data-i18n="add_title">Weiteres Urteil zusammenfassen</h3>
+    <p class="muted" data-i18n="add_hint">Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch</p>
+    <input id="addInput" required>
+    <div class="row"><button value="cancel" class="btn" data-i18n="cancel" formnovalidate>Abbrechen</button>
+      <button value="ok" class="btn primary" data-i18n="start">Starten</button></div>
+  </form>
+</dialog>
+
+<div id="toast" role="status"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>
