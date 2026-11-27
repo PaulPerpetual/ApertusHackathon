@@ -30,7 +30,11 @@ Kantonsgericht/Versicherungsgericht ↔ tribunal cantonal des assurances | guthe
 zurückweisen ↔ renvoyer | Nichteintreten ↔ irrecevabilité
 relatives/absolutes Wagnis ↔ entreprise téméraire relative/absolue | Listenverletzung (unfallähnliche Körperschädigung)
 ↔ lésion assimilée à un accident | Distorsion/Kontusion ↔ distorsion/contusion | Untersuchungshaft ↔ détention provisoire
-Einspracheentscheid ↔ décision sur opposition | Status quo sine/ante ↔ statu quo sine/ante | Tabellenlohnabzug ↔ abattement"""
+Einspracheentscheid ↔ décision sur opposition | Status quo sine/ante ↔ statu quo sine/ante | Tabellenlohnabzug ↔ abattement
+Fachhochschule (FH) ↔ haute école spécialisée (HES) | IV-Stelle ↔ office AI | kantonales Gericht ↔ tribunal cantonal
+Abkürzungen von Behörden, Schulen und Abschlüssen immer in der Zielsprache (DE "Architekt FH", nie "Architekt HES").
+Geschlecht der Parteien wie im Urteil: "die Versicherte"/"l'assurée" bei einer Frau, "der Versicherte"/"l'assuré" bei
+einem Mann; im Zweifel "die versicherte Person"/"la personne assurée"."""
 
 STYLE = {
     "de": """Stil der Suva-Zusammenfassungen (Deutsch):
@@ -44,6 +48,10 @@ STYLE = {
   knapp in der Vergangenheit ("Die Suva verglich ...").
 - Weglassen: Unfalldaten, Verfahrensgeschichte durch die Instanzen, Gerichtskosten, Daten von Verfügungen.
   Sachverhalt nur so weit, wie er für den Grundsatz nötig ist (z.B. Ausbildung bei der Frage des Kompetenzniveaus).
+  Vom Gesundheitsschaden nur das nennen, worauf es rechtlich ankommt (z.B. die Armparese bei der Hilflosigkeit);
+  keine Geburtsjahre, Kantone oder Orte.
+- Statt des Rechtsbegehrens ("beantragt 30 % oder Rückweisung") das Kernargument der beschwerdeführenden Partei
+  nennen, auf das das Bundesgericht antwortet ("machte geltend, es drohe eine schwere Arthrose").
 - Ist die Suva Partei, aus ihrer Sicht schreiben: was die Suva entschieden oder geltend gemacht hat und ob das
   BGer ihr folgt.
 - Sparsam zitieren: 1-2 Verweise auf die tragende Erwägung im Format "(E. 5.2)", nicht in jedem Satz.
@@ -51,7 +59,7 @@ STYLE = {
 - Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss in einem Satz
   ("Das Bundesgericht wies die Beschwerde ab." / "hiess die Beschwerde gut").
 - Die Suva heisst immer "die Suva" (nie CNA, SUVA oder INSAI). Keine Personennamen und keine Platzhalter wie
-  "A.________"; Parteien als "der Versicherte", "die Beschwerdeführerin", "die Suva".""",
+  "A.________"; Parteien als "der Versicherte" bzw. "die Versicherte" (Geschlecht wie im Urteil), "die Beschwerdeführerin", "die Suva".""",
     "fr": """Style des résumés de la Suva (français):
 - COURT: 100-180 mots, au plus 3 paragraphes courts, texte suivi et factuel, pas d'énumérations ni de titres.
   Seulement ce qu'un juriste de la Suva doit savoir pour sa pratique; pas d'historique de procédure, pas de dates,
@@ -62,13 +70,16 @@ STYLE = {
   ("Le nettoyage des bureaux tombe sous l'art. 73 let. b OLAA."; "Le TF confirme ..."), les faits brièvement au passé
   ("La Suva a procédé ...").
 - Omettre: dates d'accident, historique de la procédure, frais judiciaires, dates des décisions. Les faits
-  seulement dans la mesure nécessaire au principe.
+  seulement dans la mesure nécessaire au principe. De l'atteinte à la santé, ne citer que ce qui compte
+  juridiquement (p.ex. la parésie du bras pour l'impotence); pas d'année de naissance, de canton ni de lieu.
+- Au lieu des conclusions ("conclut à 30 % ou au renvoi"), indiquer l'argument central de la partie recourante
+  auquel le Tribunal fédéral répond ("faisait valoir un risque d'arthrose grave").
 - Si la Suva est partie, écrire de son point de vue: ce que la Suva a décidé ou fait valoir et si le TF la suit.
 - Citer avec parcimonie: 1-2 renvois au considérant déterminant, au format "(consid. 5.2)", pas à chaque phrase.
   N'utiliser que des numéros de la liste "Considérants de l'arrêt".
 - "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin en une phrase ("Le Tribunal fédéral a rejeté le recours.").
 - Toujours "la Suva" (jamais CNA, SUVA ou INSAI). Pas de noms de personnes ni de caractères de substitution comme
-  "A.________"; parties: "l'assuré", "la recourante", "la Suva".
+  "A.________"; parties: "l'assuré" ou "l'assurée" (selon l'arrêt), "la recourante", "la Suva".
 - Rédiger directement en français juridique suisse, ce n'est pas une traduction de l'allemand.""",
 }
 
