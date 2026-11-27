@@ -4,7 +4,7 @@ const I18N = {
   de: {
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
-    col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheid", col_tags: "Schlagworte", col_edited: "Bearbeitet",
+    col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
     add: "Urteil manuell hinzufügen …", add_title: "Urteil manuell hinzufügen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
@@ -24,7 +24,7 @@ const I18N = {
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
-    col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Décision", col_tags: "Mots-clés", col_edited: "Modifié",
+    col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
     add: "Ajouter un arrêt manuellement …", add_title: "Ajouter un arrêt manuellement", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",

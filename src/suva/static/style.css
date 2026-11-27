@@ -64,7 +64,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .mhead { position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: 18px 64px 1fr 36px; gap: 10px; padding: 3px 14px 3px 8px;
   background: var(--chrome); border-bottom: 1px solid var(--sep-strong); font-size: 11px; color: var(--muted); }
 .h-main { display: flex; justify-content: space-between; }
-.h-sort { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; padding: 1px 4px; border-radius: 4px; cursor: pointer; }
+.h-sort { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; padding: 1px 4px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
 .mhead > .h-sort { justify-self: center; }
 .h-sort:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
 .h-sort.on { color: var(--text); }

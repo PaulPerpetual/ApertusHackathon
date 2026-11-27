@@ -6,6 +6,7 @@
   run      --days 92           scrape + triage + summarise in one go
   add      8C_145/2025         fetch, assess and summarise one judgement
   demo                         load the 54 Suva example summaries as demo cards (no bger.ch needed)
+  relabel  [--min 20]          rewrite titles short and in the right language + French tags, from the existing assessment
   tags-fr                      add French tags to rulings triaged before tags_fr existed (one short LLM call each)
   eval                         recall/precision of the ranking against the Suva Excel list
   export   ../site             write static JSON mirroring the API (GitHub Pages / intranet web server)
@@ -112,6 +113,43 @@ def cmd_tags_fr(args):
         print(f"{r['slug']}: {', '.join(fr)}")
 
 
+RELABEL_SYSTEM = """Du erhältst die Bewertung eines Bundesgerichtsurteils (Titel, Begründung, deutsche Schlagworte).
+Schreibe kurze, einheitliche Listentitel und übersetze die Schlagworte.
+- title_de: DEUTSCH, 4-8 Wörter, Kernfrage + Ergebnis, ohne Aktenzeichen (z.B. "Komplementärrente: IV-Rente nur anteilig anrechnen").
+- title_fr: FRANÇAIS, 4-8 mots, même contenu (z.B. "Rente complémentaire: rente AI prise en compte au prorata").
+- tags_fr: dieselben Schlagworte auf Französisch, gleiche Reihenfolge, Fachbegriffe wie in den ATF.
+Antworte nur mit JSON: {"title_de": "...", "title_fr": "...", "tags_fr": [...]}"""
+
+
+def cmd_relabel(args):
+    """Short, language-correct titles and French tags for rulings already triaged (one short LLM call each)."""
+    import json
+    from . import llm
+    with db.connect() as con:
+        rows = [dict(r) for r in con.execute(
+            "SELECT slug, title_de, title_fr, explanation_de, tags FROM assessments "
+            "WHERE model != 'prefilter' AND COALESCE(score_override, ai_score) >= ?", (args.min,))]
+    for r in rows:
+        de = json.loads(r["tags"] or "[]")
+        user = json.dumps({"title_de": r["title_de"], "title_fr": r["title_fr"], "explanation_de": r["explanation_de"],
+                           "tags": de}, ensure_ascii=False)
+        try:
+            a = llm.parse_json(llm.chat([{"role": "system", "content": RELABEL_SYSTEM}, {"role": "user", "content": user}],
+                                        temperature=0.0, max_tokens=300, json_mode=True))
+        except (ValueError, llm.LLMError) as e:
+            print(f"! {r['slug']}: {e}", file=sys.stderr)
+            continue
+        fr = [str(t)[:40] for t in a.get("tags_fr") or []]
+        sets = {"title_de": str(a.get("title_de") or "").strip()[:120], "title_fr": str(a.get("title_fr") or "").strip()[:120]}
+        sets = {k: v for k, v in sets.items() if v}
+        if len(fr) == len(de):
+            sets["tags_fr"] = json.dumps(fr, ensure_ascii=False)
+        if sets:
+            with db.connect() as con:
+                con.execute(f"UPDATE assessments SET {', '.join(k + '=?' for k in sets)} WHERE slug=?", (*sets.values(), r["slug"]))
+        print(f"{r['slug']}: {sets.get('title_de', '-')}")
+
+
 def cmd_eval(args):
     gt = examples.load_ground_truth()
     with db.connect() as con:
@@ -174,6 +212,8 @@ def main():
     sub.add_parser("demo")
     sub.add_parser("eval")
     sub.add_parser("tags-fr")
+    rl = sub.add_parser("relabel")
+    rl.add_argument("--min", type=int, default=20, help="only rulings with at least this relevance score")
     e = sub.add_parser("export")
     e.add_argument("folder", nargs="?", default=str(config.ROOT / "site"))
     s = sub.add_parser("serve")
@@ -181,7 +221,7 @@ def main():
     s.add_argument("--port", type=int, default=8000)
     args = p.parse_args()
 
-    if config.USE_MOCK_LLM and args.cmd in ("run", "import", "triage", "add", "demo", "tags-fr"):
+    if config.USE_MOCK_LLM and args.cmd in ("run", "import", "triage", "add", "demo", "tags-fr", "relabel"):
         print("! LLM_BASE_URL not set: using the MOCK model (output is labelled 'mock').", file=sys.stderr)
     if args.cmd == "import":
         cmd_import(args)
@@ -195,6 +235,8 @@ def main():
         cmd_add(args)
     elif args.cmd == "demo":
         cmd_demo(args)
+    elif args.cmd == "relabel":
+        cmd_relabel(args)
     elif args.cmd == "tags-fr":
         cmd_tags_fr(args)
     elif args.cmd == "eval":
