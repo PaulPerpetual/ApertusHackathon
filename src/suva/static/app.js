@@ -14,7 +14,7 @@ const I18N = {
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
-    edit: "Bearbeiten", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
+    edit: "Bearbeiten", subject_hint: "Gegenstand laut Bundesgericht", subject: "Gegenstand", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
     st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
@@ -34,7 +34,7 @@ const I18N = {
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
-    edit: "Modifier", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
+    edit: "Modifier", subject_hint: "Objet selon le Tribunal fédéral", subject: "Objet", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
     st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
@@ -160,6 +160,9 @@ function tagsOf(c) {
   return de.map((k, i) => ({ key: k, label: state.lang === "fr" && fr.length === de.length ? fr[i] : k }));
 }
 
+// The court's own subject line ("Gegenstand"), as published, in the language of the ruling.
+const subjectOf = (c) => (c.source === "demo" ? "" : String(c.subject || "").replace(/[\s,;]+$/, ""));
+
 /* ---------- list ---------- */
 function visible() {
   const q = $("#search").value.trim().toLowerCase();
@@ -194,7 +197,7 @@ function rowHtml(c) {
     </div>
     <div class="m-main">
       <div class="m-top"><span class="t">${esc(titleOf(c))}</span><span class="m-date">${esc(fmtDate(c.decision_date || c.publication_date))}</span></div>
-      <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}</div>
+      <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}${subjectOf(c) ? ` · <span class="subj" title="${t("subject_hint")}">${esc(subjectOf(c))}</span>` : ""}</div>
       <p class="why">${fmt(whyOf(c))}</p>
       <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
@@ -356,6 +359,7 @@ async function renderPanel() {
     <div class="section"><h4>${t("details")}</h4><div class="kv">
       ${d.decision_date ? `<span class="muted">${t("decided")}</span><span>${esc(fmtDate(d.decision_date))}</span>` : ""}
       ${d.publication_date ? `<span class="muted">${t("published")}</span><span>${esc(fmtDate(d.publication_date))}</span>` : ""}
+      ${subjectOf(d) ? `<span class="muted">${t("subject")}</span><span>${esc(subjectOf(d))}</span>` : ""}
       ${d.division ? `<span class="muted">${t("division")}</span><span>${esc(d.division)}</span>` : ""}
       ${d.url ? `<span class="muted">${t("original")}</span><span><a href="${esc(d.url)}" target="_blank" rel="noopener">${t("open_bger")} ↗</a></span>` : ""}
     </div></div>
