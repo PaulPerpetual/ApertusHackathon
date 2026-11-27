@@ -82,6 +82,9 @@ def collect():
             continue
         link = row[3].hyperlink.target if row[3].hyperlink else ""
         m = CASE.search(title) or CASE.search(link)
+        if not m:  # e.g. "BGer-Urteil 458/2025 ..." without chamber: accident-law chamber 8C
+            bare = re.search(r"BGer-Urteil\s+(\d+)/(\d{4})", title)
+            m = ("", "8C", bare[1], bare[2]) if bare else None
         if not m:
             print(f"  skip spreadsheet row (no federal case number): {title}")
             continue
