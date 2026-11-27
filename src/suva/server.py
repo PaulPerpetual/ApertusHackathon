@@ -1,6 +1,7 @@
 """FastAPI backend for the triage UI. Serves the static frontend and a small JSON API."""
 import base64
 import hashlib
+import json
 import re
 import secrets
 import threading
@@ -108,6 +109,39 @@ def stats_json():
     if not path.exists():
         raise HTTPException(404, "stats not built yet")
     return FileResponse(path, media_type="application/json")
+
+
+@app.get("/compare")
+def compare_page():
+    """Compare runs of models / agents / versions (data/runs, built by src/runs.py)."""
+    return FileResponse(STATIC / "compare.html")
+
+
+@app.get("/api/runs")
+def runs_index():
+    path = config.ROOT / "data" / "runs" / "index.json"
+    if not path.exists():
+        raise HTTPException(404, "no runs yet")
+    return FileResponse(path, media_type="application/json")
+
+
+@app.get("/api/runs/{dataset}/{run_id}")
+def run_rows(dataset: str, run_id: str):
+    if not re.fullmatch(r"[\w.-]{1,80}", dataset) or not re.fullmatch(r"[\w.-]{1,80}", run_id):
+        raise HTTPException(400, "bad name")
+    base = config.ROOT / "data" / "runs" / dataset
+    name = "_dockets.json" if run_id == "_dockets" else f"{run_id}.jsonl"
+    path = base / name
+    if not path.exists():
+        raise HTTPException(404, "unknown run")
+    if name.endswith(".json"):
+        return FileResponse(path, media_type="application/json")
+    meta, rows = {}, []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            o = json.loads(line)
+            (rows.append(o) if "docket" in o else meta.update(o))
+    return {"meta": meta, "rows": rows}
 
 
 @app.get("/debug")

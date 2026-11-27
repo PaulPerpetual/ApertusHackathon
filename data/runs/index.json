@@ -1,0 +1,141 @@
+{
+ "generated_at": "2026-11-27T12:37:15Z",
+ "datasets": [
+  {
+   "id": "calibration40",
+   "label": "40 labelled rulings, Oct 2025 – Mar 2026 (blind for every model)",
+   "rulings": 40,
+   "labelled": true,
+   "positives": 20
+  },
+  {
+   "id": "window",
+   "label": "All 733 social-insurance rulings, Oct 2025 – Mar 2026 (Suva's list = labels)",
+   "rulings": 288,
+   "labelled": true,
+   "positives": 58
+  },
+  {
+   "id": "aprjun",
+   "label": "177 candidates, Apr – Jun 2026 (target period, labels come from Suva after judging)",
+   "rulings": 177,
+   "labelled": false,
+   "positives": 0
+  }
+ ],
+ "runs": [
+  {
+   "id": "apertus70b-v1",
+   "dataset": "calibration40",
+   "model": "Apertus v1.5 70B (CSCS/Keera)",
+   "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 40,
+   "listed": 22,
+   "metrics": {
+    "rulings": 40,
+    "positives": 20,
+    "listed": 22,
+    "hits": 16,
+    "recall": 0.8,
+    "precision": 0.727,
+    "f2": 0.784,
+    "auc": 0.752
+   }
+  },
+  {
+   "id": "apertus70b-v2-principle",
+   "dataset": "calibration40",
+   "model": "Apertus v1.5 70B (CSCS/Keera)",
+   "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 40,
+   "listed": 37,
+   "metrics": {
+    "rulings": 40,
+    "positives": 20,
+    "listed": 37,
+    "hits": 20,
+    "recall": 1.0,
+    "precision": 0.541,
+    "f2": 0.855,
+    "auc": 0.31
+   }
+  },
+  {
+   "id": "codex-gpt6",
+   "dataset": "calibration40",
+   "model": "GPT-6 (Codex; exact runtime version not exposed)",
+   "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 40,
+   "listed": 21,
+   "metrics": {
+    "rulings": 40,
+    "positives": 20,
+    "listed": 21,
+    "hits": 17,
+    "recall": 0.85,
+    "precision": 0.81,
+    "f2": 0.842,
+    "auc": 0.897
+   }
+  },
+  {
+   "id": "apertus70b-v1",
+   "dataset": "window",
+   "model": "Apertus v1.5 70B (CSCS/Keera)",
+   "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 288,
+   "listed": 101,
+   "metrics": {
+    "rulings": 288,
+    "positives": 58,
+    "listed": 101,
+    "hits": 49,
+    "recall": 0.845,
+    "precision": 0.485,
+    "f2": 0.736,
+    "auc": 0.807
+   }
+  },
+  {
+   "id": "apertus70b-v2-principle",
+   "dataset": "window",
+   "model": "Apertus v1.5 70B (CSCS/Keera)",
+   "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 288,
+   "listed": 259,
+   "metrics": {
+    "rulings": 288,
+    "positives": 58,
+    "listed": 259,
+    "hits": 57,
+    "recall": 0.983,
+    "precision": 0.22,
+    "f2": 0.58,
+    "auc": 0.319
+   }
+  },
+  {
+   "id": "apertus70b-v1",
+   "dataset": "aprjun",
+   "model": "Apertus v1.5 70B (CSCS/Keera)",
+   "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned). This is the submitted hit list.",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 177,
+   "listed": 77
+  },
+  {
+   "id": "codex-gpt6",
+   "dataset": "aprjun",
+   "model": "GPT-6 (Codex; exact runtime version not exposed)",
+   "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
+   "created_at": "2026-11-27T12:37:15Z",
+   "rulings": 177,
+   "listed": 60
+  }
+ ]
+}

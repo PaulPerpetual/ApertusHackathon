@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lex Aperta Compare</title>
+<style>
+  :root { --bg:#f3f2f1; --card:#fff; --fg:#323130; --muted:#605e5c; --line:#edebe9; --accent:#0078d4;
+          --a:#0078d4; --b:#c4314b; --both:#107c10; --none:#8a8886; --yes:#107c10; --no:#a4262c; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --a:#2899f5; --b:#f1707b; --both:#54b054; --none:#a19f9d; --yes:#54b054; --no:#f1707b; } }
+  :root[data-theme="dark"] { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --a:#2899f5; --b:#f1707b; --both:#54b054; --none:#a19f9d; --yes:#54b054; --no:#f1707b; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.5 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; }
+  .suite { background:#201f1e; color:#fff; padding:8px 16px; font-weight:600; display:flex; gap:16px; align-items:center; }
+  .suite a { color:#c8c6c4; text-decoration:none; font-weight:400; font-size:13px; } .suite a.on { color:#fff; font-weight:600; }
+  main { max-width:1180px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:24px; font-weight:600; margin:0 0 2px; } h2 { font-size:16px; font-weight:600; margin:0 0 8px; }
+  .sub, .note { color:var(--muted); } .note { font-size:12px; margin-top:8px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:16px; margin-bottom:16px; box-shadow:0 1.6px 3.6px rgba(0,0,0,.08); }
+  .bar { display:flex; flex-wrap:wrap; gap:12px; align-items:end; }
+  label { font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  select, input { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:2px; background:var(--card); color:var(--fg); min-width:200px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th, td { padding:7px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-weight:600; position:sticky; top:0; background:var(--card); }
+  td.n, th.n { text-align:right; white-space:nowrap; }
+  tr.sel td { background:color-mix(in srgb, var(--accent) 8%, transparent); }
+  .pill { display:inline-block; min-width:30px; text-align:center; padding:1px 6px; border-radius:10px; font-size:12px; font-weight:600; }
+  .yes { background:color-mix(in srgb, var(--yes) 18%, transparent); color:var(--yes); }
+  .no { background:color-mix(in srgb, var(--none) 18%, transparent); color:var(--muted); }
+  .tabs { display:flex; gap:4px; flex-wrap:wrap; margin:4px 0 10px; }
+  .tabs button { font:inherit; font-size:13px; padding:5px 10px; border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:2px; cursor:pointer; }
+  .tabs button.on { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .reason { color:var(--muted); font-size:12px; margin-top:3px; max-width:520px; }
+  .venn { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:10px; }
+  .vbox { border:1px solid var(--line); border-radius:4px; padding:10px 12px; }
+  .vbox b { font-size:24px; display:block; } .vbox span { font-size:12px; color:var(--muted); }
+  .scroll { overflow-x:auto; } .muted { color:var(--muted); } a { color:var(--accent); }
+  code { font:12px ui-monospace, Menlo, monospace; }
+</style>
+</head>
+<body>
+<div class="suite">Lex Aperta <a href="./">Urteilsradar</a><a href="stats">Statistik</a><a class="on" href="compare">Vergleich</a></div>
+<main>
+  <h1>Model comparison</h1>
+  <div class="sub">Every model, version or agent is a <b>run</b>: a yes/no, score and reason per ruling. Pick a dataset
+    and two runs. Where Suva's labels exist, every run is scored the way Suva scores the hit list (Recall, F2).</div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="bar">
+      <label>Dataset<select id="ds"></select></label>
+      <label>Run A<select id="ra"></select></label>
+      <label>Run B<select id="rb"></select></label>
+    </div>
+    <div class="note" id="dsnote"></div>
+  </div>
+
+  <div class="card">
+    <h2>All runs on this dataset</h2>
+    <div class="scroll"><table id="runs"></table></div>
+    <div class="note" id="runsnote"></div>
+  </div>
+
+  <div class="card">
+    <h2>A vs B</h2>
+    <div class="venn" id="venn"></div>
+    <div class="note">Agreement = same yes/no decision. Score correlation = Spearman rank correlation of the two scores.</div>
+  </div>
+
+  <div class="card">
+    <h2>Rulings</h2>
+    <div class="tabs" id="filters"></div>
+    <div class="bar" style="margin-bottom:8px"><label>Search<input id="q" placeholder="docket, subject, reason …"></label></div>
+    <div class="scroll"><table id="rows"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Add another model or agent</h2>
+    <div class="sub">Give it the blind input (<code>data/second_opinion/*.jsonl</code>), let it write one JSON line per ruling
+      <code>{"docket":"8C_123/2026","score":0-100,"relevant":true,"reason":"…"}</code>, then on the Mac Mini run
+      <code>python src/runs.py import FILE --id my-agent-v1 --dataset aprjun --model "…"</code>, commit and deploy.
+      New Apertus versions: <code>python src/runs.py build</code>.</div>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x) => x == null ? "–" : Math.round(x * 100) + "%";
+const f3 = (x) => x == null ? "–" : x.toFixed(3);
+const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+let IDX = null, DOCK = {}, A = null, B = null, filter = store.get("cmp.filter", "diff");
+
+function spearman(xs, ys) {
+  const rank = (v) => { const s = v.map((x, i) => [x, i]).sort((a, b) => a[0] - b[0]); const r = Array(v.length);
+    for (let i = 0; i < s.length;) { let j = i; while (j + 1 < s.length && s[j + 1][0] === s[i][0]) j++; for (let k = i; k <= j; k++) r[s[k][1]] = (i + j) / 2; i = j + 1; } return r; };
+  if (xs.length < 3) return null;
+  const a = rank(xs), b = rank(ys), n = a.length, ma = a.reduce((s, x) => s + x, 0) / n, mb = b.reduce((s, x) => s + x, 0) / n;
+  let num = 0, da = 0, db = 0; for (let i = 0; i < n; i++) { num += (a[i] - ma) * (b[i] - mb); da += (a[i] - ma) ** 2; db += (b[i] - mb) ** 2; }
+  return da && db ? num / Math.sqrt(da * db) : null;
+}
+
+async function getJSON(p) { const r = await fetch(p); if (!r.ok) throw new Error(`${r.status} ${p}`); return r.json(); }
+
+function fillRuns() {
+  const ds = $("ds").value, runs = IDX.runs.filter((r) => r.dataset === ds);
+  const opt = (r) => `<option value="${esc(r.id)}">${esc(r.id)}</option>`;
+  $("ra").innerHTML = runs.map(opt).join(""); $("rb").innerHTML = runs.map(opt).join("");
+  const pa = store.get(`cmp.a.${ds}`, runs.find((r) => /apertus.*v1/.test(r.id))?.id || runs[0]?.id);
+  const pb = store.get(`cmp.b.${ds}`, runs.find((r) => /codex/.test(r.id))?.id || runs.find((r) => r.id !== pa)?.id || runs[0]?.id);
+  if (runs.some((r) => r.id === pa)) $("ra").value = pa;
+  if (runs.some((r) => r.id === pb)) $("rb").value = pb;
+  const d = IDX.datasets.find((x) => x.id === ds);
+  $("dsnote").textContent = `${d.label}. ${d.rulings} rulings` + (d.labelled ? `, ${d.positives} picked by Suva.` : ". No labels yet.");
+  const labelled = d.labelled;
+  $("runs").innerHTML = `<tr><th>Run</th><th>Model</th><th class="n">Listed</th>${labelled ? `<th class="n">Hits</th><th class="n">Recall</th><th class="n">Precision</th><th class="n">F2</th><th class="n">AUC</th>` : ""}<th>Notes</th></tr>` +
+    runs.map((r) => { const m = r.metrics || {}; return `<tr class="${[$("ra").value, $("rb").value].includes(r.id) ? "sel" : ""}"><td><b>${esc(r.id)}</b></td><td>${esc(r.model)}</td><td class="n">${r.listed}/${r.rulings}</td>` +
+      (labelled ? `<td class="n">${m.hits}/${m.positives}</td><td class="n">${pct(m.recall)}</td><td class="n">${pct(m.precision)}</td><td class="n"><b>${f3(m.f2)}</b></td><td class="n">${f3(m.auc)}</td>` : "") +
+      `<td class="muted" style="font-size:12px">${esc(r.notes)}</td></tr>`; }).join("");
+  $("runsnote").textContent = ds === "calibration40"
+    ? "Note: this set is half Suva picks by design, which flatters lenient runs. Use 'window' (about 20 % picks, as in reality) to judge F2."
+    : ds === "window" ? "Realistic base rate: this is the yardstick for the hit list." : "Suva's labels for Apr–Jun arrive with the judging; until then compare agreement and read the disagreements.";
+}
+
+async function load() {
+  const ds = $("ds").value;
+  store.set("cmp.ds", ds); store.set(`cmp.a.${ds}`, $("ra").value); store.set(`cmp.b.${ds}`, $("rb").value);
+  DOCK = await getJSON(`api/runs/${ds}/_dockets`);
+  const [a, b] = await Promise.all([getJSON(`api/runs/${ds}/${$("ra").value}`), getJSON(`api/runs/${ds}/${$("rb").value}`)]);
+  A = a; B = b; fillRuns(); render();
+}
+
+function render() {
+  const ma = new Map(A.rows.map((r) => [r.docket, r])), mb = new Map(B.rows.map((r) => [r.docket, r]));
+  const ids = [...new Set([...ma.keys(), ...mb.keys()])];
+  const both = ids.filter((d) => ma.get(d)?.relevant && mb.get(d)?.relevant);
+  const onlyA = ids.filter((d) => ma.get(d)?.relevant && !mb.get(d)?.relevant);
+  const onlyB = ids.filter((d) => !ma.get(d)?.relevant && mb.get(d)?.relevant);
+  const common = ids.filter((d) => ma.has(d) && mb.has(d));
+  const agree = common.filter((d) => !!ma.get(d).relevant === !!mb.get(d).relevant).length;
+  const rho = spearman(common.map((d) => ma.get(d).score ?? 0), common.map((d) => mb.get(d).score ?? 0));
+  const labelled = Object.values(DOCK).some((m) => m.suva != null);
+  const missed = labelled ? ids.filter((d) => DOCK[d]?.suva && !ma.get(d)?.relevant && !mb.get(d)?.relevant) : [];
+  $("venn").innerHTML = [
+    [both.length, "both say relevant", "var(--both)"], [onlyA.length, `only A (${A.meta.run})`, "var(--a)"],
+    [onlyB.length, `only B (${B.meta.run})`, "var(--b)"], [pct(common.length ? agree / common.length : null), "agreement", "var(--fg)"],
+    [rho == null ? "–" : rho.toFixed(2), "score correlation", "var(--fg)"],
+    ...(labelled ? [[missed.length, "Suva picks both missed", "var(--no)"]] : []),
+  ].map(([v, l, c]) => `<div class="vbox" style="border-left:4px solid ${c}"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
+
+  const F = [["diff", "Disagreements", [...onlyA, ...onlyB]], ["onlyA", "Only A", onlyA], ["onlyB", "Only B", onlyB], ["both", "Both", both], ["all", "All", ids]];
+  if (labelled) F.push(["missed", "Suva picks both missed", missed], ["suva", "All Suva picks", ids.filter((d) => DOCK[d]?.suva)]);
+  if (!F.some(([k]) => k === filter)) filter = "diff";
+  $("filters").innerHTML = F.map(([k, l, arr]) => `<button class="${k === filter ? "on" : ""}" data-f="${k}">${esc(l)} (${arr.length})</button>`).join("");
+  $("filters").querySelectorAll("button").forEach((b) => b.onclick = () => { filter = b.dataset.f; store.set("cmp.filter", filter); render(); });
+
+  const q = $("q").value.trim().toLowerCase();
+  let list = F.find(([k]) => k === filter)[2];
+  if (q) list = list.filter((d) => [d, DOCK[d]?.subject, DOCK[d]?.title, ma.get(d)?.reason, mb.get(d)?.reason].join(" ").toLowerCase().includes(q));
+  list = [...list].sort((x, y) => Math.abs((ma.get(y)?.score ?? 0) - (mb.get(y)?.score ?? 0)) - Math.abs((ma.get(x)?.score ?? 0) - (mb.get(x)?.score ?? 0)));
+  const cell = (r) => r ? `<span class="pill ${r.relevant ? "yes" : "no"}">${r.score ?? "–"}</span><div class="reason">${esc(r.reason)}</div>` : `<span class="muted">–</span>`;
+  $("rows").innerHTML = `<tr><th>Ruling</th>${labelled ? "<th>Suva</th>" : ""}<th>A: ${esc(A.meta.run)}</th><th>B: ${esc(B.meta.run)}</th></tr>` +
+    list.slice(0, 300).map((d) => { const m = DOCK[d] || {}; return `<tr><td><b>${m.url ? `<a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(d)}</a>` : esc(d)}</b><div class="reason">${esc(m.date)} · ${esc(m.subject)}</div>${m.title ? `<div class="reason">${esc(m.title)}</div>` : ""}</td>` +
+      (labelled ? `<td>${m.suva ? '<span class="pill yes">picked</span>' : '<span class="pill no">no</span>'}</td>` : "") +
+      `<td>${cell(ma.get(d))}</td><td>${cell(mb.get(d))}</td></tr>`; }).join("") +
+    (list.length > 300 ? `<tr><td colspan="4" class="muted">… ${list.length - 300} more, refine the search</td></tr>` : "") +
+    (!list.length ? `<tr><td colspan="4" class="muted">Nothing in this view.</td></tr>` : "");
+}
+
+(async () => {
+  try {
+    IDX = await getJSON("api/runs");
+    $("ds").innerHTML = IDX.datasets.map((d) => `<option value="${d.id}">${esc(d.id)}</option>`).join("");
+    const ds = store.get("cmp.ds", "aprjun"); if (IDX.datasets.some((d) => d.id === ds)) $("ds").value = ds;
+    fillRuns();
+    $("ds").onchange = () => { fillRuns(); load(); };
+    $("ra").onchange = load; $("rb").onchange = load; $("q").oninput = () => render();
+    await load();
+  } catch (e) { $("dsnote").textContent = "Could not load runs: " + e.message; }
+})();
+</script>
+</body>
+</html>
