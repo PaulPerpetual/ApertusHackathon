@@ -58,7 +58,7 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
 let D = null, L = store.get("ex.lang", "de");
-const paras = (t) => esc(t).split(/\n{2,}/).map((p) => `<p>${p.replace(/\((E\.|Erw\.|consid\.)\s*([0-9][^)]*)\)/g, '<span class="ref">($1 $2)</span>')}</p>`).join("");
+const paras = (t) => esc(t).split(/\n{2,}/).map((p) => `<p>${p.replace(/(^|[\s(;,])(E\.|Erw\.|consid\.)\s*(\d+(?:\.\d+)*)/g, '$1<span class="ref">$2 $3</span>')}</p>`).join("");
 
 function render() {
   document.querySelectorAll("#lang button").forEach((b) => b.classList.toggle("on", b.dataset.l === L));
