@@ -89,7 +89,8 @@ Vergib Scores ab 70 nur, wenn das Urteil nach diesen Massstäben zu den zusammen
 
 Antworte ausschliesslich mit einem JSON-Objekt:
 {"score": <int>, "suva_party": <bool>,
- "title_de": "<prägnanter Titel, max. 12 Wörter>", "title_fr": "<titre concis, max. 12 mots>",
+ "title_de": "<kurzer Titel auf DEUTSCH, 4-8 Wörter, Kernfrage + Ergebnis, auch wenn das Urteil französisch ist>",
+ "title_fr": "<titre court en FRANÇAIS, 4-8 mots, question + issue, même si l'arrêt est en allemand>",
  "explanation_de": "<2-3 Sätze: warum (nicht) relevant, welche Rechtsfrage, Ergebnis>",
  "explanation_fr": "<2-3 phrases: pourquoi (pas) pertinent, question juridique, issue>",
  "tags": ["<3-5 kurze deutsche Schlagworte>"],
