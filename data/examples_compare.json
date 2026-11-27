@@ -1,0 +1,21 @@
+{
+ "n": 0,
+ "summary": {
+  "de": {
+   "words_suva": null,
+   "words_ours": null,
+   "refs_suva": null,
+   "refs_ours": null,
+   "overlap": null
+  },
+  "fr": {
+   "words_suva": null,
+   "words_ours": null,
+   "refs_suva": null,
+   "refs_ours": null,
+   "overlap": null
+  }
+ },
+ "flagged_relevant": 0,
+ "items": []
+}

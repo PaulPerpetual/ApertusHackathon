@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lex Aperta Examples</title>
+<style>
+  :root { --bg:#f3f2f1; --card:#fff; --fg:#323130; --muted:#605e5c; --line:#edebe9; --accent:#0078d4; --suva:#c4314b; --ours:#0078d4; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --suva:#f1707b; --ours:#2899f5; } }
+  :root[data-theme="dark"] { --bg:#1b1a19; --card:#252423; --fg:#f3f2f1; --muted:#c8c6c4; --line:#3b3a39; --accent:#2899f5; --suva:#f1707b; --ours:#2899f5; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.55 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif; }
+  .suite { background:#201f1e; color:#fff; padding:8px 16px; font-weight:600; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .suite a { color:#c8c6c4; text-decoration:none; font-weight:400; font-size:13px; } .suite a.on { color:#fff; font-weight:600; }
+  main { max-width:1240px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:24px; font-weight:600; margin:0 0 2px; } h2 { font-size:17px; font-weight:600; margin:0; }
+  .sub, .muted { color:var(--muted); } .small { font-size:12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:16px; margin-bottom:14px; box-shadow:0 1.6px 3.6px rgba(0,0,0,.08); }
+  .kpis { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); margin:14px 0; }
+  .kpi { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:10px 12px; }
+  .kpi b { display:block; font-size:22px; font-weight:600; } .kpi span { font-size:12px; color:var(--muted); }
+  .bar { display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin:10px 0 14px; }
+  label { font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  select, input { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:2px; background:var(--card); color:var(--fg); }
+  .seg button { font:inherit; padding:5px 12px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+  .seg button.on { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline; }
+  .score { font-weight:600; padding:1px 8px; border-radius:10px; background:color-mix(in srgb, var(--accent) 14%, transparent); color:var(--accent); }
+  .tags span { display:inline-block; font-size:11px; padding:1px 7px; margin:2px 4px 0 0; border-radius:2px; background:var(--line); color:var(--muted); }
+  .why { border-left:3px solid var(--accent); padding:6px 10px; margin:10px 0; background:color-mix(in srgb, var(--accent) 5%, transparent); }
+  .why b { font-size:12px; color:var(--muted); display:block; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px; }
+  @media (max-width: 760px) { .cols { grid-template-columns:1fr; } }
+  .col { border:1px solid var(--line); border-radius:4px; padding:10px 12px; }
+  .col h3 { margin:0 0 6px; font-size:13px; font-weight:600; display:flex; justify-content:space-between; gap:8px; }
+  .col.suva { border-top:3px solid var(--suva); } .col.ours { border-top:3px solid var(--ours); }
+  .col p { margin:0 0 8px; white-space:pre-wrap; } .ref { color:var(--accent); font-weight:600; }
+  .met { font-size:12px; color:var(--muted); margin-top:6px; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="suite">Lex Aperta <a href="./">Urteilsradar</a><a href="stats">Statistik</a><a href="compare">Vergleich</a><a class="on" href="examples">Suva-Beispiele</a></div>
+<main>
+  <h1>Suva examples: expert vs Apertus</h1>
+  <div class="sub">The rulings Suva gave us with expert summaries, processed by our pipeline from scratch.
+    For each ruling, Suva's own summary was <b>not</b> shown to the model (blind). Left: Suva's lawyer. Right: Apertus v1.5 70B.
+    Suva writes no "Begründung"; ours is shown above each pair.</div>
+  <div class="kpis" id="kpis"></div>
+  <div class="bar">
+    <div class="seg" id="lang"><button data-l="de">Deutsch</button><button data-l="fr">Français</button></div>
+    <label>Search<input id="q" placeholder="docket, subject, text …" size="28"></label>
+    <label>Sort<select id="sort"><option value="date">newest first</option><option value="overlap">lowest overlap first</option><option value="overlap_d">highest overlap first</option></select></label>
+  </div>
+  <div id="list"><div class="muted">Loading…</div></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+let D = null, L = store.get("ex.lang", "de");
+const paras = (t) => esc(t).split(/\n{2,}/).map((p) => `<p>${p.replace(/\((E\.|Erw\.|consid\.)\s*([0-9][^)]*)\)/g, '<span class="ref">($1 $2)</span>')}</p>`).join("");
+
+function render() {
+  document.querySelectorAll("#lang button").forEach((b) => b.classList.toggle("on", b.dataset.l === L));
+  const s = D.summary[L];
+  $("kpis").innerHTML = [
+    [D.n, "rulings with Suva summary"], [`${D.flagged_relevant} / ${D.n}`, "flagged relevant by Apertus (score ≥ 60)"],
+    [`${s.words_suva} / ${s.words_ours}`, "median words: Suva / ours"], [`${s.refs_suva} / ${s.refs_ours}`, "median Erw. refs: Suva / ours"],
+    [Math.round(s.overlap * 100) + "%", "median content-word overlap with Suva"],
+  ].map(([v, l]) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
+  const q = $("q").value.trim().toLowerCase();
+  let items = D.items.filter((i) => !q || [i.docket, i.subject, i.title[L], i.suva[L], i.ours[L], i.begruendung[L]].join(" ").toLowerCase().includes(q));
+  const srt = $("sort").value;
+  if (srt === "overlap") items = [...items].sort((a, b) => a.metrics[L].overlap - b.metrics[L].overlap);
+  if (srt === "overlap_d") items = [...items].sort((a, b) => b.metrics[L].overlap - a.metrics[L].overlap);
+  $("list").innerHTML = items.map((i) => {
+    const m = i.metrics[L];
+    return `<div class="card">
+      <div class="head"><div><h2>${esc(i.title[L] || i.docket)}</h2>
+        <div class="small muted">${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.docket)}</a>` : esc(i.docket)} · ${esc(i.date)} · ${esc(i.subject)} · Urteil ${esc((i.language || "").toUpperCase())}</div>
+        <div class="tags">${(i.tags[L] || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div></div>
+        <span class="score" title="Apertus relevance score">${i.score ?? "–"}</span></div>
+      <div class="why"><b>${L === "fr" ? "Justification (Apertus)" : "Begründung (Apertus)"}</b>${esc(i.begruendung[L])}</div>
+      <div class="cols">
+        <div class="col suva"><h3><span>${L === "fr" ? "Résumé Suva" : "Zusammenfassung Suva"}</span><span class="muted small">${esc(i.suva.author)}</span></h3>${paras(i.suva[L])}
+          <div class="met">${m.words_suva} ${L === "fr" ? "mots" : "Wörter"} · ${m.refs_suva} Erw.-Verweise</div></div>
+        <div class="col ours"><h3><span>${L === "fr" ? "Résumé Apertus" : "Zusammenfassung Apertus"}</span><span class="muted small">Apertus v1.5 70B</span></h3>${paras(i.ours[L])}
+          <div class="met">${m.words_ours} ${L === "fr" ? "mots" : "Wörter"} · ${m.refs_ours} Erw.-Verweise · Überschneidung ${Math.round(m.overlap * 100)}%</div></div>
+      </div></div>`;
+  }).join("") || `<div class="card muted">No match.</div>`;
+}
+
+fetch("api/examples-compare").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((d) => {
+  D = d;
+  document.querySelectorAll("#lang button").forEach((b) => b.onclick = () => { L = b.dataset.l; store.set("ex.lang", L); render(); });
+  $("q").oninput = render; $("sort").onchange = render;
+  render();
+}).catch((e) => { $("list").innerHTML = `<div class="card">Could not load data (${esc(e.message)}). The comparison run may still be in progress.</div>`; });
+</script>
+</body>
+</html>

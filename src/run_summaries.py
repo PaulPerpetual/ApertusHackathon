@@ -31,7 +31,8 @@ def main():
     exs = examples.load_examples()
     con = sqlite3.connect(a.db, timeout=30)
     con.row_factory = sqlite3.Row
-    rows = [dict(r) for r in con.execute("""
+    has_fin = con.execute("SELECT 1 FROM sqlite_master WHERE name='final_selection'").fetchone()
+    rows = [] if (a.only or not has_fin) else [dict(r) for r in con.execute("""
         SELECT j.*, a.ai_score FROM judgements j JOIN assessments a ON a.slug = j.slug
         JOIN final_selection f ON f.slug = j.slug
         WHERE f.selected = 1 AND (? OR (SELECT COUNT(*) FROM summaries s WHERE s.slug = j.slug) < 2)

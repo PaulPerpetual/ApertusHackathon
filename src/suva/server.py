@@ -155,6 +155,20 @@ def run_rows(dataset: str, run_id: str):
     return {"meta": meta, "rows": rows}
 
 
+@app.get("/examples")
+def examples_page():
+    """Suva's expert summaries vs ours on the same rulings (data: GET /api/examples-compare)."""
+    return FileResponse(STATIC / "examples.html")
+
+
+@app.get("/api/examples-compare")
+def examples_compare():
+    path = config.ROOT / "data" / "examples_compare.json"  # built by src/build_examples_compare.py
+    if not path.exists():
+        raise HTTPException(404, "not built yet")
+    return FileResponse(path, media_type="application/json")
+
+
 @app.get("/debug")
 def debug_page():
     """Troubleshooting page for the hosted API (status, data counts, key test)."""
