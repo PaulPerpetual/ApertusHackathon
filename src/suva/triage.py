@@ -92,8 +92,8 @@ Antworte ausschliesslich mit einem JSON-Objekt:
 {"score": <int>, "suva_party": <bool>,
  "title_de": "<kurzer Titel auf DEUTSCH, 4-8 Wörter, Kernfrage + Ergebnis, auch wenn das Urteil französisch ist>",
  "title_fr": "<titre court en FRANÇAIS, 4-8 mots, question + issue, même si l'arrêt est en allemand>",
- "explanation_de": "<2-3 Sätze: warum (nicht) relevant, welche Rechtsfrage, Ergebnis>",
- "explanation_fr": "<2-3 phrases: pourquoi (pas) pertinent, question juridique, issue>",
+ "explanation_de": "<1-2 Sätze, höchstens 40 Wörter, DEUTSCH: was das Urteil für die Fallbearbeitung der Suva bedeutet (welcher Grundsatz gilt, worauf künftig zu achten ist); kein Sachverhalt, keine Erwägungsnummern; bei geringer Relevanz kurz warum nicht>",
+ "explanation_fr": "<1-2 phrases, 40 mots au plus, FRANÇAIS: ce que l'arrêt signifie pour la pratique de la Suva (principe applicable, point d'attention); pas de faits, pas de numéros de considérants>",
  "tags": ["<2-5 Schlagworte, NUR aus der Liste unten, exakt so geschrieben>"]}
 
 Schlagworte (nur Rechtsfragen, kein Ergebnis wie "abgewiesen"; UVG bzw. IV für das Rechtsgebiet):
