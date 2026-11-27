@@ -67,6 +67,14 @@
   </div>
 
   <div class="card">
+    <h2>Ranking: A vs B</h2>
+    <div class="sub">Both runs sorted by their own score (ties broken by the other criteria of the run file order).
+      Overlap = how many of A's top N are also in B's top N.</div>
+    <div class="venn" id="topn" style="margin:10px 0"></div>
+    <div class="scroll"><table id="ranks"></table></div>
+  </div>
+
+  <div class="card">
     <h2>Rulings</h2>
     <div class="tabs" id="filters"></div>
     <div class="bar" style="margin-bottom:8px"><label>Search<input id="q" placeholder="docket, subject, reason …"></label></div>
@@ -145,6 +153,18 @@ function render() {
     [rho == null ? "–" : rho.toFixed(2), "score correlation", "var(--fg)"],
     ...(labelled ? [[missed.length, "Suva picks both missed", "var(--no)"]] : []),
   ].map(([v, l, c]) => `<div class="vbox" style="border-left:4px solid ${c}"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
+
+  // ranking view
+  const rankOf = (rows) => { const m = new Map(); [...rows].sort((x, y) => (y.score ?? -1) - (x.score ?? -1)).forEach((r, i) => m.set(r.docket, i + 1)); return m; };
+  const ra = rankOf(A.rows), rb = rankOf(B.rows);
+  const topN = (n) => { const ta = new Set([...ra].filter(([, r]) => r <= n).map(([d]) => d)); return [...rb].filter(([d, r]) => r <= n && ta.has(d)).length; };
+  const nA = A.rows.filter((r) => r.relevant).length;
+  $("topn").innerHTML = [10, 30, nA].filter((n, i, a) => n && a.indexOf(n) === i).map((n) =>
+    `<div class="vbox"><b>${topN(n)} / ${n}</b><span>top-${n} overlap${n === nA ? " (size of A's list)" : ""}</span></div>`).join("");
+  const top = [...ra].sort((x, y) => x[1] - y[1]).slice(0, 40);
+  $("ranks").innerHTML = `<tr><th class="n">Rank A</th><th>Ruling</th><th class="n">Score A</th><th class="n">Rank B</th><th class="n">Score B</th><th class="n">Δ rank</th></tr>` +
+    top.map(([d, r]) => { const b = rb.get(d); const dl = b ? b - r : null; const m = DOCK[d] || {};
+      return `<tr><td class="n">${r}</td><td>${esc(d)} <span class="reason">${esc((m.title || m.subject || "").slice(0, 80))}</span></td><td class="n">${ma.get(d)?.score ?? "–"}</td><td class="n">${b ?? "–"}</td><td class="n">${mb.get(d)?.score ?? "–"}</td><td class="n" style="${dl != null && Math.abs(dl) > 30 ? "color:var(--no);font-weight:600" : ""}">${dl == null ? "–" : (dl > 0 ? "+" : "") + dl}</td></tr>`; }).join("");
 
   const F = [["diff", "Disagreements", [...onlyA, ...onlyB]], ["onlyA", "Only A", onlyA], ["onlyB", "Only B", onlyB], ["both", "Both", both], ["all", "All", ids]];
   if (labelled) F.push(["missed", "Suva picks both missed", missed], ["suva", "All Suva picks", ids.filter((d) => DOCK[d]?.suva)]);
