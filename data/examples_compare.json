@@ -3,8 +3,8 @@
  "prompt": "S2.2 (live prompt)",
  "tiers": {
   "1": 41,
-  "2": 6,
-  "3": 7
+  "2": 12,
+  "3": 1
  },
  "summary": {
   "de": {
@@ -275,8 +275,8 @@
      "overlap": 0.237
     }
    },
-   "tier": 3,
-   "tier_reason": "Das Urteil betrifft ausschliesslich die Invalidenversicherung (IVG/LAI), behandelt rein prozessuale Fragen (Verletzung des Beschleunigungsgebots und Gerichtskosten im kantonalen Verfahren) und enthält keine materiellen Grundsätze, die für die Unfallversicherung (UVG/LAA) relevant wären. Es klärt keinen übertragbaren Rechtssatz, der auch von der Suva angewendet werden muss (z. B. Unfallbegriff, Kau"
+   "tier": 2,
+   "tier_reason": "Das Urteil betrifft zwar die IV und ist prozessual, enthält aber eine klare Aussage zur Unzulässigkeit einer automatischen Annahme von Rechtsverzögerung nach 10 Jahren und zur Notwendigkeit einer einzelfallweisen Gesamtbeurteilung. Diese Aussage ist für die Suva relevant, da sie auch im UVG-Kontext bei langen Verfahren und Fristenfragen (Art. 46 BGG, Art. 38 ATSG) als \"cavete collegae\" dient. Zude"
   },
   {
    "docket": "8C_223/2025",
@@ -525,8 +525,8 @@
      "overlap": 0.241
     }
    },
-   "tier": 3,
-   "tier_reason": "Es handelt sich um einen reinen Prozessentscheid (Nichteintreten auf Einsprache wegen fehlender Anfechtungsobjekte), der keine Klärung eines übertragbaren Rechtssatzes für die Unfallversicherung beinhaltet (keine Kausalität, Invaliditätsgrad, Integritätsentschädigung, Revision Art. 17 ATSG, Einkommensvergleich/Tabellenlöhne, Hilflosigkeit, etc.). Die Suva fasst solche rein prozessualen Entscheide "
+   "tier": 2,
+   "tier_reason": "Obwohl das Urteil rein prozessual ist (Eintretensfrage bei einer Verfügung, die nur den Rentenbetrag festlegte), betrifft es eine zentrale Verfahrensfrage für die Suva (Gegenstand der Anfechtung, Bindungswirkung rechtskräftiger Entscheide, Art. 52 ATSG). Solche \"cavete collegae\"-Punkte werden von der Suva als TIER 2 eingestuft, da sie die korrekte Anwendung der Verfahrensregeln im UVG betreffen un"
   },
   {
    "docket": "8C_366/2024",
@@ -885,7 +885,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung (Hilflosenentschädigung), enthält aber eine klare Anwendung und Bestätigung von Art. 25 Abs. 1 ATSG (Rückerstattung unrechtmässig bezogener Leistungen) und Art. 88bis Abs. 2 IVV (Zeitpunkt der Herabsetzung/Aufhebung von Leistungen). Da das ATSG auch für die Unfallversicherung (UVG) gilt und die Suva bei Rückforderungen und rückwirkenden Leistungsa"
+   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung (Hilflosenentschädigung), enthält jedoch klare Ausführungen zur rückwirkenden Aufhebung von Leistungen gestützt auf Art. 25 Abs. 1 ATSG und Art. 88bis Abs. 2 IVV. Da das ATSG auch für die Unfallversicherung (UVG) gilt und die Suva bei der Rückforderung unrechtmässig bezogener Leistungen sowie bei der rückwirkenden Leistungsanpassung an diese Norme"
   },
   {
    "docket": "8C_224/2025",
@@ -1088,8 +1088,8 @@
      "overlap": 0.235
     }
    },
-   "tier": 3,
-   "tier_reason": "Das Urteil bestätigt die Anwendung der IV-rechtlichen Rechtsprechung zum Soziallohn auf einen konkreten Einzelfall. Es präzisiert nicht einen für die Suva relevanten Grundsatz des UVG (Unfallversicherungsgesetz), sondern wendet etablierte IV-Rechtsprechung auf einen spezifischen Sachverhalt an. Es handelt sich um eine reine Anwendung gefestigter Rechtsprechung auf den Einzelfall ohne Klärung eines"
+   "tier": 2,
+   "tier_reason": "Das Urteil präzisiert die Voraussetzungen für die Anrechnung eines tatsächlich erzielten Einkommens als Invalideneinkommen und die Abgrenzung von Soziallohn bei langjährig im Familienbetrieb beschäftigten Versicherten. Es betrifft einen übertragbaren Rechtssatz (Art. 16 ATSG, Art. 25 Abs. 1 IVV, Art. 26bis Abs. 1 IVV) und enthält eine relevante verfahrensrechtliche/beweisrechtliche Klärung (Nachwe"
   },
   {
    "docket": "8C_399/2025",
@@ -1241,7 +1241,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Das Urteil präzisiert die Anwendung von Art. 17 ATSG (Revision) im Zusammenhang mit der Hilflosenentschädigung der IV und hält explizit fest, dass eine Verbesserung in einer Lebensverrichtung einen Revisionsgrund darstellt, der eine Neubeurteilung ohne Bindung an frühere Entscheide erlaubt. Da das ATSG auch für die Unfallversicherung (UVG) gilt, ist diese Rechtsprechung für die Suva relevant. Es h"
+   "tier_reason": "Das Urteil betrifft die Invalidenversicherung (Hilflosenentschädigung), ist aber für die Suva relevant, weil Art. 17 ATSG (Revision) auch im Unfallversicherungsrecht anwendbar ist und das Urteil die Voraussetzungen für eine Revision der Hilflosenentschädigung präzisiert (Verbesserung in einer Lebensverrichtung als Revisionsgrund). Es handelt sich um eine Querschnittsfrage (ATSG-Verfahren), die auc"
   },
   {
    "docket": "8C_626/2024",
@@ -1342,7 +1342,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung, präzisiert aber die Anwendung von Art. 17 ATSG (Rentenrevision) und damit einen allgemeinen sozialversicherungsrechtlichen Rechtssatz, der auch für die Unfallversicherung (UVG) relevant ist. Es klärt nicht nur die Tatbestandsvoraussetzungen der Revision, sondern auch die Bindungswirkung früherer Beurteilungen und die umfassende Neuprüfung bei Rev"
+   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung, enthält aber eine präzise Anwendung von Art. 17 ATSG (Rentenrevision) und klärt die Bindungswirkung früherer Beurteilungen. Da das ATSG auch für die Unfallversicherung gilt und die Suva bei Revisionsfragen sowie bei der Prüfung der Verwertbarkeit der Restarbeitsfähigkeit auf dieselben Grundsätze angewiesen ist, stellt es einen übertragbaren Recht"
   },
   {
    "docket": "8C_129/2025",
@@ -1645,7 +1645,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Grenzfall, da das Urteil eine prozessuale Frage der Fristwahrung bei einer Einsprache behandelt und damit eine Präzisierung von Art. 10 Abs. 5 OPGA sowie Art. 61 lit. b LPGA enthält. Diese Bestimmungen sind für die Suva anwendbar (ATSG-Verfahren). Allerdings handelt es sich primär um die Anwendung dieser Normen auf einen Einzelfall (Rückweisung zur materiellen Entscheidung) und nicht um eine grund"
+   "tier_reason": "Verfahrensthema (Fristwahrung bei Einsprache) mit übertragbarem Rechtssatz (Art. 10 Abs. 5 ATSV) und Relevanz für Unfallversicherer; es betrifft eine Verfahrensfrage, die nicht reine Routine ist, sondern eine klare Präzisierung der Rechtsprechung zu Fristwahrung und Akteneinsicht bei vertretenen Versicherten, was als \"cavete collegae\" für die Suva relevant ist."
   },
   {
    "docket": "8C_172/2025",
@@ -1901,8 +1901,8 @@
      "overlap": 0.187
     }
    },
-   "tier": 3,
-   "tier_reason": "Das Urteil betrifft eine Einzelfallbeurteilung im Rahmen der Früherfassung der Invalidenversicherung. Es wendet keine allgemeine sozialversicherungsrechtliche Norm (wie Art. 17 ATSG Revision, Art. 53 ATSG Wiedererwägung, Art. 37 ATSG Zustellung, Art. 43/44 ATSG Gutachten, Art. 6 EMRK öffentliche Verhandlung etc.) in einer Weise aus, die für die Unfallversicherung präjudiziell wäre. Es handelt sich"
+   "tier": 2,
+   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung, aber es klärt die Grenzen des Beratungs- und Hinweispflichts (Art. 27 ATSG) im Rahmen der Früherfassung (Art. 3a LAI) und der Pflicht zur Anmeldung (Art. 29 Abs. 1 LPGA). Diese Normen sind auch für die Unfallversicherung relevant (z.B. bei Frühintervention, Fristen, Beratungspflicht). Zudem handelt es sich um eine verfahrensrechtliche Frage (kein"
   },
   {
    "docket": "8C_330/2025",
@@ -2053,7 +2053,7 @@
     }
    },
    "tier": 3,
-   "tier_reason": "Das Urteil betrifft ausschliesslich die Beweiswürdigung im konkreten IV-Fall (Simulation, Glaubwürdigkeit, Würdigung des Gutachtens vs. behandelnde Ärzte) und klärt keinen allgemeinen sozialversicherungsrechtlichen Rechtssatz, der für die Unfallversicherung (UVG/Suva) präjudiziell wäre. Es handelt sich um eine Einzelfallbeurteilung ohne Präzisierung oder Erinnerung einer Norm, die auch für die Suv"
+   "tier_reason": "Das Urteil betrifft ausschliesslich die Beweiswürdigung im konkreten IV-Fall (Simulation, Glaubwürdigkeit, Würdigung psychiatrisches Gutachten vs. behandelnde Ärzte) und klärt keinen allgemeinen sozialversicherungsrechtlichen Rechtssatz, der auch für die Unfallversicherung (UVG/Suva) präjudiziell wäre. Es enthält keine neuen Grundsätze zu Kausalität, Invaliditätsbemessung im UVG-Kontext, Integritä"
   },
   {
    "docket": "8C_517/2024",
@@ -2153,8 +2153,8 @@
      "overlap": 0.182
     }
    },
-   "tier": 3,
-   "tier_reason": "Reine prozessuale Entscheidung (Nichteintreten wegen Fristversäumnis) ohne Klärung eines materiellen Rechtsgrundsatzes, der für die Unfallversicherung relevant wäre; reine IV-Spezialfrage (Fristenstillstand im IV-Verfahren), keine Anwendung auf UVG/LAA."
+   "tier": 2,
+   "tier_reason": "Verfahrensfrage (Fristenstillstand bei Sistierung) betrifft auch die Unfallversicherung (ATSG/BGG), ist eine „cavete collegae\"-Frage (Fristen) und stellt eine klare Präzisierung einer Ausnahme vom Fristenstillstand dar, die für die Suva relevant ist. Im Zweifel wird ein solches Urteil geprüft, da verpasste Fristen in der Praxis häufig vorkommen und die Suva solche Präjudizien intern sammelt."
   },
   {
    "docket": "8C_241/2025",
@@ -2571,7 +2571,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Grenzfall, da das Urteil einen für die Suva relevanten Rechtssatz (Art. 44 LPGA, Kompetenz des Experten zur Bestimmung der Untersuchungsmodalitäten) präzisiert und wörtlich zitiert; jedoch betrifft es primär IV-Verfahren und reine Beweiswürdigung ohne Klärung eines neuen Grundsatzes für die Unfallversicherung; eine Juristin sollte es prüfen, ob die Präzisierung auch für die Suva bindend ist (z.B. "
+   "tier_reason": "Das Urteil betrifft zwar die Invalidenversicherung, enthält aber explizite und wörtliche Präzisierungen zu allgemeinen Verfahrensfragen (Art. 44 LPGA, Art. 72bis RAI, Art. 6 EMRK), die auch für die Suva bindend sind (z.B. Kompetenz des Experten bei Untersuchungsmodalitäten, Ausschluss von Begleitpersonen, Bedeutung von Treu und Glauben bei verspäteten Rügen). Zudem handelt es sich um eine Grenzfal"
   },
   {
    "docket": "8C_154/2025",
@@ -2673,8 +2673,8 @@
      "overlap": 0.189
     }
    },
-   "tier": 3,
-   "tier_reason": "Das Urteil betrifft eine private Taggeldversicherung nach VVG und nicht die Unfallversicherung (UVG/LAA) der Suva. Es präzisiert keine sozialversicherungsrechtlichen Grundsätze, die für die Suva bei der Anwendung des UVG, der Kausalität, Invaliditätsbemessung oder Integritätsentschädigung relevant wären. Es handelt sich um eine reine Anwendung des VVG auf einen Einzelfall ohne Klärung eines übertr"
+   "tier": 2,
+   "tier_reason": "Das Urteil betrifft zwar eine private Taggeldversicherung (VVG), präzisiert jedoch die Beweislastverteilung und das Beweismass bei der Prüfung der Arbeitsfähigkeit (ordentliches Beweismass statt überwiegende Wahrscheinlichkeit) sowie die Beweiskraft von Parteigutachten und Arbeitsunfähigkeitszeugnissen. Diese allgemeinen sozialversicherungsrechtlichen Grundsätze gelten auch für die Unfallversicher"
   },
   {
    "docket": "8C_145/2025",
@@ -2726,7 +2726,7 @@
     }
    },
    "tier": 2,
-   "tier_reason": "Grenzfall, da das Urteil einen übertragbaren Rechtssatz (Art. 6 Abs. 1 EMRK zu den Voraussetzungen einer öffentlichen Verhandlung) präzisiert, der auch für die Unfallversicherung relevant ist. Allerdings handelt es sich primär um ein IV-Urteil, das keine Klärung eines spezifischen UVG-Rechts oder einer Kausalitätsfrage enthält, sondern eine allgemeine sozialversicherungsrechtliche Verfahrensfrage "
+   "tier_reason": "Das Urteil enthält eine präzise Klärung der Voraussetzungen für die Durchführung einer öffentlichen Verhandlung nach Art. 6 EMRK (einfache Beweisanträge wie persönliche Anhörung genügen nicht). Diese Verfahrensfrage ist für die Suva relevant, da Art. 6 EMRK und das ATSG auch im Unfallversicherungsrecht gelten. Zudem betrifft es die Beweiswürdigung und die Wertigkeit von medizinischen Gutachten, wa"
   },
   {
    "docket": "8C_178/2025",

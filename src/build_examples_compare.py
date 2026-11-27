@@ -47,13 +47,14 @@ def tiers(base):
     con = sqlite3.connect(base)
     con.row_factory = sqlite3.Row
     t = {r[0] for r in con.execute("SELECT name FROM sqlite_master")}
+    adj = "adjudications_v2" if "adjudications_v2" in t else "adjudications"  # same pass 4 as production
     out = {}
     for r in con.execute(f"""SELECT j.docket, j.subject, j.text, a.ai_score m,
-            {'i.score' if 'iv_assessments' in t else 'NULL'} iv, {'ad.tier' if 'adjudications' in t else 'NULL'} adj,
-            {'ad.reason' if 'adjudications' in t else 'NULL'} reason
+            {'i.score' if 'iv_assessments' in t else 'NULL'} iv, {'ad.tier' if adj in t else 'NULL'} adj,
+            {'ad.reason' if adj in t else 'NULL'} reason
             FROM judgements j JOIN assessments a ON a.slug = j.slug
             {'LEFT JOIN iv_assessments i ON i.slug = j.slug' if 'iv_assessments' in t else ''}
-            {'LEFT JOIN adjudications ad ON ad.slug = j.slug' if 'adjudications' in t else ''}"""):
+            {f'LEFT JOIN {adj} ad ON ad.slug = j.slug' if adj in t else ''}"""):
         c = triage.classify({"subject": r["subject"], "text": r["text"]})
         if (r["m"] or 0) >= 60 or ("invalidity" in c["areas"] and (r["iv"] or 0) >= 40):
             out[r["docket"]] = (1, "")
