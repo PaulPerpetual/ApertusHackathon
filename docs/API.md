@@ -114,6 +114,7 @@ Still open for Paul:
 | GET | `/api/judgements` | – | list of cards (`db.list_cards`) ranked by effective score |
 | GET | `/api/judgements/{slug}` | – | detail (`db.get_detail`): card + text, summaries, history |
 | PUT | `/api/judgements/{slug}/score` | `{score: 0-100, editor}` | `{ok}`; logged in `edits` |
+| PUT | `/api/judgements/{slug}/status` | `{status: "new"\|"done", editor}` | `{ok}`; team-wide "Erledigt" state, logged in `edits` (unread/read is per browser) |
 | DELETE | `/api/judgements/{slug}/score` | `{editor}` | `{ok}`; reverts to AI score |
 | PUT | `/api/judgements/{slug}/summary/{de\|fr}` | `{text, editor}` | `{ok}`; logged in `edits` |
 | POST | `/api/judgements` | `{docket: "8C_123/2026", editor?}` | job `{status}`; fetch + triage + summarise |
@@ -122,7 +123,7 @@ Still open for Paul:
 
 ### Card fields the UI relies on (`db.list_cards`)
 
-`slug, docket, decision_date, division, language, subject, url, source, ai_score,
+`slug, docket, status, status_by, status_at, decision_date, division, language, subject, url, source, ai_score,
 score_override, override_by, title_de, title_fr, explanation_de, explanation_fr, tags,
 suva_party, model, has_summary`. The effective score is `score_override ?? ai_score`.
 
@@ -133,7 +134,7 @@ suva_party, model, has_summary`. The effective score is `score_override ?? ai_sc
 | `areas` | card | `["accident" \| "invalidity" \| "daily_allowance"]` from the subject line |
 | `procedural` | card | appeal dismissed without a decision on the merits; Suva rarely picks these (3/26) |
 | `dataset` | card | `"period"` (Apr–Jun 2026, the triage target) \| `"examples"` (Suva's 82 reference rulings) |
-| `expert_summaries` | detail | `{de, fr}` Suva's human summary, for side-by-side comparison on example rulings |
+| `expert_summaries` | detail | `{de, fr, author}` Suva's human summary, for side-by-side comparison on example rulings. **Implemented** (PR: citations + compare) |
 
 ## Runtime notes
 
