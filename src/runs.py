@@ -164,7 +164,7 @@ def build():
         p = os.path.join(ROOT, "data", "second_opinion", path)
         if os.path.exists(p):
             imp(p, "codex-gpt6", ds, None, "Development reference only (closed model, not allowed at runtime). Blind.")
-    for agent in ("gem", "misty", "muse"):
+    for agent in ("gem", "misty", "muse", "clau"):
         for ds, suffix in (("calibration40", "calibration"), ("aprjun", "aprjun")):
             p = os.path.join(ROOT, "data", "second_opinion", f"{agent}_{suffix}.jsonl")
             if os.path.exists(p):
