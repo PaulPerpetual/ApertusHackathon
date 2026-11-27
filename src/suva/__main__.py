@@ -126,12 +126,15 @@ def cmd_tags_fr(args):
 def _relabel_system():
     from . import summarize, tags
     return f"""Du erhältst die Bewertung eines Bundesgerichtsurteils (Titel, Begründung, Schlagworte) aus einem früheren Lauf.
-Bringe sie in eine einheitliche Form, ohne den Inhalt zu ändern:
+Bringe sie in eine einheitliche, knappe Form, ohne neue Fakten zu erfinden:
 - title_de: DEUTSCH, 4-8 Wörter, Rechtsfrage + Ergebnis, ohne Aktenzeichen
   (z.B. "Komplementärrente: IV-Rente nur anteilig anrechnen").
 - title_fr: FRANÇAIS, 4-8 mots, même contenu (z.B. "Rente complémentaire: rente AI prise en compte au prorata").
-- explanation_de: die Begründung auf DEUTSCH, 2-3 Sätze (bestehende deutsche Begründung sprachlich glätten, nicht kürzen).
-- explanation_fr: la même justification en FRANÇAIS, 2-3 phrases.
+- explanation_de: die Begründung auf DEUTSCH, 1-2 Sätze, höchstens 40 Wörter. Nur, warum das Urteil für die Suva
+  relevant ist: welcher Grundsatz für ihre Fallbearbeitung gilt oder worauf sie künftig achten muss
+  (z.B. "Für die Suva: Bei psychischen Unfallfolgen ist die natürliche Kausalität vor der adäquaten fachärztlich
+  zu klären."). Kein Sachverhalt, keine Erwägungsnummern, keine Wiederholung des Titels.
+- explanation_fr: la même justification en FRANÇAIS, 1-2 phrases, 40 mots au plus.
 - tags: 2-5 Schlagworte NUR aus dieser Liste, exakt so geschrieben: {tags.prompt_list()}
 
 {tags.LANGUAGE_RULES}
@@ -172,8 +175,12 @@ def cmd_relabel(args):
             print(f"! {r['slug']}: {e}", file=sys.stderr)
             continue
         sets = {}
-        for k, limit in (("title_de", 120), ("title_fr", 120), ("explanation_de", 1200), ("explanation_fr", 1200)):
-            v = str(a.get(k) or "").strip()[:limit]
+        for k, limit in (("title_de", 120), ("title_fr", 120), ("explanation_de", 400), ("explanation_fr", 400)):
+            v = str(a.get(k) or "").strip()
+            if len(v) > limit:  # cut at the last full sentence (or word) inside the limit, never mid-word
+                cut = v[:limit]
+                end = max(cut.rfind(". "), cut.rfind("."), cut.rfind("; "))
+                v = cut[:end + 1] if end > limit // 2 else cut.rsplit(" ", 1)[0] + " …"
             if v and _lang_ok(v, k[-2:]):
                 sets[k] = v
             elif v:
