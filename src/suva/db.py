@@ -88,6 +88,8 @@ def _migrate(con):
     for name, ddl in (("status", "TEXT DEFAULT 'new'"), ("status_by", "TEXT"), ("status_at", "TEXT")):
         if name not in cols:
             con.execute(f"ALTER TABLE judgements ADD COLUMN {name} {ddl}")
+    if "html" not in cols:
+        con.execute("ALTER TABLE judgements ADD COLUMN html TEXT")  # cleaned original HTML (scraper._html_clean)
     if "tags_fr" not in {r[1] for r in con.execute("PRAGMA table_info(assessments)")}:
         con.execute("ALTER TABLE assessments ADD COLUMN tags_fr TEXT")  # JSON list, same order as tags (DE)
 
@@ -96,7 +98,7 @@ def upsert_judgement(con, j):
     j = {"source": "bger", "fetched_at": now(), **j}
     j["slug"] = slugify(j["docket"])
     cols = ["slug", "docket", "decision_date", "publication_date", "division", "language",
-            "subject", "url", "text", "source", "fetched_at"]
+            "subject", "url", "text", "html", "source", "fetched_at"]
     vals = [j.get(c) for c in cols]
     con.execute(
         f"INSERT INTO judgements ({','.join(cols)}) VALUES ({','.join('?' * len(cols))}) "

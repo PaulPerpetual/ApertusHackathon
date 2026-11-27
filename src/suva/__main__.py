@@ -6,6 +6,7 @@
   run      --days 92           scrape + triage + summarise in one go
   add      8C_145/2025         fetch, assess and summarise one judgement
   demo                         load the 54 Suva example summaries as demo cards (no bger.ch needed)
+  attach-html ../data/period/<from>_<to>   store the formatted original for rulings already imported (no LLM)
   relabel  [--min 20]          rewrite titles short and in the right language + French tags, from the existing assessment
   tags-fr                      add French tags to rulings triaged before tags_fr existed (one short LLM call each)
   eval                         recall/precision of the ranking against the Suva Excel list
@@ -50,6 +51,14 @@ def cmd_import(args):
                 except Exception as e:  # keep going; report at the end
                     print(f"! {futs[f]}: {e}", file=sys.stderr)
     print(f"{len(jobs)} judgements processed into {config.DB_PATH}")
+
+
+def cmd_attach_html(args):
+    n = 0
+    with db.connect() as con:
+        for j in scraper.load_crawled(args.folder):
+            n += con.execute("UPDATE judgements SET html=? WHERE slug=?", (j["html"], db.slugify(j["docket"]))).rowcount
+    print(f"original HTML stored for {n} judgements")
 
 
 def cmd_triage(args):
@@ -212,6 +221,8 @@ def main():
     sub.add_parser("demo")
     sub.add_parser("eval")
     sub.add_parser("tags-fr")
+    ah = sub.add_parser("attach-html")
+    ah.add_argument("folder")
     rl = sub.add_parser("relabel")
     rl.add_argument("--min", type=int, default=20, help="only rulings with at least this relevance score")
     e = sub.add_parser("export")
@@ -235,6 +246,8 @@ def main():
         cmd_add(args)
     elif args.cmd == "demo":
         cmd_demo(args)
+    elif args.cmd == "attach-html":
+        cmd_attach_html(args)
     elif args.cmd == "relabel":
         cmd_relabel(args)
     elif args.cmd == "tags-fr":

@@ -4,7 +4,7 @@ const I18N = {
   de: {
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
-    col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
+    preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
     add: "Urteil manuell hinzufügen …", add_title: "Urteil manuell hinzufügen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
@@ -24,7 +24,7 @@ const I18N = {
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
-    col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
+    preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
     add: "Ajouter un arrêt manuellement …", add_title: "Ajouter un arrêt manuellement", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
@@ -134,6 +134,9 @@ function renderChrome() {
   document.querySelectorAll("[data-lang]").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
   document.querySelectorAll("#scope [data-scope]").forEach((b) => b.classList.toggle("on", b.dataset.scope === state.scope));
   $("#sortBy").value = state.sort;
+  const lines = store.get("lex.whyLines", "4");
+  document.documentElement.style.setProperty("--why-lines", lines === "0" ? "999" : lines);
+  document.querySelectorAll("#whyLines [data-lines]").forEach((b) => b.classList.toggle("on", b.dataset.lines === lines));
   document.querySelectorAll("#mhead [data-sort]").forEach((b) => { b.classList.toggle("on", b.dataset.sort === state.sort); b.classList.toggle("asc", state.dir === "asc"); });
   $("#sortDir").textContent = state.dir === "desc" ? "↓" : "↑"; $("#sortDir").title = state.dir === "desc" ? t("desc") : t("asc");
   $("#editorBtn").textContent = t("editor_set", state.editor);
@@ -283,6 +286,20 @@ function renderOriginal(text) {
   return out.join("\n");
 }
 
+// Same "Erw. N" anchors for the formatted original: number the paragraphs after the "Erwägungen" heading.
+function anchorHtml(root) {
+  if (!root) return;
+  const head = /^(Erwägungen?|Considérant en droit|Considérants?|Considerando in diritto|Diritto)\s*:?\s*$/i;
+  const blocks = [...root.querySelectorAll("p, div, li, td, h1, h2, h3, h4, h5, h6")].filter((el) => !el.querySelector("p, div, li, td"));
+  let started = false; const seen = new Set();
+  for (const el of blocks) {
+    const txt = el.textContent.trim();
+    if (!started) { if (head.test(txt)) started = true; continue; }
+    const m = txt.match(/^(\d+(?:\.\d+)*)\.?(?:\s|$)/);
+    if (m && !seen.has(m[1])) { seen.add(m[1]); el.id = "erw-" + m[1]; el.classList.add("erw-anchor"); }
+  }
+}
+
 /* ---------- detail pane ---------- */
 async function openPanel(slug) {
   state.open = slug; state.editing = false; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
@@ -340,7 +357,9 @@ async function renderPanel() {
         ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
     }
   } else if (state.tab === "text") {
-    html += d.text ? `<div class="original">${renderOriginal(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
+    // formatted original (cleaned server-side, see scraper._html_clean); plain text as fallback
+    html += d.html ? `<div class="original-html" id="origHtml">${d.html}</div>`
+      : d.text ? `<div class="original">${renderOriginal(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
   } else {
     const label = (h) => (h.field === "status" ? `${t("h_status")}: ${t("st_" + h.old_value)} → ${t("st_" + h.new_value)}`
       : t("h_" + h.field.replace("_score", "")) + (h.field.includes("score") ? `: ${esc(h.old_value)} → ${esc(h.new_value)}` : ""));
@@ -353,6 +372,7 @@ async function renderPanel() {
 
   $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; state.editing = false; renderPanel(); }));
   $("#pBody").querySelectorAll(".cite").forEach((el) => (el.onclick = (e) => { e.preventDefault(); state.tab = "text"; state.pendingErw = el.dataset.erw; renderPanel(); }));
+  if (state.tab === "text" && d.html) anchorHtml($("#origHtml"));
   if (state.tab === "text" && state.pendingErw) {
     const num = state.pendingErw; state.pendingErw = null;
     let el = null; for (let n = num; n && !el; n = n.includes(".") ? n.slice(0, n.lastIndexOf(".")) : "") el = document.getElementById("erw-" + n);
@@ -416,6 +436,7 @@ function init() {
   const setMenu = (open) => { menu.hidden = !open; menuBtn.setAttribute("aria-expanded", String(open)); };
   menuBtn.onclick = (e) => { e.stopPropagation(); setMenu(menu.hidden); };
   document.addEventListener("click", (e) => { if (!menu.hidden && !e.target.closest(".menu-wrap")) setMenu(false); });
+  document.querySelectorAll("#whyLines [data-lines]").forEach((b) => (b.onclick = (e) => { e.stopPropagation(); store.set("lex.whyLines", b.dataset.lines); renderChrome(); }));
   $("#editorBtn").onclick = () => { setMenu(false); askEditor(); };
   $("#addBtn").onclick = () => {
     setMenu(false);
