@@ -97,7 +97,7 @@ Antworte ausschliesslich mit einem JSON-Objekt:
  "tags": ["<2-5 Schlagworte, NUR aus der Liste unten, exakt so geschrieben>"]}
 
 Schlagworte (nur Rechtsfragen, kein Ergebnis wie "abgewiesen"; UVG bzw. IV für das Rechtsgebiet):
-""" + _tags.prompt_list()
+""" + _tags.prompt_list() + "\n\n" + _tags.LANGUAGE_RULES
 
 
 def _excerpt(text, limit):

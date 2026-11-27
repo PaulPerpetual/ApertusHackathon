@@ -45,6 +45,19 @@ FR = {de: fr for de, fr, _ in VOCAB}
 _COMPILED = [(de, re.compile(p, re.I)) for de, _, p in VOCAB]
 
 
+# Wording rules shared by triage and relabel: write like Suva's legal service does.
+LANGUAGE_RULES = """Sprache und Stil (wie im Rechtsdienst der Suva):
+- Fachsprache des Sozialversicherungsrechts, sachlich und knapp; keine Umgangssprache, keine Wertungen wie "wichtig" oder "spannend".
+- Deutsch: "das Bundesgericht" (BGer), "die versicherte Person"/"der Versicherte", "die Suva", "die Vorinstanz";
+  Normen als "Art. 6 Abs. 1 UVG", "Art. 17 ATSG"; Begriffe wie natürlicher/adäquater Kausalzusammenhang,
+  Status quo ante/sine, Integritätsentschädigung, Invaliditätsgrad, Valideneinkommen, Invalideneinkommen, Tabellenlohn (LSE).
+- Français: "le Tribunal fédéral" (TF), "l'assuré(e)", "la Suva", "l'autorité précédente"; normes "art. 6 al. 1 LAA",
+  "art. 17 LPGA"; termes: lien de causalité naturelle/adéquate, statu quo ante/sine, indemnité pour atteinte à l'intégrité,
+  taux d'invalidité, revenu sans invalidité, revenu d'invalide, salaire statistique (ESS).
+- Jedes Feld strikt in seiner Sprache (_de = Deutsch, _fr = Français), unabhängig von der Sprache des Urteils.
+- Keine Personennamen und keine Platzhalter wie "A.________"."""
+
+
 def _norm(tag):
     return re.sub(r"\s+", " ", str(tag).replace("-", " ").replace("_", " ")).strip().lower()
 

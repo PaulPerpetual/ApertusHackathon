@@ -14,6 +14,7 @@
   serve    --port 8000         start the web UI
 """
 import argparse
+import re
 import sys
 
 from . import config, db, examples, pipeline, scraper
@@ -122,37 +123,64 @@ def cmd_tags_fr(args):
         print(f"{r['slug']}: {', '.join(fr)}")
 
 
-RELABEL_SYSTEM = """Du erhältst die Bewertung eines Bundesgerichtsurteils (Titel, Begründung, deutsche Schlagworte).
-Schreibe kurze, einheitliche Listentitel und übersetze die Schlagworte.
-- title_de: DEUTSCH, 4-8 Wörter, Kernfrage + Ergebnis, ohne Aktenzeichen (z.B. "Komplementärrente: IV-Rente nur anteilig anrechnen").
+def _relabel_system():
+    from . import summarize, tags
+    return f"""Du erhältst die Bewertung eines Bundesgerichtsurteils (Titel, Begründung, Schlagworte) aus einem früheren Lauf.
+Bringe sie in eine einheitliche Form, ohne den Inhalt zu ändern:
+- title_de: DEUTSCH, 4-8 Wörter, Rechtsfrage + Ergebnis, ohne Aktenzeichen
+  (z.B. "Komplementärrente: IV-Rente nur anteilig anrechnen").
 - title_fr: FRANÇAIS, 4-8 mots, même contenu (z.B. "Rente complémentaire: rente AI prise en compte au prorata").
-- tags_fr: dieselben Schlagworte auf Französisch, gleiche Reihenfolge, Fachbegriffe wie in den ATF.
-Antworte nur mit JSON: {"title_de": "...", "title_fr": "...", "tags_fr": [...]}"""
+- explanation_de: die Begründung auf DEUTSCH, 2-3 Sätze (bestehende deutsche Begründung sprachlich glätten, nicht kürzen).
+- explanation_fr: la même justification en FRANÇAIS, 2-3 phrases.
+- tags: 2-5 Schlagworte NUR aus dieser Liste, exakt so geschrieben: {tags.prompt_list()}
+
+{tags.LANGUAGE_RULES}
+
+{summarize.GLOSSARY}
+
+Antworte nur mit JSON: {{"title_de": "...", "title_fr": "...", "explanation_de": "...", "explanation_fr": "...", "tags": [...]}}"""
+
+
+_FR_WORDS = re.compile(r"\b(le|la|les|des|du|une|est|selon|pour|dans|qui|que|l'|d')\b", re.I)
+_DE_WORDS = re.compile(r"\b(der|die|das|und|ist|nicht|wird|zur|zum|des|vom|auf)\b", re.I)
+
+
+def _lang_ok(text, lang):
+    """Cheap guard: reject a German field that reads French and vice versa."""
+    fr, de = len(_FR_WORDS.findall(text)), len(_DE_WORDS.findall(text))
+    return de >= fr if lang == "de" else fr >= de
 
 
 def cmd_relabel(args):
-    """Short, language-correct titles and French tags for rulings already triaged (one short LLM call each)."""
+    """Short titles, DE+FR reasoning in the right language and keywords from the fixed list, for rulings already
+    triaged (one LLM call each). Human edits (explanation_*_human, tags_human) are stored separately and stay."""
     import json
-    from . import llm
+    from . import llm, tags
+    system = _relabel_system()
     with db.connect() as con:
         rows = [dict(r) for r in con.execute(
-            "SELECT slug, title_de, title_fr, explanation_de, tags FROM assessments "
+            "SELECT slug, title_de, title_fr, explanation_de, explanation_fr, tags FROM assessments "
             "WHERE model != 'prefilter' AND COALESCE(score_override, ai_score) >= ?", (args.min,))]
     for r in rows:
-        de = json.loads(r["tags"] or "[]")
-        user = json.dumps({"title_de": r["title_de"], "title_fr": r["title_fr"], "explanation_de": r["explanation_de"],
-                           "tags": de}, ensure_ascii=False)
+        payload = {k: r[k] for k in ("title_de", "title_fr", "explanation_de", "explanation_fr")}
+        payload["tags"] = json.loads(r["tags"] or "[]")
+        user = json.dumps(payload, ensure_ascii=False)
         try:
-            a = llm.parse_json(llm.chat([{"role": "system", "content": RELABEL_SYSTEM}, {"role": "user", "content": user}],
-                                        temperature=0.0, max_tokens=300, json_mode=True))
+            a = llm.parse_json(llm.chat([{"role": "system", "content": system}, {"role": "user", "content": user}],
+                                        temperature=0.0, max_tokens=700, json_mode=True))
         except (ValueError, llm.LLMError) as e:
             print(f"! {r['slug']}: {e}", file=sys.stderr)
             continue
-        fr = [str(t)[:40] for t in a.get("tags_fr") or []]
-        sets = {"title_de": str(a.get("title_de") or "").strip()[:120], "title_fr": str(a.get("title_fr") or "").strip()[:120]}
-        sets = {k: v for k, v in sets.items() if v}
-        if len(fr) == len(de):
-            sets["tags_fr"] = json.dumps(fr, ensure_ascii=False)
+        sets = {}
+        for k, limit in (("title_de", 120), ("title_fr", 120), ("explanation_de", 1200), ("explanation_fr", 1200)):
+            v = str(a.get(k) or "").strip()[:limit]
+            if v and _lang_ok(v, k[-2:]):
+                sets[k] = v
+            elif v:
+                print(f"! {r['slug']}: {k} not in the right language, kept the old one", file=sys.stderr)
+        t = tags.normalize(a.get("tags") or [])
+        if t:
+            sets["tags"] = json.dumps(t, ensure_ascii=False)
         if sets:
             with db.connect() as con:
                 con.execute(f"UPDATE assessments SET {', '.join(k + '=?' for k in sets)} WHERE slug=?", (*sets.values(), r["slug"]))
