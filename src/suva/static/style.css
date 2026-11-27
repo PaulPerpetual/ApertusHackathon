@@ -123,8 +123,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .bigscore { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .bigscore .n { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .bigscore .level { width: 90px; max-width: none; flex: none; }
-.tabs { display: flex; gap: 2px; margin-top: 18px; border-bottom: 1px solid var(--sep); }
-.tabs button { border: 0; background: transparent; padding: 6px 10px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs { display: flex; gap: 2px; margin-top: 18px; border-bottom: 1px solid var(--sep); overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { white-space: nowrap; flex: none; border: 0; background: transparent; padding: 6px 10px; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .tabs button.on { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
 .summary { white-space: pre-wrap; font-size: 13.5px; line-height: 1.55; }
 textarea.summary-edit { width: 100%; min-height: 280px; padding: 10px; border: 1px solid var(--accent); border-radius: 6px; background: var(--control); line-height: 1.5; }
@@ -194,3 +195,12 @@ textarea.note-edit { border-color: var(--control-border); min-height: 70px; marg
 .tag-edit .rm { border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0 0 0 4px; font-size: 12px; }
 .tag-edit input { flex: 1; min-width: 160px; border: 0; outline: none; background: transparent; color: var(--text); font: inherit; padding: 2px 4px; }
 .small { font-size: 11px; }
+
+/* panel header: docket + buttons on the first line, the title gets the full width below (no squeezed title) */
+.panel-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 6px; align-items: center; }
+.panel-title { display: contents; }
+.panel-head .docket { grid-column: 1; grid-row: 1; }
+.panel-head .panel-actions { grid-column: 2; grid-row: 1; align-items: center; }
+.panel-head h2 { grid-column: 1 / -1; grid-row: 2; margin: 0; }
+#pEdit { display: inline-flex; align-items: center; gap: 7px; }
+.ico { width: 15px; height: 15px; flex: none; }
