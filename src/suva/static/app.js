@@ -125,7 +125,7 @@ const INFO = {
     welche Rechtsfrage entschieden wurde und warum das für die Suva zählt.</p>
     <h4>Grenzfälle</h4>
     <p>Urteile, bei denen Apertus unsicher ist (oft Invaliden- oder Verfahrensrecht, das auch für die Unfallversicherung
-    gelten kann). Sie stehen unter den klar relevanten Urteilen, tragen das Schlagwort <b>Grenzfall</b> und sind im Reiter
+    gelten kann). Sie stehen unter den klar relevanten Urteilen, tragen das gelbe Etikett <b>Grenzfall</b> und sind im Reiter
     „Grenzfälle" gesammelt. Lieber ein Grenzfall zu viel als ein verpasstes Urteil: bitte kurz prüfen.</p>
     <h4>Neu · Erledigt · Nicht relevant</h4>
     <ul><li><b>Neu</b>: noch nicht bearbeitet.</li>
@@ -149,8 +149,8 @@ const INFO = {
     question juridique tranchée et pourquoi elle compte pour la Suva.</p>
     <h4>Cas limites</h4>
     <p>Arrêts pour lesquels Apertus hésite (souvent assurance-invalidité ou procédure pouvant aussi valoir pour
-    l'assurance-accidents). Ils figurent sous les arrêts clairement pertinents, portent le mot-clé <b>Cas limite</b> et
-    sont regroupés dans l'onglet « Grenzfälle ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
+    l'assurance-accidents). Ils figurent sous les arrêts clairement pertinents, portent l’étiquette jaune <b>Cas limite</b> et
+    sont regroupés dans l'onglet « Cas limites ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
     <h4>Nouveau · Traité · Non pertinent</h4>
     <ul><li><b>Nouveau</b>: pas encore traité.</li>
       <li><b>Traité</b>: vérifié et en ordre (touche E). Vaut pour toute l'équipe.</li>
@@ -160,7 +160,7 @@ const INFO = {
     modification est enregistrée avec votre nom et historisée; le texte original de l'IA reste disponible. Lors de la
     première modification, votre nom et votre clé d'éditeur sont demandés.</p>
     <h4>Liste des résultats</h4>
-    <p>Le bouton <b>Trefferliste</b> affiche tous les arrêts retenus avec rang et catégorie (normal / cas limite), à copier
+    <p>Le bouton <b>Liste des résultats</b> affiche tous les arrêts retenus avec rang et catégorie (normal / cas limite), à copier
     ou en CSV. Vos décisions ici s'y appliquent immédiatement.</p>
     <h4>Renvois</h4>
     <p>« (consid. 4.2) » dans un résumé mène directement au considérant de l'arrêt original.</p>`,
