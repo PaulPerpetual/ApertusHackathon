@@ -7,6 +7,7 @@
   add      8C_145/2025         fetch, assess and summarise one judgement
   demo                         load the 54 Suva example summaries as demo cards (no bger.ch needed)
   eval                         recall/precision of the ranking against the Suva Excel list
+  export   ../site             write static JSON mirroring the API (GitHub Pages / intranet web server)
   serve    --port 8000         start the web UI
 """
 import argparse
@@ -91,6 +92,33 @@ def cmd_eval(args):
     print("Missed in top-30:", ", ".join(missed) or "none")
 
 
+def cmd_export(args):
+    """Static mirror of the read API (docs/API.md): api/<path>.json for every GET the UI makes."""
+    import json
+    from datetime import datetime, timezone
+    from pathlib import Path
+    from . import llm, server
+    out = Path(args.folder) / "api"
+    (out / "judgements").mkdir(parents=True, exist_ok=True)
+    (out / "kb" / "example").mkdir(parents=True, exist_ok=True)
+
+    def dump(rel, obj):
+        (out / rel).write_text(json.dumps(obj, ensure_ascii=False, default=str), encoding="utf-8")
+
+    with db.connect() as con:
+        cards = db.list_cards(con)
+        dump("judgements.json", cards)
+        for c in cards:
+            dump(f"judgements/{c['slug']}.json", db.get_detail(con, c["slug"]))
+    dump("status.json", {"model": llm.model_name(), "mock": config.USE_MOCK_LLM, "threshold": config.RELEVANCE_SUMMARY_THRESHOLD,
+                         "read_only": True, "static": True, "jobs": {},
+                         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds")})
+    dump("kb.json", server.kb_entries())
+    for ex in examples.load_examples():
+        dump(f"kb/example/{db.slugify(ex['docket'])}.json", ex)
+    print(f"exported {len(cards)} judgements to {out}")
+
+
 def main():
     p = argparse.ArgumentParser(prog="suva", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -107,6 +135,8 @@ def main():
     a.add_argument("docket")
     sub.add_parser("demo")
     sub.add_parser("eval")
+    e = sub.add_parser("export")
+    e.add_argument("folder", nargs="?", default=str(config.ROOT / "site"))
     s = sub.add_parser("serve")
     s.add_argument("--host", default="127.0.0.1")
     s.add_argument("--port", type=int, default=8000)
@@ -128,6 +158,8 @@ def main():
         cmd_demo(args)
     elif args.cmd == "eval":
         cmd_eval(args)
+    elif args.cmd == "export":
+        cmd_export(args)
     elif args.cmd == "serve":
         import uvicorn
         uvicorn.run("suva.server:app", host=args.host, port=args.port)

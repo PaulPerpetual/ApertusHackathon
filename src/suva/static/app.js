@@ -14,6 +14,9 @@ const I18N = {
     saved: "Gespeichert", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet",
     mock: "Mock-Modell", demo: "Demo", suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung",
+    view_radar: "Radar", view_kb: "Bibliothek", kind_all: "Alle", kind_suva: "Suva", kind_ai: "KI", kind_edited: "Bearbeitet",
+    kb_search: "Bibliothek durchsuchen (Stichwort, Artikel, Nummer)", kb_n: (n) => `${n} Zusammenfassungen`, read_only: "Nur lesen",
+    in_radar: "Im Radar öffnen", author: "Autor:in",
   },
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher (titre, numéro, mot-clé)", show_low: "Afficher les moins pertinents",
@@ -29,6 +32,9 @@ const I18N = {
     saved: "Enregistré", queued: "En cours …", done: "Terminé", failed: "Erreur", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié",
     mock: "Modèle fictif", demo: "Démo", suva_party: "Suva partie", human_example: "Résumé original Suva",
+    view_radar: "Radar", view_kb: "Bibliothèque", kind_all: "Tous", kind_suva: "Suva", kind_ai: "IA", kind_edited: "Modifiés",
+    kb_search: "Rechercher dans la bibliothèque (mot-clé, article, numéro)", kb_n: (n) => `${n} résumés`, read_only: "Lecture seule",
+    in_radar: "Ouvrir dans le radar", author: "Auteur·e",
   },
 };
 
@@ -36,14 +42,29 @@ const store = {
   get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
-const state = { lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
+const state = { view: "radar", kbKind: "", kbTag: "", lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
 const $ = (s) => document.querySelector(s);
 const t = (k, ...a) => { const v = I18N[state.lang][k]; return typeof v === "function" ? v(...a) : v ?? k; };
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtTime = (iso) => { if (!iso) return ""; const d = new Date(iso); return d.toLocaleString(state.lang === "fr" ? "fr-CH" : "de-CH", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); };
 const band = (s) => (s >= 70 ? "hi" : s >= 40 ? "mid" : "lo");
 
+/* Static mode (GitHub Pages / any web server without the FastAPI backend): read the exported JSON
+   that mirrors the live API (docs/API.md). "/api/judgements/x" -> "api/judgements/x.json". Read-only. */
+const STATIC = location.hostname.endsWith("github.io") || window.LEX_STATIC === true || location.protocol === "file:";
+const staticUrl = (p) => p.replace(/^\/api\//, "api/").replace(/%2F/gi, "_").replace(/\//g, "/") + ".json";
+let kbCache = null;
 async function api(path, opts = {}) {
+  if (STATIC) {
+    if (opts.method && opts.method !== "GET") throw new Error(t("read_only"));
+    if (path.startsWith("/api/kb?")) return kbLocal(new URLSearchParams(path.split("?")[1]));
+    if (path.startsWith("/api/kb/example/")) path = "/api/kb/example/" + decodeURIComponent(path.slice(16)).replace("/", "_");
+    const r = await fetch(staticUrl(path));
+    if (!r.ok) throw new Error(`${r.status} ${path}`);
+    const data = await r.json();
+    if (path === "/api/status") { data.read_only = true; data.static = true; data.jobs = data.jobs || {}; }
+    return data;
+  }
   const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opts });
   if (!r.ok) throw new Error(await r.text());
   return r.json();
@@ -62,17 +83,21 @@ function askName() {
     dlg.showModal();
   });
 }
-async function requireName() { return state.editor || (await askName()); }
+async function requireName() { if (state.status?.read_only) { toast(t("read_only")); return null; } return state.editor || (await askName()); }
 
 /* ---------- chrome / i18n ---------- */
 function renderChrome() {
   document.documentElement.lang = state.lang;
   document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => (el.placeholder = t(el.dataset.i18nPlaceholder)));
+  $("#search").placeholder = state.view === "kb" ? t("kb_search") : t("search");
+  document.querySelectorAll(".views button").forEach((b) => b.classList.toggle("on", b.dataset.view === state.view));
+  const ro = state.status?.read_only;
+  $("#addBtn").hidden = !!ro; $("#editorChip").hidden = !!ro;
   document.querySelectorAll(".lang button").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
   $("#editorChip").textContent = state.editor ? "✎ " + state.editor : t("name_set");
   document.title = "Suva · " + t("app_title");
-  if (state.status) { const b = $("#modelBadge"); b.textContent = state.status.mock ? t("mock") : state.status.model; b.classList.toggle("warn", state.status.mock); }
+  if (state.status) { const b = $("#modelBadge"); b.textContent = ro ? t("read_only") : state.status.mock ? t("mock") : state.status.model; b.classList.toggle("warn", state.status.mock || !!ro); }
 }
 
 /* ---------- list ---------- */
@@ -260,12 +285,87 @@ async function startAdd(docket) {
   setTimeout(poll, 3000);
 }
 
+/* Same filtering as GET /api/kb, done in the browser on the exported api/kb.json */
+async function kbLocal(params) {
+  if (!kbCache) { const r = await fetch("api/kb.json"); kbCache = r.ok ? await r.json() : []; }
+  const norm = (x) => (x || "").replace(/\s+/g, " ").toLowerCase();
+  const terms = norm(params.get("q")).split(" ").filter((x) => x.length > 1);
+  const tag = (params.get("tag") || "").toLowerCase(), kind = params.get("kind") || "", lang = params.get("lang") || "de";
+  const res = [];
+  for (const e of kbCache) {
+    if (tag && !(e.tags || []).some((x) => x.toLowerCase() === tag)) continue;
+    if (kind && e.kind !== kind) continue;
+    const hay = norm([e.docket, e.title_de, e.title_fr, e.de, e.fr, (e.tags || []).join(" ")].join(" "));
+    if (terms.length && !terms.every((x) => hay.includes(x))) continue;
+    const body = e[lang] || e.de || e.fr || "";
+    let snippet = body.slice(0, 220) + (body.length > 220 ? "…" : "");
+    if (terms.length) {
+      const low = body.toLowerCase();
+      const hits = terms.map((x) => low.indexOf(x)).filter((i) => i >= 0);
+      const st = Math.max(0, (hits.length ? Math.min(...hits) : 0) - 70);
+      snippet = (st ? "…" : "") + body.slice(st, st + 220) + (st + 220 < body.length ? "…" : "");
+    }
+    const rank = terms.reduce((a, x) => a + hay.split(x).length - 1, 0);
+    const { de, fr, ...rest } = e;
+    res.push({ ...rest, snippet, rank });
+  }
+  res.sort((a, b) => terms.length ? b.rank - a.rank : (b.date || "").localeCompare(a.date || ""));
+  const tags = [...new Set(res.flatMap((e) => e.tags || []))].sort();
+  return { total: res.length, results: res.slice(0, 100), tags };
+}
+
+/* ---------- knowledge base (library of all summaries, incl. Suva's own) ---------- */
+function highlight(text, q) {
+  let h = esc(text);
+  q.toLowerCase().split(/\s+/).filter((x) => x.length > 1).forEach((term) => {
+    const re = new RegExp("(" + term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+    h = h.replace(re, "<mark>$1</mark>");
+  });
+  return h;
+}
+async function loadKb() {
+  const q = $("#search").value.trim();
+  const params = new URLSearchParams({ q, tag: state.kbTag, kind: state.kbKind, lang: state.lang });
+  const r = await api("/api/kb?" + params);
+  $("#kbMeta").textContent = t("kb_n", r.total);
+  $("#kbTags").innerHTML = (state.kbTag && !r.tags.includes(state.kbTag) ? [state.kbTag, ...r.tags] : r.tags).slice(0, 24)
+    .map((g) => `<span class="tag ${g === state.kbTag ? "on" : ""}" data-tag="${esc(g)}">${esc(g)}</span>`).join("");
+  $("#kbList").innerHTML = r.results.map((e) => {
+    const title = (state.lang === "fr" ? e.title_fr : e.title_de) || e.docket;
+    return `<li class="kb-item" data-slug="${esc(e.slug || "")}" data-docket="${esc(e.docket)}">
+      <div class="c-sub"><b>${esc(e.docket)}</b>${e.date ? `<span>${esc(e.date)}</span>` : ""}<span class="kind ${e.kind}">${t("kind_" + e.kind)}</span>${e.score != null ? `<span>${t("relevance")} ${e.score}</span>` : ""}</div>
+      <div class="c-title">${esc(title)}</div>
+      <p class="snip">${highlight(e.snippet, q)}</p>
+      <div class="tags">${(e.tags || []).map((g) => `<span class="tag">${esc(g)}</span>`).join("")}</div></li>`;
+  }).join("");
+}
+async function openExample(docket) {
+  const ex = await api("/api/kb/example/" + encodeURIComponent(docket));
+  state.open = null; $("#panel").hidden = false;
+  $("#pDocket").innerHTML = `${esc(ex.docket)} <span class="kind suva">${t("kind_suva")}</span>`;
+  $("#pTitle").textContent = ex.title;
+  $("#pBody").innerHTML = `
+    <div class="section"><div class="kv"><span class="muted">${t("author")}</span><span>${esc(ex.author)}</span>
+      ${ex.url ? `<span class="muted">${t("original")}</span><span><a href="${esc(ex.url)}" target="_blank" rel="noopener">${t("open_bger")} ↗</a></span>` : ""}</div></div>
+    <div class="section"><h4>${t("summary_de")}</h4><div class="summary">${esc(ex.de)}</div></div>
+    <div class="section"><h4>${t("summary_fr")}</h4><div class="summary">${esc(ex.fr)}</div></div>`;
+}
+function setView(v) {
+  state.view = v; $("#radarView").hidden = v !== "radar"; $("#kbView").hidden = v !== "kb";
+  $("#showLow").parentElement.hidden = v !== "radar";
+  renderChrome(); v === "kb" ? loadKb() : renderList();
+}
+
 /* ---------- wiring ---------- */
 function init() {
   renderChrome();
-  document.querySelectorAll(".lang button").forEach((b) => (b.onclick = () => { state.lang = b.dataset.lang; store.set("suva.lang", state.lang); if (state.tab?.startsWith("summary_")) state.tab = "summary_" + state.lang; renderChrome(); renderList(); if (state.open) renderPanel(); }));
+  document.querySelectorAll(".lang button").forEach((b) => (b.onclick = () => { state.lang = b.dataset.lang; store.set("suva.lang", state.lang); if (state.tab?.startsWith("summary_")) state.tab = "summary_" + state.lang; renderChrome(); state.view === "kb" ? loadKb() : renderList(); if (state.open) renderPanel(); }));
   $("#editorChip").onclick = askName;
-  $("#search").oninput = renderList;
+  let deb; $("#search").oninput = () => { if (state.view === "kb") { clearTimeout(deb); deb = setTimeout(loadKb, 200); } else renderList(); };
+  document.querySelectorAll(".views button").forEach((b) => (b.onclick = () => setView(b.dataset.view)));
+  $("#kbKind").onclick = (e) => { const b = e.target.closest("[data-kind]"); if (!b) return; state.kbKind = b.dataset.kind; $("#kbKind").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); loadKb(); };
+  $("#kbTags").onclick = (e) => { const g = e.target.closest("[data-tag]"); if (!g) return; state.kbTag = state.kbTag === g.dataset.tag ? "" : g.dataset.tag; loadKb(); };
+  $("#kbList").onclick = (e) => { const li = e.target.closest(".kb-item"); if (!li) return; li.dataset.slug ? openPanel(li.dataset.slug) : openExample(li.dataset.docket); };
   $("#showLow").onchange = renderList;
   $("#closePanel").onclick = closePanel;
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.open && !document.querySelector("dialog[open]")) closePanel(); });

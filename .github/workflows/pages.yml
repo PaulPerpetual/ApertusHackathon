@@ -1,0 +1,35 @@
+# Publish the read-only UI on GitHub Pages.
+# Data: site/api/*.json, produced by `python -m suva export` (run from src/) and committed.
+# UI: always taken fresh from src/suva/static/.
+name: Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble site
+        run: |
+          mkdir -p _site/static
+          cp src/suva/static/style.css src/suva/static/app.js _site/static/
+          cp src/suva/static/index.html _site/index.html
+          if [ -d site/api ]; then cp -r site/api _site/api; else echo "::warning::site/api missing - run python -m suva export"; fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

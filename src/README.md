@@ -39,3 +39,31 @@ Docker: `docker build -t suva . && docker run -p 8000:8000 --env-file .env suva`
 | `server.py`, `static/` | FastAPI + plain HTML/JS UI, no build step |
 
 Editors are identified by a name typed once and remembered in the browser (no accounts).
+
+## Deploy on a server (Docker)
+
+```bash
+git clone https://github.com/PaulPerpetual/ApertusHackathon.git && cd ApertusHackathon
+cp .env.example .env    # LLM_API_KEY=..., and for a public URL also DEMO_PASSWORD=...
+docker build -t suva .
+docker run -d --name suva --restart unless-stopped -p 127.0.0.1:8000:8000 \
+  --env-file .env -v "$PWD/data:/app/data" suva
+# load data once (inside the container, same database volume):
+docker exec suva python -m suva demo          # or: python -m suva import ../data/period/<from>_<to>
+```
+
+Put a reverse proxy with HTTPS in front, e.g. Caddy: `suva.example.ch { reverse_proxy 127.0.0.1:8000 }`.
+
+| Variable | Effect |
+| --- | --- |
+| `DEMO_PASSWORD` (+ `DEMO_USER`, default `suva`) | HTTP basic auth on every page and API call |
+| `READ_ONLY=1` | disables edits and on-demand summaries (public showcase) |
+
+**Azure:** the same image runs on Azure Container Apps / App Service (region Switzerland North);
+mount an Azure Files share at `/app/data` for the database and point `LLM_BASE_URL` at an Apertus
+endpoint (e.g. vLLM on AKS / GPU VM, or a managed online endpoint).
+
+## Knowledge base
+
+The **Bibliothek / Bibliothèque** tab searches every summary we hold: AI summaries, human-edited ones and
+Suva's own 54 example summaries. Filter by origin (Suva / AI / edited) and by tag; every term must match.
