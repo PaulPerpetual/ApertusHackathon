@@ -65,7 +65,7 @@ once: repo **Settings → Pages → Source: GitHub Actions** (repo admin = Paul)
 | Troubleshooting page | <https://api.robotross.art/lex/debug>: status, data counts, key test, raw GET |
 | Server-hosted UI (fallback) | <https://api.robotross.art/lex/>: the same UI, served by FastAPI |
 | Server | team droplet (DigitalOcean **Frankfurt**), systemd service `lex-aperta`, Caddy TLS. Demo host only, not the sovereign deployment (that's the Dockerfile) |
-| Data right now | Suva's 54 example summaries + 583 April–June rulings scored by the **mock** model. Real Apertus results replace it tonight |
+| Data right now | 637 rulings: Suva's 54 example summaries + 583 April–June rulings scored by the **mock** model. Real Apertus results replace it tonight |
 | Deploy | `deploy/robotsales.sh [--db data/suva.sqlite]` (Miguel) |
 
 ### Security model
@@ -84,19 +84,25 @@ once: repo **Settings → Pages → Source: GitHub Actions** (repo admin = Paul)
   limited to 2 concurrent jobs and to docket numbers like `8C_123/2026`.
 - `GET /api/status` now also returns `editor_key_required: true|false`.
 
-### What the UI needs (Paul)
+### UI status (Paul)
 
-1. **API base.** On GitHub Pages, call the hosted API instead of static JSON. For example:
-   ```js
-   const API_BASE = window.LEX_API_BASE ?? (location.hostname.endsWith("github.io") ? "https://api.robotross.art/lex" : "");
-   // and: fetch(API_BASE + path, …); STATIC mode only if API_BASE is empty AND the page is static
-   ```
-   The server-hosted copy at `/lex/` also needs API calls relative to the page (`api/…`, not `/api/…`),
-   because it runs behind the `/lex` prefix.
-2. **Editor key.** Ask once ("Editor key"), keep it in `localStorage` (like the editor name), send it as
-   `X-Lex-Key` on writes. On `401`, clear it and ask again. If `editor_key_required` is true and no key is set,
-   show the UI read-only.
-3. **Static export** stays useful as an offline / air-gapped fallback, but it's no longer the main path.
+Already done (commit `839f49e`, `src/suva/static/app.js` → `api()`), verified in a browser
+(282 of 637 cards at <https://api.robotross.art/lex/>):
+
+- **API base:** calls go to `API_BASE + path`, with `API_BASE = window.LEX_API_BASE ?? <page path prefix>`.
+  So the server-hosted UI works behind `/lex`, and locally at `/`.
+- **Editor key:** writes send `X-Lex-Key` from `localStorage["lex.key"]`. On `401` the UI asks once
+  (`window.prompt`), stores the key and retries.
+
+Still open for Paul:
+
+1. **GitHub Pages → hosted API.** Pages still runs in STATIC mode (exported JSON, read-only). To use the
+   live API from Pages, set `window.LEX_API_BASE = "https://api.robotross.art/lex"` in the Pages build
+   (e.g. a small inline script in the assembled `index.html`) and turn STATIC off when it's set. CORS
+   already allows `https://paulperpetual.github.io`.
+2. Nicer key UX than `window.prompt` (a field next to "Name festlegen"), and show read-only when
+   `GET /api/status` returns `editor_key_required: true` and no key is stored.
+3. SharePoint look (see `STATUS.md`).
 
 ## Endpoints (live mode, from `src/suva/server.py`)
 

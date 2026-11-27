@@ -22,5 +22,5 @@ ssh "$HOST" "set -e; cd $DEST
   sudo -u lex venv/bin/pip -q install -r requirements.txt
   if [ -f data/suva.sqlite.new ]; then chown lex:lex data/suva.sqlite.new; mv data/suva.sqlite.new data/suva.sqlite; fi
   systemctl restart lex-aperta; sleep 3; systemctl is-active lex-aperta
-  echo deployed: \$(git log --oneline -1)"
+  echo deployed: \$(sudo -u lex git log --oneline -1)"
 curl -s -o /dev/null -w "public /api/status: %{http_code}\n" https://api.robotross.art/lex/api/status
