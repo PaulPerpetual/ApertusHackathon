@@ -14,7 +14,7 @@ const I18N = {
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
-    edit: "Bearbeiten", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
+    edit: "Bearbeiten", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
     st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
@@ -34,7 +34,7 @@ const I18N = {
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
-    edit: "Modifier", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
+    edit: "Modifier", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
     st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
@@ -196,7 +196,7 @@ function rowHtml(c) {
       <div class="m-top"><span class="t">${esc(titleOf(c))}</span><span class="m-date">${esc(fmtDate(c.decision_date || c.publication_date))}</span></div>
       <div class="m-sub">${esc(c.docket)}${c.source === "demo" ? ` · ${t("demo")}` : ""}</div>
       <p class="why">${esc(whyOf(c))}</p>
-      <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
+      <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
     <div class="m-act">${readOnly() ? "" : `<button class="act" data-act="${isDone(c) ? "reopen" : "done"}" title="${isDone(c) ? t("reopen") : t("mark_done")}">${isDone(c) ? "↺" : "✓"}</button>`}</div>
   </li>`;
@@ -340,7 +340,8 @@ async function renderPanel() {
       ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
       ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${esc(why)}</p>`}
-      <div class="tags">${a.suva_party ? `<span class="tag">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div></div>
+      ${E ? tagEditor(dr.tags ?? a.tags ?? [])
+        : `<div class="tags">${a.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(a).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}${a.tags_edited ? `<span class="muted small">✎</span>` : ""}</div>`}</div>
     <div class="section"><h4>${t("details")}</h4><div class="kv">
       ${d.decision_date ? `<span class="muted">${t("decided")}</span><span>${esc(fmtDate(d.decision_date))}</span>` : ""}
       ${d.publication_date ? `<span class="muted">${t("published")}</span><span>${esc(fmtDate(d.publication_date))}</span>` : ""}
@@ -397,6 +398,14 @@ async function renderPanel() {
   }
   const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
   const keep = (id, key) => { const el = document.getElementById(id); if (el) el.oninput = () => (dr[key ?? el.dataset.lang] = el.value); };
+  const ti = document.getElementById("tagInput");
+  if (ti) {
+    const cur = () => dr.tags ?? [...(a.tags || [])];
+    const add = () => { const k = tagKey(ti.value); if (k && !cur().includes(k)) { dr.tags = [...cur(), k]; } ti.value = ""; renderPanel(); };
+    ti.onkeydown = (e) => { if (e.key === "Enter" || e.key === ",") { e.preventDefault(); add(); } };
+    ti.oninput = () => { if (vocabHas(ti.value)) add(); };   // picked from the suggestion list
+    $("#pBody").querySelectorAll("[data-rmtag]").forEach((b) => (b.onclick = () => { dr.tags = cur().filter((x) => x !== b.dataset.rmtag); renderPanel(); }));
+  }
   keep("eScore", "score"); keep("eWhy", "why"); keep("noteInput", "note");
   const se = document.getElementById("sumEdit"); if (se) se.oninput = () => (dr["sum_" + se.dataset.lang] = se.value);
   on("addNote", async () => {
@@ -418,6 +427,17 @@ async function renderPanel() {
   on("genBtn", () => startAdd(d.docket));
 }
 
+// Keyword editor: chips with ×, input suggests the fixed Suva list (stored by German label, shown in the UI language).
+const vocab = () => state.status?.tag_vocab || [];
+const vocabHas = (v) => vocab().some((x) => x.de === v.trim() || x.fr === v.trim());
+const tagKey = (v) => { v = v.replace(/^#/, "").trim(); const m = vocab().find((x) => x.de.toLowerCase() === v.toLowerCase() || x.fr.toLowerCase() === v.toLowerCase()); return m ? m.de : v; };
+const tagLabel = (k) => { const m = vocab().find((x) => x.de === k); return state.lang === "fr" && m ? m.fr : k; };
+function tagEditor(list) {
+  return `<div class="tags tag-edit">${list.map((k) => `<span class="tag">#${esc(tagLabel(k))}<button class="rm" data-rmtag="${esc(k)}" title="${t("delete")}">×</button></span>`).join("")}
+    <input id="tagInput" list="tagVocab" placeholder="${t("add_tag")}"><datalist id="tagVocab">${vocab().filter((x) => !list.includes(x.de))
+      .map((x) => `<option value="${esc(state.lang === "fr" ? x.fr : x.de)}">`).join("")}</datalist></div>`;
+}
+
 // One "Bearbeiten" for the whole panel: score, reasoning (current language) and both summaries; saves what changed.
 async function saveAll(d) {
   const a = d.assessment || {}, dr = state.draft || {}, L = state.lang, base = `/api/judgements/${encodeURIComponent(d.slug)}`;
@@ -425,6 +445,7 @@ async function saveAll(d) {
   const cur = a.score_override ?? a.ai_score;
   try {
     if (dr.score !== undefined && dr.score !== "" && +dr.score !== cur) await put("/score", { score: Math.max(0, Math.min(100, parseInt(dr.score, 10))) });
+    if (dr.tags !== undefined && JSON.stringify(dr.tags) !== JSON.stringify(a.tags || [])) await put("/tags", { tags: dr.tags });
     if (dr.why !== undefined && dr.why.trim() !== (a[`explanation_${L}`] || "").trim()) await put(`/explanation/${L}`, { text: dr.why.trim() });
     for (const lang of ["de", "fr"]) {
       const v = dr["sum_" + lang];

@@ -11,6 +11,7 @@ Score scale (0-100), from Suva's legal service point of view:
 import re
 
 from . import llm, config
+from . import tags as _tags
 
 DIVISION_PRIOR = {"8C": 25, "9C": 10, "4A": 5}
 KEYWORDS = {
@@ -93,8 +94,10 @@ Antworte ausschliesslich mit einem JSON-Objekt:
  "title_fr": "<titre court en FRANÇAIS, 4-8 mots, question + issue, même si l'arrêt est en allemand>",
  "explanation_de": "<2-3 Sätze: warum (nicht) relevant, welche Rechtsfrage, Ergebnis>",
  "explanation_fr": "<2-3 phrases: pourquoi (pas) pertinent, question juridique, issue>",
- "tags": ["<3-5 kurze deutsche Schlagworte>"],
- "tags_fr": ["<dieselben Schlagworte auf Französisch, gleiche Reihenfolge>"]}"""
+ "tags": ["<2-5 Schlagworte, NUR aus der Liste unten, exakt so geschrieben>"]}
+
+Schlagworte (nur Rechtsfragen, kein Ergebnis wie "abgewiesen"; UVG bzw. IV für das Rechtsgebiet):
+""" + _tags.prompt_list() + "\n\n" + _tags.LANGUAGE_RULES
 
 
 def _excerpt(text, limit):
@@ -131,7 +134,7 @@ def assess(j, examples_hint=None):
                        temperature=0.0, max_tokens=700, json_mode=True)
         a = llm.parse_json(out)
     a["score"] = max(0, min(100, int(a.get("score", 0))))
-    a["tags"] = [str(t)[:40] for t in (a.get("tags") or [])][:6]
+    a["tags"] = _tags.normalize(a.get("tags") or [])[:6]   # keep only keywords from the fixed list
     fr = [str(t)[:40] for t in (a.get("tags_fr") or [])][:6]
     a["tags_fr"] = fr if len(fr) == len(a["tags"]) else []   # only keep a 1:1 translation (UI pairs them by position)
     return a
