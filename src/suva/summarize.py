@@ -18,6 +18,7 @@ PLACEHOLDER = re.compile(r"\b[A-Z]{1,2}\._{3,}(?:\s*\([^)]*\))?,?\s*")  # anonym
 GLOSSARY = """Terminologie DE ↔ FR (verbindlich):
 Bundesgericht (BGer) ↔ Tribunal fédéral (TF) | Erw. ↔ consid. | Urteil ↔ arrêt | Beschwerdeführer/in ↔ recourant/e
 Versicherte/r ↔ assuré/e | Unfallversicherung (UVG) ↔ assurance-accidents (LAA) | ATSG ↔ LPGA | IVG ↔ LAI
+UVV ↔ OLAA | IVV ↔ RAI | ATSV ↔ OPGA | BVG ↔ LPP (keine italienischen Abkürzungen wie OAI/LAINF in DE oder FR)
 Invalidenrente ↔ rente d'invalidité | Invaliditätsgrad ↔ taux d'invalidité | Valideneinkommen ↔ revenu sans invalidité
 Invalideneinkommen ↔ revenu d'invalide | Tabellenlohn (LSE) ↔ salaire statistique (ESS) | Leidensabzug ↔ abattement
 Integritätsentschädigung ↔ indemnité pour atteinte à l'intégrité | Taggeld ↔ indemnité journalière

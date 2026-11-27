@@ -54,6 +54,8 @@ LANGUAGE_RULES = """Sprache und Stil (wie im Rechtsdienst der Suva):
 - Français: "le Tribunal fédéral" (TF), "l'assuré(e)", "la Suva", "l'autorité précédente"; normes "art. 6 al. 1 LAA",
   "art. 17 LPGA"; termes: lien de causalité naturelle/adéquate, statu quo ante/sine, indemnité pour atteinte à l'intégrité,
   taux d'invalidité, revenu sans invalidité, revenu d'invalide, salaire statistique (ESS).
+- Erlasse mit der Abkürzung der jeweiligen Sprache: UVG/LAA, UVV/OLAA, IVG/LAI, IVV/RAI, ATSG/LPGA, ATSV/OPGA, BVG/LPP;
+  nie italienische Abkürzungen (OAI, LAINF, OAINF) in einem deutschen oder französischen Text.
 - Jedes Feld strikt in seiner Sprache (_de = Deutsch, _fr = Français), unabhängig von der Sprache des Urteils.
 - Keine Personennamen und keine Platzhalter wie "A.________"."""
 

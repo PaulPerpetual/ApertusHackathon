@@ -126,6 +126,10 @@ def _html_text(raw):
     soup = BeautifulSoup(raw, "html.parser")
     for t in soup.find_all(["script", "style"]):
         t.decompose()
+    # inline tags must not become line breaks ("l'<a>art. 26<sup>bis</sup></a> LAA" stays one line)
+    for t in soup.find_all(["a", "b", "strong", "i", "em", "u", "span", "sup", "sub", "font", "abbr"]):
+        t.unwrap()
+    soup.smooth()
     return re.sub(r"\n{3,}", "\n\n", soup.get_text("\n", strip=True))
 
 
