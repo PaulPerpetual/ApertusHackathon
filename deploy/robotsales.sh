@@ -13,8 +13,16 @@ DEST=/opt/lex-aperta
 
 if [ "${1:-}" = "--db" ]; then
   DB="${2:?usage: --db FILE}"
-  sqlite3 "$DB" "PRAGMA wal_checkpoint(TRUNCATE);" >/dev/null
-  rsync -az "$DB" "$HOST:$DEST/data/suva.sqlite.new"
+  # Refuse missing/empty DBs: sqlite3 would silently create an empty file and we'd deploy no data.
+  [ -s "$DB" ] || { echo "refuse: $DB missing or empty" >&2; exit 1; }
+  N=$(sqlite3 "$DB" "SELECT COUNT(*) FROM judgements;" 2>/dev/null || echo 0)
+  [ "$N" -gt 0 ] || { echo "refuse: $DB has no judgements" >&2; exit 1; }
+  # Consistent snapshot (includes WAL content) instead of copying a live file
+  SNAP=$(mktemp -t lexdb).sqlite
+  sqlite3 "$DB" ".backup '$SNAP'"
+  echo "uploading $N judgements from $DB"
+  rsync -az "$SNAP" "$HOST:$DEST/data/suva.sqlite.new"
+  rm -f "$SNAP"
 fi
 
 ssh "$HOST" "set -e; cd $DEST
