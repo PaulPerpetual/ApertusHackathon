@@ -31,30 +31,37 @@ zurückweisen ↔ renvoyer | Nichteintreten ↔ irrecevabilité"""
 
 STYLE = {
     "de": """Stil der Suva-Zusammenfassungen (Deutsch):
-- 120-300 Wörter, 1-4 Absätze, sachlicher Fliesstext, keine Aufzählungen, keine Überschriften.
-- Entweder mit dem Sachverhalt in einem Satz beginnen ("Versicherter, Maurer, der ...") oder direkt mit dem
-  Rechtsgrundsatz ("Erwartet der Versicherer ..., muss er ...").
-- Kern sind die Grundsätze und die Begründung des Bundesgerichts, mit Verweis auf die Erwägung in Klammern
-  "(Erw. 5.2)". Nur Erwägungsnummern verwenden, die in den Notizen stehen.
-- Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss nennen
+- KURZ: 100-170 Wörter, höchstens 3 kurze Absätze, sachlicher Fliesstext, keine Aufzählungen, keine Überschriften.
+  Nur das, was eine Juristin der Suva für ihre Praxis wissen muss; keine Prozessgeschichte, keine Daten,
+  keine Wiederholungen.
+- Einstieg: bevorzugt mit der Rechtsfrage oder dem Grundsatz ("In diesem Urteil prüfte das Bundesgericht, ob ..."
+  oder "Erwartet der Versicherer ..., muss er ..."); sonst den Sachverhalt in einem Satz ("Versicherter, Maurer, der ...").
+- Kern sind die Grundsätze und die Begründung des Bundesgerichts. Durchgehend in der Vergangenheit erzählen
+  ("Streitig war ...", "Das Bundesgericht erwog ..."), nicht im Präsens.
+- Sparsam zitieren: 1-2 Verweise auf die tragende Erwägung im Format "(E. 5.2)", nicht in jedem Satz.
+  Nur Nummern aus der Liste "Erwägungen des Urteils" verwenden.
+- Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss in einem Satz
   ("Das Bundesgericht wies die Beschwerde ab." / "hiess die Beschwerde gut").
-- Keine Personennamen und keine Platzhalter wie "A.________"; Parteien als "der Versicherte",
-  "die Beschwerdeführerin", "die Suva".
-- Jeder Absatz verweist mindestens einmal auf die tragende Erwägung im Format "(E. 5.2)" oder "(E. 4.3.1 und 4.3.2)".
-  Nur Nummern aus der Liste "Erwägungen des Urteils" verwenden.""",
+- Die Suva heisst immer "die Suva" (nie CNA, SUVA oder INSAI). Keine Personennamen und keine Platzhalter wie
+  "A.________"; Parteien als "der Versicherte", "die Beschwerdeführerin", "die Suva".""",
     "fr": """Style des résumés de la Suva (français):
-- 120-300 mots, 1-4 paragraphes, texte suivi et factuel, pas d'énumérations ni de titres.
-- Commencer soit par les faits en une phrase ("Assuré, carreleur, qui ...") soit directement par le principe
-  ("Lorsque l'assureur attend ..., il doit ...").
-- L'essentiel: les principes et le raisonnement du Tribunal fédéral, avec renvoi au considérant entre
-  parenthèses "(consid. 5.2)". N'utiliser que des numéros de considérants figurant dans les notes.
-- "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin ("Le Tribunal fédéral a rejeté le recours.").
-- Pas de noms de personnes ni de caractères de substitution comme "A.________"; parties: "l'assuré",
-  "la recourante", "la Suva".
-- Chaque paragraphe renvoie au moins une fois au considérant déterminant, au format "(consid. 5.2)" ou
-  "(consid. 4.3.1 et 4.3.2)". N'utiliser que des numéros de la liste "Considérants de l'arrêt".
+- COURT: 100-180 mots, au plus 3 paragraphes courts, texte suivi et factuel, pas d'énumérations ni de titres.
+  Seulement ce qu'un juriste de la Suva doit savoir pour sa pratique; pas d'historique de procédure, pas de dates,
+  pas de répétitions.
+- Début: de préférence par la question juridique ou le principe ("Dans cet arrêt, le Tribunal fédéral a examiné si ..."
+  ou "Lorsque l'assureur attend ..., il doit ..."); sinon les faits en une phrase ("Assuré, carreleur, qui ...").
+- L'essentiel: les principes et le raisonnement du Tribunal fédéral, au passé ("Était litigieux ...",
+  "Le Tribunal fédéral a considéré ..."), pas au présent.
+- Citer avec parcimonie: 1-2 renvois au considérant déterminant, au format "(consid. 5.2)", pas à chaque phrase.
+  N'utiliser que des numéros de la liste "Considérants de l'arrêt".
+- "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin en une phrase ("Le Tribunal fédéral a rejeté le recours.").
+- Toujours "la Suva" (jamais CNA, SUVA ou INSAI). Pas de noms de personnes ni de caractères de substitution comme
+  "A.________"; parties: "l'assuré", "la recourante", "la Suva".
 - Rédiger directement en français juridique suisse, ce n'est pas une traduction de l'allemand.""",
 }
+
+MAX_WORDS = {"de": 170, "fr": 180}
+SUVA_ALIAS = re.compile(r"\b(?:CNA|INSAI|SUVA)\b")
 
 EXTRACT_SYSTEM = """Du bist Jurist:in. Lies das Urteil und notiere stichwortartig (auf Deutsch):
 1. Sachverhalt (2-3 Zeilen, ohne Namen), Vorinstanz und Partei, die Beschwerde führt.
@@ -138,6 +145,16 @@ def write_summary(j, notes, examples, lang):
                                                             f"aus, nur den Text."}],
                         temperature=0.1, max_tokens=900).strip()
         found, bad = erwaegungen.check_refs(text, valid)
+    words = len(text.split())
+    if words > MAX_WORDS[lang] * 1.15:  # too long: one shortening pass, keeping the references
+        short = ("Zu lang ({} Wörter). Kürze auf höchstens {} Wörter: nur Rechtsfrage, tragende Begründung und Ergebnis, "
+                 "behalte die Erwägungsverweise, gleiche Sprache. Gib nur den Text aus.").format(words, MAX_WORDS[lang])
+        shorter = llm.chat(msgs + [{"role": "assistant", "content": text}, {"role": "user", "content": short}],
+                           temperature=0.1, max_tokens=700).strip()
+        if shorter and len(shorter.split()) < words:
+            text = shorter
+            found, bad = erwaegungen.check_refs(text, valid)
+    text = SUVA_ALIAS.sub("Suva", text)
     text = PLACEHOLDER.sub("", text).replace(" ,", ",").replace("  ", " ")  # last resort for placeholders
     for nr in set(bad):  # last resort: never ship an invented reference
         text = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", text)
