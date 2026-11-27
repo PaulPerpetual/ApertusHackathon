@@ -506,7 +506,20 @@ function init() {
       const c = state.cards.find((x) => x.slug === state.open); if (c) setDone(c.slug, !isDone(c));
     }
   });
-  api("/api/status").then((s) => { state.status = s; renderChrome(); renderList(); }).catch(() => {});
+  api("/api/status").then((s) => { state.status = s; state.dataVersion = s.data_version; renderChrome(); renderList(); }).catch(() => {});
   load();
+  /* Auto-refresh: reload list + open panel when the server's data_version changes (new pipeline data or
+     someone else's edit). Paused while editing, while a field has focus, or while the tab is hidden. */
+  if (!STATIC) setInterval(async () => {
+    if (document.hidden || state.editing) return;
+    if (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+    try {
+      const s = await api("/api/status");
+      if (state.dataVersion && s.data_version && s.data_version !== state.dataVersion) {
+        state.status = s; await load(); toast(state.lang === "fr" ? "Données mises à jour" : "Daten aktualisiert");
+      }
+      state.dataVersion = s.data_version;
+    } catch (e) { /* offline for a moment: try again next tick */ }
+  }, 30000);
 }
 init();

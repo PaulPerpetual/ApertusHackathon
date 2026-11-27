@@ -116,10 +116,19 @@ def debug_page():
     return FileResponse(STATIC / "debug.html")
 
 
+def _data_version():
+    """Changes whenever the DB file changes (redeploy, any edit): the UI polls it to auto-refresh."""
+    try:
+        st = config.DB_PATH.stat()
+        return f"{st.st_mtime_ns}-{st.st_size}"
+    except OSError:
+        return ""
+
+
 @app.get("/api/status")
 def status():
     return {"model": llm.model_name(), "mock": config.USE_MOCK_LLM, "read_only": config.READ_ONLY,
-            "editor_key_required": bool(config.EDITOR_KEYS),
+            "editor_key_required": bool(config.EDITOR_KEYS), "data_version": _data_version(),
             "threshold": config.RELEVANCE_SUMMARY_THRESHOLD, "jobs": JOBS}
 
 

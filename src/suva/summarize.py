@@ -11,6 +11,9 @@ from collections import Counter
 
 from . import llm, config
 from .triage import _excerpt
+from . import erwaegungen
+
+PLACEHOLDER = re.compile(r"\b[A-Z]{1,2}\._{3,}(?:\s*\([^)]*\))?,?\s*")  # anonymised party, e.g. "A.________"
 
 GLOSSARY = """Terminologie DE ↔ FR (verbindlich):
 Bundesgericht (BGer) ↔ Tribunal fédéral (TF) | Erw. ↔ consid. | Urteil ↔ arrêt | Beschwerdeführer/in ↔ recourant/e
@@ -34,7 +37,10 @@ STYLE = {
   "(Erw. 5.2)". Nur Erwägungsnummern verwenden, die in den Notizen stehen.
 - Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss nennen
   ("Das Bundesgericht wies die Beschwerde ab." / "hiess die Beschwerde gut").
-- Keine Personennamen; Parteien als "der Versicherte", "die Beschwerdeführerin", "die Suva".""",
+- Keine Personennamen und keine Platzhalter wie "A.________"; Parteien als "der Versicherte",
+  "die Beschwerdeführerin", "die Suva".
+- Jeder Absatz verweist mindestens einmal auf die tragende Erwägung im Format "(E. 5.2)" oder "(E. 4.3.1 und 4.3.2)".
+  Nur Nummern aus der Liste "Erwägungen des Urteils" verwenden.""",
     "fr": """Style des résumés de la Suva (français):
 - 120-300 mots, 1-4 paragraphes, texte suivi et factuel, pas d'énumérations ni de titres.
 - Commencer soit par les faits en une phrase ("Assuré, carreleur, qui ...") soit directement par le principe
@@ -42,7 +48,10 @@ STYLE = {
 - L'essentiel: les principes et le raisonnement du Tribunal fédéral, avec renvoi au considérant entre
   parenthèses "(consid. 5.2)". N'utiliser que des numéros de considérants figurant dans les notes.
 - "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin ("Le Tribunal fédéral a rejeté le recours.").
-- Pas de noms de personnes; parties: "l'assuré", "la recourante", "la Suva".
+- Pas de noms de personnes ni de caractères de substitution comme "A.________"; parties: "l'assuré",
+  "la recourante", "la Suva".
+- Chaque paragraphe renvoie au moins une fois au considérant déterminant, au format "(consid. 5.2)" ou
+  "(consid. 4.3.1 et 4.3.2)". N'utiliser que des numéros de la liste "Considérants de l'arrêt".
 - Rédiger directement en français juridique suisse, ce n'est pas une traduction de l'allemand.""",
 }
 
@@ -91,14 +100,38 @@ def write_summary(j, notes, examples, lang):
     shots = pick_examples((j.get("text") or "") + notes, examples, lang)
     shot_txt = "\n\n".join(f"Beispiel {i + 1} ({ex['docket']}):\n{ex[lang]}" for i, ex in enumerate(shots))
     target = "Deutsch" if lang == "de" else "Französisch (français)"
+    label = "Erwägungen des Urteils" if lang == "de" else "Considérants de l'arrêt"
+    valid = erwaegungen.numbers(j.get("text") or "")
     system = (f"Du verfasst für den Rechtsdienst der Suva Urteilszusammenfassungen auf {target}.\n\n"
               f"{STYLE[lang]}\n\n{GLOSSARY}")
     user = (f"Stilbeispiele echter Suva-Zusammenfassungen:\n\n{shot_txt}\n\n---\n"
             f"Notizen zum Urteil {j['docket']} vom {j.get('decision_date') or '?'}:\n{notes}\n\n"
+            f"{label} (Nummer: Anfang des Texts):\n{erwaegungen.outline(j.get('text') or '', 120)}\n\n"
+            f"Dispositiv des Urteils (verbindlich: das Ergebnis genau so wiedergeben; wer Beschwerde führte "
+            f"und ob sie gutgeheissen, abgewiesen oder zurückgewiesen wurde):\n"
+            f"{erwaegungen.dispositiv(j.get('text') or '')}\n\n"
             f"Auszug aus dem Urteil (zur Kontrolle):\n<judgement>\n{(j.get('text') or '')[:6000]}\n</judgement>\n\n"
             f"Schreibe jetzt die Zusammenfassung auf {target}. Gib nur den Text der Zusammenfassung aus.")
-    return llm.chat([{"role": "system", "content": system}, {"role": "user", "content": user}],
-                    temperature=0.3, max_tokens=900).strip()
+    msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
+    text = llm.chat(msgs, temperature=0.3, max_tokens=900).strip()
+    found, bad = erwaegungen.check_refs(text, valid)
+    placeholder = PLACEHOLDER.search(text)
+    if (valid and (bad or not found)) or placeholder:  # one corrective retry
+        fix = ""
+        if bad:
+            fix += f"Die Nummern {', '.join(bad)} gibt es im Urteil nicht. Erlaubt sind nur: {', '.join(valid)}. "
+        elif valid and not found:
+            fix += f"Es fehlen Verweise auf die Erwägungen. Erlaubt sind nur: {', '.join(valid)}. "
+        if placeholder:
+            fix += "Entferne Platzhalter wie \"A.________\"; nenne die Parteien nach ihrer Rolle. "
+        fix += "Gib die korrigierte Zusammenfassung aus, nur den Text."
+        text = llm.chat(msgs + [{"role": "assistant", "content": text}, {"role": "user", "content": fix}],
+                        temperature=0.2, max_tokens=900).strip()
+        found, bad = erwaegungen.check_refs(text, valid)
+    text = PLACEHOLDER.sub("", text).replace(" ,", ",").replace("  ", " ")  # last resort for placeholders
+    for nr in set(bad):  # last resort: never ship an invented reference
+        text = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", text)
+    return text
 
 
 def summarize(j, examples):

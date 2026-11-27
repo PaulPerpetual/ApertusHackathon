@@ -53,15 +53,20 @@ def main():
     check("GET /api/status", s == 200, json.dumps(st)[:120])
     check("status: real model (not mock)", st.get("mock") is False and "apertus" in str(st.get("model")))
     check("status: editor key required", st.get("editor_key_required") is True)
+    check("status: data_version for auto-refresh", bool(st.get("data_version")))
 
     # --- list
     s, raw, _, t = req(b, "/api/judgements")
     cards = json.loads(raw) if s == 200 else []
     check("GET /api/judgements", s == 200 and len(cards) > 0, f"{len(cards)} cards, {len(raw)//1024} KB, {t:.2f}s")
     scored = [c for c in cards if str(c.get("model", "")).startswith("apertus")]
-    hit = [c for c in cards if "#Trefferliste" in (c.get("tags") or [])]
+    hit = [c for c in scored if (c.get("score") or 0) >= 60]  # hit list = Apertus score >= 60 (finalize.py)
     check("cards scored by Apertus", len(scored) >= 150, f"{len(scored)}")
-    check("hit list tagged (#Trefferliste)", len(hit) >= 60, f"{len(hit)}")
+    check("hit list (score >= 60)", len(hit) >= 60, f"{len(hit)}")
+    tags = [t for c in scored for t in (c.get("tags") or [])]
+    check("tags without '#' (UI adds it)", not any(str(t).startswith("#") for t in tags), f"{len(set(tags))} distinct")
+    check("no duplicate tags on a card", all(len(c.get("tags") or []) == len(set(c.get("tags") or [])) for c in scored))
+    check("FR tags aligned with DE", all(len(c.get("tags_fr") or []) in (0, len(c.get("tags") or [])) for c in scored))
     check("cards sorted by score", all((cards[i].get("score") or 0) >= (cards[i + 1].get("score") or 0)
                                        for i in range(min(len(cards), 300) - 1)))
     need = {"slug", "docket", "decision_date", "score", "title_de", "title_fr", "explanation_de", "tags"}
