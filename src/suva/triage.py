@@ -133,6 +133,21 @@ def assess(j, examples_hint=None):
                         {"role": "user", "content": "Bitte nur das JSON-Objekt, ohne weiteren Text."}],
                        temperature=0.0, max_tokens=700, json_mode=True)
         a = llm.parse_json(out)
+    wrong = [k for k in ("title_de", "title_fr", "explanation_de", "explanation_fr")
+             if a.get(k) and not _tags.lang_ok(str(a[k]), k[-2:])]
+    if wrong:  # e.g. an Italian ruling answered in Italian: one repair call for those fields
+        fix = llm.chat([{"role": "system", "content": SYSTEM}, {"role": "user", "content": user},
+                        {"role": "assistant", "content": out},
+                        {"role": "user", "content": "Diese Felder sind in der falschen Sprache: " + ", ".join(wrong)
+                         + ". _de muss Deutsch sein, _fr Französisch. Gib das ganze JSON-Objekt korrigiert aus."}],
+                       temperature=0.0, max_tokens=700, json_mode=True)
+        try:
+            b = llm.parse_json(fix)
+            for k in wrong:
+                if b.get(k) and _tags.lang_ok(str(b[k]), k[-2:]):
+                    a[k] = b[k]
+        except ValueError:
+            pass
     a["score"] = max(0, min(100, int(a.get("score", 0))))
     a["tags"] = _tags.normalize(a.get("tags") or [])[:6]   # keep only keywords from the fixed list
     fr = [str(t)[:40] for t in (a.get("tags_fr") or [])][:6]

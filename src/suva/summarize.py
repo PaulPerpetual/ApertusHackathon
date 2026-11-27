@@ -36,8 +36,13 @@ STYLE = {
   keine Wiederholungen.
 - Einstieg: bevorzugt mit der Rechtsfrage oder dem Grundsatz ("In diesem Urteil prüfte das Bundesgericht, ob ..."
   oder "Erwartet der Versicherer ..., muss er ..."); sonst den Sachverhalt in einem Satz ("Versicherter, Maurer, der ...").
-- Kern sind die Grundsätze und die Begründung des Bundesgerichts. Durchgehend in der Vergangenheit erzählen
-  ("Streitig war ...", "Das Bundesgericht erwog ..."), nicht im Präsens.
+- Kern sind die Grundsätze und die Begründung des Bundesgerichts: die tragenden Argumente als Rechtssätze im
+  Präsens ("Die Reinigung von Büros fällt unter Art. 73 lit. b UVV."; "Das BGer bestätigt ..."), der Sachverhalt
+  knapp in der Vergangenheit ("Die Suva verglich ...").
+- Weglassen: Unfalldaten, Verfahrensgeschichte durch die Instanzen, Gerichtskosten, Daten von Verfügungen.
+  Sachverhalt nur so weit, wie er für den Grundsatz nötig ist (z.B. Ausbildung bei der Frage des Kompetenzniveaus).
+- Ist die Suva Partei, aus ihrer Sicht schreiben: was die Suva entschieden oder geltend gemacht hat und ob das
+  BGer ihr folgt.
 - Sparsam zitieren: 1-2 Verweise auf die tragende Erwägung im Format "(E. 5.2)", nicht in jedem Satz.
   Nur Nummern aus der Liste "Erwägungen des Urteils" verwenden.
 - Bundesgericht als "das Bundesgericht" oder "das BGer". Ergebnis am Schluss in einem Satz
@@ -50,8 +55,12 @@ STYLE = {
   pas de répétitions.
 - Début: de préférence par la question juridique ou le principe ("Dans cet arrêt, le Tribunal fédéral a examiné si ..."
   ou "Lorsque l'assureur attend ..., il doit ..."); sinon les faits en une phrase ("Assuré, carreleur, qui ...").
-- L'essentiel: les principes et le raisonnement du Tribunal fédéral, au passé ("Était litigieux ...",
-  "Le Tribunal fédéral a considéré ..."), pas au présent.
+- L'essentiel: les principes et le raisonnement du Tribunal fédéral, énoncés comme règles au présent
+  ("Le nettoyage des bureaux tombe sous l'art. 73 let. b OLAA."; "Le TF confirme ..."), les faits brièvement au passé
+  ("La Suva a procédé ...").
+- Omettre: dates d'accident, historique de la procédure, frais judiciaires, dates des décisions. Les faits
+  seulement dans la mesure nécessaire au principe.
+- Si la Suva est partie, écrire de son point de vue: ce que la Suva a décidé ou fait valoir et si le TF la suit.
 - Citer avec parcimonie: 1-2 renvois au considérant déterminant, au format "(consid. 5.2)", pas à chaque phrase.
   N'utiliser que des numéros de la liste "Considérants de l'arrêt".
 - "le Tribunal fédéral" ou "le TF". Indiquer l'issue à la fin en une phrase ("Le Tribunal fédéral a rejeté le recours.").
@@ -61,7 +70,7 @@ STYLE = {
 }
 
 MAX_WORDS = {"de": 170, "fr": 180}
-SUVA_ALIAS = re.compile(r"\b(?:CNA|INSAI|SUVA)\b")
+SUVA_ALIAS = re.compile(r"(?:Caisse nationale suisse d'assurance en cas d'accidents|Schweizerische Unfallversicherungsanstalt|Istituto nazionale svizzero di assicurazione contro gli infortuni)(?:\s*\((?:CNA|SUVA|INSAI|Suva)\))?|\b(?:CNA|INSAI|SUVA)\b")
 
 EXTRACT_SYSTEM = """Du bist Jurist:in. Lies das Urteil und notiere stichwortartig (auf Deutsch):
 1. Sachverhalt (2-3 Zeilen, ohne Namen), Vorinstanz und Partei, die Beschwerde führt.
@@ -104,7 +113,7 @@ def extract_notes(j):
                     temperature=0.1, max_tokens=1200)
 
 
-def write_summary(j, notes, examples, lang):
+def write_summary(j, notes, examples, lang, reference=None):
     shots = pick_examples((j.get("text") or "") + notes, examples, lang)
     shot_txt = "\n\n".join(f"Beispiel {i + 1} ({ex['docket']}):\n{ex[lang]}" for i, ex in enumerate(shots))
     target = "Deutsch" if lang == "de" else "Französisch (français)"
@@ -118,6 +127,9 @@ def write_summary(j, notes, examples, lang):
             f"Dispositiv des Urteils (verbindlich: das Ergebnis genau so wiedergeben; wer Beschwerde führte "
             f"und ob sie gutgeheissen, abgewiesen oder zurückgewiesen wurde):\n"
             f"{erwaegungen.dispositiv(j.get('text') or '')}\n\n"
+            + (f"Bereits verfasste deutsche Zusammenfassung (gleiche Fakten, gleiches Ergebnis, gleiche Partei als "
+               f"Beschwerdeführerin; nicht übersetzen, sondern eigenständig auf Französisch formulieren):\n{reference}\n\n"
+               if reference else "") +
             f"Auszug aus dem Urteil (zur Kontrolle):\n<judgement>\n{(j.get('text') or '')[:6000]}\n</judgement>\n\n"
             f"Schreibe jetzt die Zusammenfassung auf {target}. Gib nur den Text der Zusammenfassung aus.")
     msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -155,6 +167,7 @@ def write_summary(j, notes, examples, lang):
             text = shorter
             found, bad = erwaegungen.check_refs(text, valid)
     text = SUVA_ALIAS.sub("Suva", text)
+    text = re.sub(r"\b([Ll])'Suva", lambda m: m.group(1) + "a Suva", text)  # l'INSAI -> la Suva
     text = PLACEHOLDER.sub("", text).replace(" ,", ",").replace("  ", " ")  # last resort for placeholders
     for nr in set(bad):  # last resort: never ship an invented reference
         text = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", text)
@@ -164,5 +177,6 @@ def write_summary(j, notes, examples, lang):
 def summarize(j, examples):
     """Return {'de': text, 'fr': text, 'notes': notes}."""
     notes = extract_notes(j)
-    return {"notes": notes, "de": write_summary(j, notes, examples, "de"),
-            "fr": write_summary(j, notes, examples, "fr")}
+    de = write_summary(j, notes, examples, "de")
+    # FR gets the DE text as a fact reference so both versions agree on who appealed and what was decided
+    return {"notes": notes, "de": de, "fr": write_summary(j, notes, examples, "fr", reference=de)}

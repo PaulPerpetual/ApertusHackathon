@@ -88,3 +88,19 @@ def vocab():
 
 def prompt_list():
     return ", ".join(de for de, _, _ in VOCAB)
+
+
+_LANG_WORDS = {
+    "de": re.compile(r"\b(der|die|das|und|ist|nicht|wird|zur|zum|des|vom|auf|für)\b", re.I),
+    "fr": re.compile(r"\b(le|la|les|des|du|une|est|selon|pour|dans|qui|que)\b|\b[ld]'", re.I),
+    "it": re.compile(r"\b(il|della|delle|che|del|non|per|sono|alla|dell|gli|nella)\b", re.I),
+}
+
+
+def lang_ok(text, lang):
+    """Cheap guard: True if `text` reads like `lang` (de/fr) and not like one of the other two languages.
+    Short strings (titles) without enough function words pass."""
+    counts = {k: len(rx.findall(text or "")) for k, rx in _LANG_WORDS.items()}
+    if sum(counts.values()) < 3:
+        return True
+    return counts[lang] >= max(v for k, v in counts.items() if k != lang)
