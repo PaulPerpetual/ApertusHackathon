@@ -49,7 +49,22 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const fmtTime = (iso) => { if (!iso) return ""; const d = new Date(iso); return d.toLocaleString(state.lang === "fr" ? "fr-CH" : "de-CH", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); };
 const band = (s) => (s >= 70 ? "hi" : s >= 40 ? "mid" : "lo");
 
+/* Static mode (GitHub Pages / any web server without the FastAPI backend): read the exported JSON
+   that mirrors the live API (docs/API.md). "/api/judgements/x" -> "api/judgements/x.json". Read-only. */
+const STATIC = location.hostname.endsWith("github.io") || window.LEX_STATIC === true || location.protocol === "file:";
+const staticUrl = (p) => p.replace(/^\/api\//, "api/").replace(/%2F/gi, "_").replace(/\//g, "/") + ".json";
+let kbCache = null;
 async function api(path, opts = {}) {
+  if (STATIC) {
+    if (opts.method && opts.method !== "GET") throw new Error(t("read_only"));
+    if (path.startsWith("/api/kb?")) return kbLocal(new URLSearchParams(path.split("?")[1]));
+    if (path.startsWith("/api/kb/example/")) path = "/api/kb/example/" + decodeURIComponent(path.slice(16)).replace("/", "_");
+    const r = await fetch(staticUrl(path));
+    if (!r.ok) throw new Error(`${r.status} ${path}`);
+    const data = await r.json();
+    if (path === "/api/status") { data.read_only = true; data.static = true; data.jobs = data.jobs || {}; }
+    return data;
+  }
   const r = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opts });
   if (!r.ok) throw new Error(await r.text());
   return r.json();
@@ -268,6 +283,35 @@ async function startAdd(docket) {
     if (job.status === "done") { toast(t("done")); await load(); openPanel(job.slug); } else toast(`${t("failed")}: ${job.message}`);
   };
   setTimeout(poll, 3000);
+}
+
+/* Same filtering as GET /api/kb, done in the browser on the exported api/kb.json */
+async function kbLocal(params) {
+  if (!kbCache) { const r = await fetch("api/kb.json"); kbCache = r.ok ? await r.json() : []; }
+  const norm = (x) => (x || "").replace(/\s+/g, " ").toLowerCase();
+  const terms = norm(params.get("q")).split(" ").filter((x) => x.length > 1);
+  const tag = (params.get("tag") || "").toLowerCase(), kind = params.get("kind") || "", lang = params.get("lang") || "de";
+  const res = [];
+  for (const e of kbCache) {
+    if (tag && !(e.tags || []).some((x) => x.toLowerCase() === tag)) continue;
+    if (kind && e.kind !== kind) continue;
+    const hay = norm([e.docket, e.title_de, e.title_fr, e.de, e.fr, (e.tags || []).join(" ")].join(" "));
+    if (terms.length && !terms.every((x) => hay.includes(x))) continue;
+    const body = e[lang] || e.de || e.fr || "";
+    let snippet = body.slice(0, 220) + (body.length > 220 ? "…" : "");
+    if (terms.length) {
+      const low = body.toLowerCase();
+      const hits = terms.map((x) => low.indexOf(x)).filter((i) => i >= 0);
+      const st = Math.max(0, (hits.length ? Math.min(...hits) : 0) - 70);
+      snippet = (st ? "…" : "") + body.slice(st, st + 220) + (st + 220 < body.length ? "…" : "");
+    }
+    const rank = terms.reduce((a, x) => a + hay.split(x).length - 1, 0);
+    const { de, fr, ...rest } = e;
+    res.push({ ...rest, snippet, rank });
+  }
+  res.sort((a, b) => terms.length ? b.rank - a.rank : (b.date || "").localeCompare(a.date || ""));
+  const tags = [...new Set(res.flatMap((e) => e.tags || []))].sort();
+  return { total: res.length, results: res.slice(0, 100), tags };
 }
 
 /* ---------- knowledge base (library of all summaries, incl. Suva's own) ---------- */

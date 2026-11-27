@@ -151,6 +151,10 @@ def _norm(s):
     return re.sub(r"\s+", " ", (s or "")).lower()
 
 
+def kb_entries():
+    return _kb_entries()
+
+
 def _kb_entries():
     """All summaries we know: pipeline output (AI or human-edited) plus Suva's own example summaries."""
     with db.connect() as con:
