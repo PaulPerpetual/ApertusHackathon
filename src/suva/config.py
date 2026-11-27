@@ -26,3 +26,9 @@ EXAMPLES_JSON = ROOT / "data" / "examples.json"
 GROUND_TRUTH_XLSX = JUDGEMENTS_DIR / "BG_Urteile_2025_Q4_2026_Q1.xlsx"
 
 USE_MOCK_LLM = not LLM_BASE_URL
+
+# Optional protection for a public deployment: HTTP basic auth on every page and API call.
+DEMO_USER = os.getenv("DEMO_USER", "suva")
+DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "")
+# READ_ONLY=1 disables edits and on-demand summaries (e.g. for a public showcase link)
+READ_ONLY = os.getenv("READ_ONLY", "").lower() in ("1", "true", "yes")

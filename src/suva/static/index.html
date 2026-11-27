@@ -9,6 +9,9 @@
 <body>
 <header class="topbar">
   <div class="brand"><span class="logo">S</span><span data-i18n="app_title">Urteilsradar</span></div>
+  <div class="views" role="tablist">
+    <button data-view="radar" class="on" data-i18n="view_radar">Radar</button><button data-view="kb" data-i18n="view_kb">Bibliothek</button>
+  </div>
   <input id="search" type="search" data-i18n-placeholder="search">
   <label class="toggle"><input id="showLow" type="checkbox"> <span data-i18n="show_low">Wenig relevante zeigen</span></label>
   <div class="spacer"></div>
@@ -22,8 +25,20 @@
 
 <main id="layout">
   <section id="listPane">
-    <div id="listMeta" class="meta"></div>
-    <ol id="cards"></ol>
+    <div id="radarView">
+      <div id="listMeta" class="meta"></div>
+      <ol id="cards"></ol>
+    </div>
+    <div id="kbView" hidden>
+      <div class="kb-filters">
+        <div class="seg" id="kbKind">
+          <button data-kind="" class="on" data-i18n="kind_all">Alle</button><button data-kind="suva" data-i18n="kind_suva">Suva</button><button data-kind="ai" data-i18n="kind_ai">KI</button><button data-kind="edited" data-i18n="kind_edited">Bearbeitet</button>
+        </div>
+        <div id="kbTags" class="tags"></div>
+      </div>
+      <div id="kbMeta" class="meta"></div>
+      <ol id="kbList" class="kb-list"></ol>
+    </div>
   </section>
   <aside id="panel" hidden>
     <div class="panel-head">
