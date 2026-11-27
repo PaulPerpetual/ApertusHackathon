@@ -17,6 +17,8 @@ const I18N = {
     view_radar: "Radar", view_kb: "Bibliothek", kind_all: "Alle", kind_suva: "Suva", kind_ai: "KI", kind_edited: "Bearbeitet",
     kb_search: "Bibliothek durchsuchen (Stichwort, Artikel, Nummer)", kb_n: (n) => `${n} Zusammenfassungen`, read_only: "Nur lesen",
     in_radar: "Im Radar öffnen", author: "Autor:in",
+    compare: "Mit Suva-Zusammenfassung vergleichen", compare_off: "Vergleich schliessen", ours: "Unsere Zusammenfassung",
+    suva_expert: "Suva-Expert:innen", cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
     app_title: "Radar des arrêts", search: "Rechercher (titre, numéro, mot-clé)", show_low: "Afficher les moins pertinents",
@@ -35,6 +37,8 @@ const I18N = {
     view_radar: "Radar", view_kb: "Bibliothèque", kind_all: "Tous", kind_suva: "Suva", kind_ai: "IA", kind_edited: "Modifiés",
     kb_search: "Rechercher dans la bibliothèque (mot-clé, article, numéro)", kb_n: (n) => `${n} résumés`, read_only: "Lecture seule",
     in_radar: "Ouvrir dans le radar", author: "Auteur·e",
+    compare: "Comparer avec le résumé Suva", compare_off: "Fermer la comparaison", ours: "Notre résumé",
+    suva_expert: "Expert·e·s Suva", cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
 };
 
@@ -42,7 +46,7 @@ const store = {
   get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
-const state = { view: "radar", kbKind: "", kbTag: "", lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
+const state = { compare: false, view: "radar", kbKind: "", kbTag: "", lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""), cards: [], open: null, tab: null, editing: false, showAi: false };
 const $ = (s) => document.querySelector(s);
 const t = (k, ...a) => { const v = I18N[state.lang][k]; return typeof v === "function" ? v(...a) : v ?? k; };
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -193,6 +197,35 @@ function setupDnD() {
   });
 }
 
+/* ---------- citations: "(Erw. 4.2)" / "(consid. 5.2)" link to the consideration in the original text ---------- */
+const CITE_RE = /\b(Erw(?:ägung(?:en)?)?\.?|E\.|consid(?:érants?)?\.?|cons\.|considérants?)\s*(\d+(?:\.\d+)*)/g;
+function linkCitations(text) {
+  return esc(text).replace(CITE_RE, (m, word, num) => `<a href="#" class="cite" data-erw="${num}" title="${t("cite_hint")}">${word} ${num}</a>`);
+}
+/* Mark each consideration start ("4.2 ..." / "4.2. ..." at line start) after the Erwägungen heading. */
+function renderOriginal(text) {
+  const lines = text.split("\n");
+  let started = false;
+  const head = /^(Erwägungen?|Erwägung|Considérant en droit|Considérants?|Considerando in diritto|Diritto)\s*:?\s*$/i;
+  const seen = new Set();
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (!started && head.test(line.trim())) { started = true; out.push(`<b>${esc(line)}</b>`); continue; }
+    const m = started && line.match(/^\s*(\d+(?:\.\d+)*)\.?(?:\s|$)/);
+    if (m && !seen.has(m[1])) {
+      seen.add(m[1]);
+      // a bare number line ("5.2.") belongs to the paragraph that follows it
+      const body = /^\s*[\d.]+\s*$/.test(line) && i + 1 < lines.length ? line + "\n" + lines[++i] : line;
+      out.push(`<span class="erw-anchor" id="erw-${m[1]}">${esc(body)}</span>`);
+    } else out.push(esc(line));
+  }
+  return out.join("\n");
+}
+function jumpToErw(num) {
+  state.tab = "text"; state.pendingErw = num; renderPanel();
+}
+
 /* ---------- side panel ---------- */
 async function openPanel(slug) {
   state.open = slug; state.editing = false; state.showAi = false; state.tab = state.tab || "summary_" + state.lang;
@@ -240,13 +273,23 @@ async function renderPanel() {
     } else {
       const meta = s.edited_by ? `<span class="edited">✎ ${t("edited_by")} ${esc(s.edited_by)} · ${esc(fmtTime(s.edited_at))}</span>`
         : s.model === "suva-human-example" ? `<span class="tag">${t("human_example")}</span>` : `<span class="tag">${t("ai")} · ${esc(s.model)}</span>`;
-      html += `<div class="c-sub">${meta}</div><div class="summary">${esc(s.text)}</div>
-        <div class="row">${s.edited_by && s.ai_text ? `<button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button>` : ""}
+      const expert = d.expert_summaries && d.expert_summaries[lang];
+      const canCompare = expert && s.model !== "suva-human-example";
+      if (canCompare && state.compare) {
+        html += `<div class="compare">
+          <div><h4>${t("ours")}</h4><div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div></div>
+          <div><h4>${t("suva_expert")}${d.expert_summaries.author ? ` · ${esc(d.expert_summaries.author)}` : ""}</h4><div class="c-sub"><span class="tag">${t("human_example")}</span></div><div class="summary">${linkCitations(expert)}</div></div>
+        </div>`;
+      } else {
+        html += `<div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div>`;
+      }
+      html += `<div class="row">${canCompare ? `<button class="btn small" id="toggleCompare">${state.compare ? t("compare_off") : t("compare")}</button>` : ""}
+        ${s.edited_by && s.ai_text ? `<button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button>` : ""}
         <button class="btn" id="editBtn">${t("edit")}</button></div>
-        ${state.showAi && s.ai_text ? `<div class="ai-orig">${esc(s.ai_text)}</div>` : ""}`;
+        ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
     }
   } else if (state.tab === "text") {
-    html += d.text ? `<div class="original">${esc(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
+    html += d.text ? `<div class="original" id="origText">${renderOriginal(d.text)}</div>` : `<p class="muted">${t("no_text")}</p>`;
   } else {
     html += d.history.length
       ? `<ul class="history">${d.history.map((h) => `<li><b>${esc(h.editor)}</b> · ${esc(fmtTime(h.at))} · ${t("h_" + h.field.replace("_score", ""))}${h.field.includes("score") ? `: ${esc(h.old_value)} → ${esc(h.new_value)}` : ""}</li>`).join("")}</ul>`
@@ -254,12 +297,22 @@ async function renderPanel() {
   }
   html += `</div>`;
   $("#pBody").innerHTML = html;
+  $("#panel").classList.toggle("wide", !!(state.compare && state.tab.startsWith("summary_") && d.expert_summaries && !state.editing));
+  $("#pBody").querySelectorAll(".cite").forEach((a) => (a.onclick = (e) => { e.preventDefault(); jumpToErw(a.dataset.erw); }));
+  if (state.tab === "text" && state.pendingErw) {
+    const num = state.pendingErw; state.pendingErw = null;
+    // exact consideration, else its parent (4.2.1 -> 4.2 -> 4)
+    let el = null; for (let n = num; n && !el; n = n.includes(".") ? n.slice(0, n.lastIndexOf(".")) : "") el = document.getElementById("erw-" + n);
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.add("flash"); setTimeout(() => el.classList.remove("flash"), 2200); }
+    else toast(t("cite_missing"));
+  }
 
   $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; state.editing = false; renderPanel(); }));
   const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
   on("editBtn", async () => { if (await requireName()) { state.editing = true; renderPanel(); } });
   on("cancelEdit", () => { state.editing = false; renderPanel(); });
   on("toggleAi", () => { state.showAi = !state.showAi; renderPanel(); });
+  on("toggleCompare", () => { state.compare = !state.compare; renderPanel(); });
   on("saveEdit", async () => {
     const lang = state.tab.slice(-2);
     await api(`/api/judgements/${encodeURIComponent(state.open)}/summary/${lang}`, { method: "PUT", body: JSON.stringify({ text: $("#sumEdit").value, editor: state.editor }) });

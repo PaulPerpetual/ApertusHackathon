@@ -85,7 +85,7 @@ suva_party, model, has_summary`. The effective score is `score_override ?? ai_sc
 | `areas` | card | `["accident" \| "invalidity" \| "daily_allowance"]` from the subject line |
 | `procedural` | card | appeal dismissed without a decision on the merits; Suva rarely picks these (3/26) |
 | `dataset` | card | `"period"` (Apr–Jun 2026, the triage target) \| `"examples"` (Suva's 82 reference rulings) |
-| `expert_summaries` | detail | `{de, fr}` Suva's human summary, for side-by-side comparison on example rulings |
+| `expert_summaries` | detail | `{de, fr, author}` Suva's human summary, for side-by-side comparison on example rulings. **Implemented** (PR: citations + compare) |
 
 ## Runtime notes
 

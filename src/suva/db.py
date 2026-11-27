@@ -156,4 +156,21 @@ def get_detail(con, slug):
         d["assessment"]["tags"] = json.loads(a["tags"] or "[]")
     d["summaries"] = {r["lang"]: dict(r) for r in con.execute("SELECT * FROM summaries WHERE slug=?", (slug,))}
     d["history"] = [dict(r) for r in con.execute("SELECT * FROM edits WHERE slug=? ORDER BY id DESC", (slug,))]
+    d["expert_summaries"] = _expert_summary(d["docket"])
     return d
+
+
+_EXPERT = None
+
+
+def _expert_summary(docket):
+    """Suva's human summary for this docket, if it is one of the provided examples (docs/API.md)."""
+    global _EXPERT
+    if _EXPERT is None:
+        from .examples import load_examples
+        try:
+            _EXPERT = {e["docket"]: e for e in load_examples()}
+        except Exception:
+            _EXPERT = {}
+    e = _EXPERT.get(docket)
+    return {"de": e["de"], "fr": e["fr"], "author": e.get("author")} if e else None

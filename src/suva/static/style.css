@@ -109,3 +109,14 @@ dialog h3 { margin-top: 0; }
   .card { grid-template-columns: 24px 54px 1fr; }
   #search { flex-basis: 100%; order: 9; }
 }
+
+/* citations and side-by-side comparison */
+a.cite { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); cursor: pointer; }
+a.cite:hover { border-bottom-style: solid; }
+.erw-anchor { font-weight: 650; scroll-margin-top: 80px; border-radius: 4px; transition: background .4s; }
+.erw-anchor.flash { background: color-mix(in srgb, var(--accent) 28%, transparent); }
+#panel.wide { width: min(72vw, 1150px); }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.compare > div { min-width: 0; }
+.compare > div + div { border-left: 1px solid var(--border); padding-left: 20px; }
+@media (max-width: 900px) { .compare { grid-template-columns: 1fr; } .compare > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--border); padding-top: 12px; } }
