@@ -59,7 +59,7 @@ def parse_json(text):
         elif text[i] == "}":
             depth -= 1
             if depth == 0:
-                return json.loads(text[start:i + 1])
+                return json.loads(text[start:i + 1], strict=False)  # tolerate raw newlines/tabs in strings
     raise ValueError("unterminated JSON object in model output")
 
 

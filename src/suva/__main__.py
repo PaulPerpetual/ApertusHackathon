@@ -33,11 +33,21 @@ def cmd_scrape(args, process=False):
 def cmd_import(args):
     exs = examples.load_examples()
     divisions = set(args.divisions.split(",")) if args.divisions else None
-    n = 0
-    for j in scraper.load_crawled(args.folder, divisions):
-        pipeline.process(j, exs)
-        n += 1
-    print(f"{n} judgements processed into {config.DB_PATH}")
+    jobs = list(scraper.load_crawled(args.folder, divisions))
+    workers = max(1, getattr(args, "workers", 1) or 1)
+    if workers == 1:
+        for j in jobs:
+            pipeline.process(j, exs)
+    else:  # Apertus calls dominate; run several in parallel (SQLite writes are short, db.connect waits)
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        with ThreadPoolExecutor(workers) as pool:
+            futs = {pool.submit(pipeline.process, j, exs): j["docket"] for j in jobs}
+            for f in as_completed(futs):
+                try:
+                    f.result()
+                except Exception as e:  # keep going; report at the end
+                    print(f"! {futs[f]}: {e}", file=sys.stderr)
+    print(f"{len(jobs)} judgements processed into {config.DB_PATH}")
 
 
 def cmd_triage(args):
@@ -127,6 +137,7 @@ def main():
         s.add_argument("--days", type=int, default=92)
         s.add_argument("--divisions", default="", help="only fetch full text for these, e.g. 8C,9C,4A")
     i = sub.add_parser("import")
+    i.add_argument("--workers", type=int, default=1, help="parallel LLM workers")
     i.add_argument("folder")
     i.add_argument("--divisions", default="", help="e.g. 8C,9C,4A")
     t = sub.add_parser("triage")

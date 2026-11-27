@@ -23,8 +23,34 @@ KEYWORDS = {
 }
 
 
+# Subject areas of every ruling Suva summarised (82/82 reference rulings; 0 of 445 rulings outside these
+# areas were picked in Oct 2025 - Mar 2026). Matched on the subject line ("Gegenstand" / "Objet" / "Oggetto").
+SUBJECT_AREAS = {
+    "accident": r"unfallversicherung|assurance[- ]accidents|assicurazione (contro gli )?infortuni|\bUVG\b|\bLAA\b",
+    "invalidity": r"invalidenversicherung|assurance[- ]invalidit|assicurazione (per l')?invalidit|\bIVG\b|\bLAI\b",
+    "daily_allowance": r"taggeldversicherung|indemnités? journalières?|indennità giornalier",
+}
+# Appeal decided without going into the merits. Suva picked 3 of 26 such accident rulings (vs 40 of 66 on the merits).
+PROCEDURAL = re.compile(r"Prozessvoraussetzung|recevabilit|retrait du recours|Rückzug|Nichteintreten|irrecevab|"
+                        r"Revision|unentgeltlich|assistance judiciaire|Rechtsverzögerung|ritardata giustizia", re.I)
+_SUBJECT = re.compile(r"\b(Gegenstand|Objet|Oggetto)\s+(.{0,250}?)(Beschwerde gegen|recours contre|ricorso contro|$)")
+
+
+def classify(j):
+    """Subject line, Suva subject areas and procedural flag. Fills j["subject"] if the loader left it empty."""
+    subject = j.get("subject") or ""
+    if not subject:
+        m = _SUBJECT.search(re.sub(r"\s+", " ", (j.get("text") or "")[:6000]))
+        subject = m.group(2).strip(" ,;") if m else ""
+        j["subject"] = subject
+    areas = [a for a, p in SUBJECT_AREAS.items() if re.search(p, subject, re.I)]
+    return {"areas": areas, "procedural": bool(PROCEDURAL.search(subject))}
+
+
 def prefilter(j):
-    """Return (score 0-100, matched terms). Used to skip obviously irrelevant judgements cheaply."""
+    """Return (score 0-100, matched terms). Rulings outside Suva's subject areas score < PREFILTER_MIN
+    and never reach the LLM; everything inside does (keeps 100 % recall on Suva's reference set)."""
+    c = classify(j)
     text = ((j.get("subject") or "") + "\n" + (j.get("text") or "")[:20000]).lower()
     score = DIVISION_PRIOR.get(j.get("division") or "", 0)
     hits = []
@@ -32,7 +58,9 @@ def prefilter(j):
         if re.search(pat, text):
             score += w
             hits.append(pat.strip("\\b").split("|")[0])
-    return min(score, 100), hits
+    if not c["areas"]:
+        return min(score, 15), hits          # below pipeline.PREFILTER_MIN (20): no LLM call
+    return max(20, min(score, 100)), hits
 
 
 SYSTEM = """Du bist juristische:r Mitarbeiter:in im Rechtsdienst der Suva (Schweizerische Unfallversicherungsanstalt).
@@ -49,6 +77,15 @@ Bewertungsskala (score 0-100):
 - 30-59: andere Sozialversicherung (IV, BVG, ALV, KVG) mit nur indirekter Bedeutung für die Suva.
 - 0-29: nicht relevant (z.B. Straf-, Zivil-, Steuerrecht ohne Bezug zur Unfallversicherung,
   reine Nichteintretensentscheide).
+
+Erfahrungswerte aus der bisherigen Auswahl der Suva (Okt. 2025 – März 2026), zur Kalibrierung:
+- Unfallversicherung, materiell entschieden: rund 60 % werden zusammengefasst.
+- Unfallversicherung, nur prozessual (Nichteintreten, Rückzug, Fristen, unentgeltliche Rechtspflege): rund 12 %,
+  nur wenn ein Verfahrensgrundsatz für die Praxis wichtig ist.
+- Invalidenversicherung: rund 8 %, nur wenn die Begründung auch für die Unfallversicherung massgebend ist
+  (z.B. Invaliditätsbemessung, Einkommensvergleich, Tabellenlöhne/LSE, Beweiswert von Gutachten, Revision).
+- Andere Rechtsgebiete: praktisch nie.
+Vergib Scores ab 70 nur, wenn das Urteil nach diesen Massstäben zu den zusammengefassten gehört.
 
 Antworte ausschliesslich mit einem JSON-Objekt:
 {"score": <int>, "suva_party": <bool>,
@@ -72,8 +109,11 @@ def _excerpt(text, limit):
 def assess(j, examples_hint=None):
     """Return assessment dict for a judgement dict (needs docket, text or subject)."""
     body = j.get("text") or j.get("subject") or ""
+    c = classify(j)
+    kind = "nur prozessual" if c["procedural"] else "materiell"
     user = (f"Urteil {j['docket']} vom {j.get('decision_date') or '?'}"
-            f" (Abteilung {j.get('division') or '?'}; Rechtsgebiet: {j.get('subject') or '?'})\n\n"
+            f" (Abteilung {j.get('division') or '?'}; Rechtsgebiet: {j.get('subject') or '?'};"
+            f" Bereich: {', '.join(c['areas']) or 'keiner'}; Entscheid: {kind})\n\n"
             f"<judgement>\n{_excerpt(body, config.LLM_MAX_INPUT_CHARS)}\n</judgement>")
     if examples_hint:
         user = examples_hint + "\n\n" + user

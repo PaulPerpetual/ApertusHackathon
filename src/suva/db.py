@@ -71,7 +71,7 @@ def slugify(docket):
 @contextmanager
 def connect():
     config.DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(config.DB_PATH)
+    con = sqlite3.connect(config.DB_PATH, timeout=30)  # parallel pipeline workers
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
     _migrate(con)
