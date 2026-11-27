@@ -176,3 +176,13 @@ dialog input { width: 100%; padding: 5px 8px; border: 1px solid var(--control-bo
 .sum-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
 .sum-head .c-sub { margin: 0; }
 .bigscore .n input { width: 64px; font-size: 18px; padding: 2px 4px; border: 1px solid var(--accent); border-radius: 5px; background: var(--control); color: var(--text); text-align: center; }
+
+/* one edit mode for the whole panel */
+.score-in { width: 70px; font-size: 20px; font-weight: 650; padding: 2px 6px; border: 1px solid var(--accent); border-radius: 6px; background: var(--control); color: var(--text); text-align: center; }
+textarea.why-edit, textarea.note-edit { width: 100%; min-height: 90px; padding: 8px 10px; border: 1px solid var(--accent); border-radius: 6px; background: var(--control); color: var(--text); font: inherit; line-height: 1.5; }
+textarea.note-edit { border-color: var(--control-border); min-height: 70px; margin-top: 8px; }
+.notes { list-style: none; margin: 0; padding: 0; }
+.notes li { padding: 8px 0; border-bottom: 1px solid var(--sep); }
+.note-meta { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.note-meta .note-del { opacity: .5; margin-left: auto; }
+.note-text { white-space: pre-wrap; margin-top: 2px; }

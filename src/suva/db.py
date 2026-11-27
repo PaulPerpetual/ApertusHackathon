@@ -57,6 +57,13 @@ CREATE TABLE IF NOT EXISTS edits (
     editor TEXT,
     at TEXT
 );
+CREATE TABLE IF NOT EXISTS notes (          -- free-text team notes on a ruling
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug TEXT REFERENCES judgements(slug),
+    text TEXT NOT NULL,
+    editor TEXT,
+    at TEXT
+);
 """
 
 
@@ -90,8 +97,12 @@ def _migrate(con):
             con.execute(f"ALTER TABLE judgements ADD COLUMN {name} {ddl}")
     if "html" not in cols:
         con.execute("ALTER TABLE judgements ADD COLUMN html TEXT")  # cleaned original HTML (scraper._html_clean)
-    if "tags_fr" not in {r[1] for r in con.execute("PRAGMA table_info(assessments)")}:
-        con.execute("ALTER TABLE assessments ADD COLUMN tags_fr TEXT")  # JSON list, same order as tags (DE)
+    acols = {r[1] for r in con.execute("PRAGMA table_info(assessments)")}
+    # tags_fr: JSON list, same order as tags (DE). explanation_*_human: edited reasoning, kept apart from the
+    # AI text so a re-triage never overwrites it.
+    for name in ("tags_fr", "explanation_de_human", "explanation_fr_human", "explanation_edited_by", "explanation_edited_at"):
+        if name not in acols:
+            con.execute(f"ALTER TABLE assessments ADD COLUMN {name} TEXT")
 
 
 def upsert_judgement(con, j):
@@ -141,8 +152,10 @@ def list_cards(con):
         """SELECT j.slug, j.docket, j.decision_date, j.publication_date, j.division, j.subject, j.url, j.source,
                   COALESCE(j.status, 'new') AS status, j.status_by, j.status_at,
                   a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
-                  a.explanation_de, a.explanation_fr, a.tags, a.tags_fr, a.suva_party, a.model,
+                  COALESCE(a.explanation_de_human, a.explanation_de) AS explanation_de,
+                  COALESCE(a.explanation_fr_human, a.explanation_fr) AS explanation_fr, a.tags, a.tags_fr, a.suva_party, a.model,
                   (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,
+                  (SELECT COUNT(*) FROM notes n WHERE n.slug=j.slug) AS n_notes,
                   (SELECT e.editor FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_editor,
                   (SELECT e.at FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_edit_at
            FROM judgements j JOIN assessments a ON a.slug=j.slug""").fetchall()
@@ -170,7 +183,12 @@ def get_detail(con, slug):
     if a:
         d["assessment"]["tags"] = json.loads(a["tags"] or "[]")
         d["assessment"]["tags_fr"] = json.loads(a["tags_fr"] or "[]")
+        for lang in ("de", "fr"):  # effective reasoning = human edit if any; AI text stays available
+            d["assessment"][f"explanation_{lang}_ai"] = a[f"explanation_{lang}"]
+            if a[f"explanation_{lang}_human"] is not None:
+                d["assessment"][f"explanation_{lang}"] = a[f"explanation_{lang}_human"]
     d["summaries"] = {r["lang"]: dict(r) for r in con.execute("SELECT * FROM summaries WHERE slug=?", (slug,))}
+    d["notes"] = [dict(r) for r in con.execute("SELECT id, text, editor, at FROM notes WHERE slug=? ORDER BY id", (slug,))]
     d["history"] = [dict(r) for r in con.execute("SELECT * FROM edits WHERE slug=? ORDER BY id DESC", (slug,))]
     d["expert_summaries"] = _expert_summary(d["docket"])
     return d
