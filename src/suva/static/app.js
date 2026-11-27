@@ -2,7 +2,7 @@
    detail pane, human score overrides and summary edits with simple name attribution. */
 const I18N = {
   de: {
-    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt",
+    app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
@@ -10,19 +10,19 @@ const I18N = {
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     name: "Name", key: "Editor-Schlüssel (nur für den Server)", editor_set: (n) => n ? `Name: ${n} …` : "Name festlegen …",
     model: "Modell", mock: "Mock (kein LLM)", read_only: "Nur lesen",
-    mark_done: "Erledigt", reopen: "Wieder öffnen", done_by: (n, at) => `Erledigt von ${n}, ${at}`, moved_done: "Nach «Erledigt» verschoben", moved_new: "Wieder geöffnet",
+    mark_done: "Erledigt", reopen: "Wieder öffnen", done_by: (n, at) => `Erledigt von ${n}, ${at}`, moved_done: "Nach «Erledigt» verschoben", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
     edit: "Bearbeiten", subject_hint: "Gegenstand laut Bundesgericht", subject: "Gegenstand", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
-    st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
+    st_new: "neu", st_done: "erledigt", st_rejected: "nicht relevant", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
     suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung", demo: "Demo",
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
-    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités",
+    app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
@@ -30,14 +30,14 @@ const I18N = {
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     name: "Nom", key: "Clé d'éditeur (serveur uniquement)", editor_set: (n) => n ? `Nom : ${n} …` : "Définir le nom …",
     model: "Modèle", mock: "Fictif (sans LLM)", read_only: "Lecture seule",
-    mark_done: "Traité", reopen: "Rouvrir", done_by: (n, at) => `Traité par ${n}, ${at}`, moved_done: "Déplacé vers « Traités »", moved_new: "Rouvert",
+    mark_done: "Traité", reopen: "Rouvrir", done_by: (n, at) => `Traité par ${n}, ${at}`, moved_done: "Déplacé vers « Traités »", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
     edit: "Modifier", subject_hint: "Objet selon le Tribunal fédéral", subject: "Objet", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
-    st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
+    st_new: "nouveau", st_done: "traité", st_rejected: "non pertinent", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
     suva_party: "Suva partie", human_example: "Résumé original Suva", demo: "Démo",
     cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
@@ -65,6 +65,9 @@ const band = (s) => (s >= 70 ? "hi" : s >= 40 ? "mid" : "lo");
 const titleOf = (c) => (state.lang === "fr" ? c.title_fr : c.title_de) || c.subject || c.docket;
 const whyOf = (c) => (state.lang === "fr" ? c.explanation_fr : c.explanation_de) || "";
 const isDone = (c) => c.status === "done";
+const isRejected = (c) => c.status === "rejected";
+const isOpen = (c) => !isDone(c) && !isRejected(c);
+const inScopeOf = (c) => ({ all: true, done: isDone(c), rejected: isRejected(c) }[state.scope] ?? isOpen(c));
 const readOnly = () => !!state.status?.read_only;
 
 /* ---------- API (live FastAPI, or static JSON export on GitHub Pages; see docs/API.md) ---------- */
@@ -167,8 +170,7 @@ const subjectOf = (c) => (c.source === "demo" ? "" : String(c.subject || "").rep
 function visible() {
   const q = $("#search").value.trim().toLowerCase();
   const rows = state.cards.filter((c) => {
-    if (state.scope === "new" && isDone(c)) return false;
-    if (state.scope === "done" && !isDone(c)) return false;
+    if (!inScopeOf(c)) return false;
     if ((c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
     if (state.tag && !(c.tags || []).includes(state.tag)) return false;
     if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || []), ...(c.tags_fr || [])].join(" ").toLowerCase().includes(q)) return false;
@@ -186,10 +188,10 @@ function visible() {
 function rowHtml(c) {
   const s = c.score ?? 0;
   const overridden = c.score_override !== null && c.score_override !== undefined;
-  const unread = !readSet.has(c.slug) && !isDone(c);
+  const unread = !readSet.has(c.slug) && isOpen(c);
   const tip = `${t("score_ai")}: ${c.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${c.score_override} (${c.override_by || ""})` : ""} · ${t("edit_score")}`;
   const edited = c.last_editor ? `<span class="edited">✎ ${esc(c.last_editor)} · ${esc(fmtTime(c.last_edit_at))}</span>` : "";
-  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
+  return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${isRejected(c) ? "rejected" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
     <div class="m-dot">${unread ? '<span class="dot"></span>' : ""}</div>
     <div class="m-score ${overridden ? "manual" : ""}" data-score title="${esc(tip)}">
       <span class="n">${c.score ?? "–"}</span>
@@ -201,17 +203,19 @@ function rowHtml(c) {
       <p class="why">${fmt(whyOf(c))}</p>
       <div class="m-foot"><div class="tags">${c.suva_party ? `<span class="tag party">${t("suva_party")}</span>` : ""}${tagsOf(c).map((g) => `<span class="tag">#${esc(g.label)}</span>`).join("")}</div>${edited}</div>
     </div>
-    <div class="m-act">${readOnly() ? "" : `<button class="act" data-act="${isDone(c) ? "reopen" : "done"}" title="${isDone(c) ? t("reopen") : t("mark_done")}">${isDone(c) ? "↺" : "✓"}</button>`}</div>
+    <div class="m-act">${readOnly() ? "" : isOpen(c)
+      ? `<button class="act" data-act="done" title="${t("mark_done")}">✓</button><button class="act" data-act="rejected" title="${t("reject")}">⊘</button>`
+      : `<button class="act" data-act="new" title="${isRejected(c) ? t("restore") : t("reopen")}">↺</button>`}</div>
   </li>`;
 }
 
 function renderList() {
   const rows = visible();
   $("#rows").innerHTML = rows.map(rowHtml).join("");
-  const inScope = state.cards.filter((c) => (state.scope === "all" ? true : state.scope === "done" ? isDone(c) : !isDone(c))).length;
+  const inScope = state.cards.filter(inScopeOf).length;
   $("#listMeta").textContent = t("n_shown", rows.length, inScope);
-  const nNew = state.cards.filter((c) => !isDone(c) && !readSet.has(c.slug) && (c.score ?? 0) >= state.minScore).length;
-  $("#cNew").textContent = nNew || ""; $("#cDone").textContent = state.cards.filter(isDone).length || "";
+  const nNew = state.cards.filter((c) => isOpen(c) && !readSet.has(c.slug) && (c.score ?? 0) >= state.minScore).length;
+  $("#cNew").textContent = nNew || ""; $("#cDone").textContent = state.cards.filter(isDone).length || ""; $("#cRej").textContent = state.cards.filter(isRejected).length || "";
   $("#empty").hidden = rows.length > 0; $("#empty").textContent = state.scope === "new" ? t("empty_new") : t("empty");
 }
 
@@ -254,11 +258,12 @@ document.addEventListener("pointerup", () => setTimeout(() => (pointerDown = fal
 const pointerReleased = () => new Promise((r) => (function wait() { pointerDown ? setTimeout(wait, 30) : setTimeout(r); })());
 
 /* ---------- done / reopen (team-wide), read (this browser) ---------- */
-async function setDone(slug, done) {
+const setDone = (slug, done) => setStatus(slug, done ? "done" : "new");
+async function setStatus(slug, status) {
   if (!(await requireName())) return;
-  await api(`/api/judgements/${encodeURIComponent(slug)}/status`, { method: "PUT", body: JSON.stringify({ status: done ? "done" : "new", editor: state.editor }) });
-  toast(done ? t("moved_done") : t("moved_new"));
-  if (done && state.scope === "new" && state.open === slug) {
+  await api(`/api/judgements/${encodeURIComponent(slug)}/status`, { method: "PUT", body: JSON.stringify({ status, editor: state.editor }) });
+  toast(t({ done: "moved_done", rejected: "moved_rejected" }[status] || "moved_new"));
+  if (status !== "new" && state.scope === "new" && state.open === slug) {
     const rows = visible(); const i = rows.findIndex((c) => c.slug === slug);
     const next = rows[i + 1] || rows[i - 1];
     await load(); next ? openPanel(next.slug) : closePanel();
@@ -338,8 +343,12 @@ async function renderPanel() {
   $("#pCancel").hidden = !E; $("#pCancel").textContent = t("cancel");
   $("#pCancel").onclick = () => { state.editing = false; state.draft = {}; renderPanel(); };
   $("#pDone").hidden = readOnly() || E;
-  $("#pDone").textContent = done ? "↺ " + t("reopen") : "✓ " + t("mark_done");
-  $("#pDone").onclick = () => setDone(d.slug, !done);
+  const rejected = d.status === "rejected";
+  $("#pDone").textContent = rejected ? "↺ " + t("restore") : done ? "↺ " + t("reopen") : "✓ " + t("mark_done");
+  $("#pDone").onclick = () => setStatus(d.slug, done || rejected ? "new" : "done");
+  $("#pReject").hidden = readOnly() || E || done || rejected;
+  $("#pReject").textContent = "⊘ " + t("reject");
+  $("#pReject").onclick = () => setStatus(d.slug, "rejected");
   const overridden = a.score_override !== null && a.score_override !== undefined;
   const score = overridden ? a.score_override : a.ai_score;
   const tabs = ["summary_de", "summary_fr", "notes", "text", "history"];
@@ -351,7 +360,7 @@ async function renderPanel() {
         : `<span class="n">${score ?? "–"}</span>`}<span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
-      ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
+      ${(done || rejected) && d.status_by ? `<p class="muted">${esc(t(done ? "done_by" : "rejected_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
       ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(why)}</p>`}
       ${E ? tagEditor(dr.tags ?? a.tags ?? [])
@@ -523,7 +532,7 @@ function init() {
   $("#rows").addEventListener("click", (e) => {
     const tr = e.target.closest("[data-slug]"); if (!tr) return;
     const act = e.target.closest("[data-act]");
-    if (act) { e.stopPropagation(); setDone(tr.dataset.slug, act.dataset.act === "done"); return; }
+    if (act) { e.stopPropagation(); setStatus(tr.dataset.slug, act.dataset.act); return; }
     const sc = e.target.closest("[data-score]");
     if (sc && !readOnly()) { e.stopPropagation(); editScore(tr.dataset.slug, sc); return; }
     openPanel(tr.dataset.slug);
@@ -539,7 +548,7 @@ function init() {
       e.preventDefault(); openPanel(rows[i < 0 ? 0 : n].slug);
     }
     if ((e.key === "e" || e.key === "E") && state.open && !readOnly()) {
-      const c = state.cards.find((x) => x.slug === state.open); if (c) setDone(c.slug, !isDone(c));
+      const c = state.cards.find((x) => x.slug === state.open); if (c) setStatus(c.slug, isOpen(c) ? "done" : "new");
     }
   });
   api("/api/status").then((s) => { state.status = s; state.dataVersion = s.data_version; renderChrome(); renderList(); }).catch(() => {});

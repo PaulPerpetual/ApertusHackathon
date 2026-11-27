@@ -12,6 +12,7 @@
     <button data-scope="new" class="on"><span data-i18n="scope_new">Neu</span> <span class="count" id="cNew"></span></button>
     <button data-scope="all" data-i18n="scope_all">Alle</button>
     <button data-scope="done"><span data-i18n="scope_done">Erledigt</span> <span class="count" id="cDone"></span></button>
+    <button data-scope="rejected"><span data-i18n="scope_rejected">Nicht relevant</span> <span class="count" id="cRej"></span></button>
   </div>
   <div class="spacer"></div>
   <label class="searchbox"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -71,6 +72,7 @@
       <div class="panel-actions">
         <button id="pEdit" class="btn primary"></button>
         <button id="pCancel" class="btn" hidden></button>
+        <button id="pReject" class="btn"></button>
         <button id="pDone" class="btn"></button>
         <button id="closePanel" class="tool-btn" aria-label="close">✕</button>
       </div>

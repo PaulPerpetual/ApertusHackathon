@@ -156,6 +156,7 @@ dialog input { width: 100%; padding: 5px 8px; border: 1px solid var(--control-bo
 
 @media (max-width: 900px) {
   .mrow, .mhead { grid-template-columns: 12px 52px 1fr 30px; gap: 8px; }
+  .m-act { flex-direction: column; }
   #panel { position: fixed; inset: 0; width: auto; z-index: 30; }
   .searchbox { width: auto; flex: 1; }
   .toolbar { flex-wrap: wrap; }
@@ -207,3 +208,8 @@ textarea.note-edit { border-color: var(--control-border); min-height: 70px; marg
 
 /* "Art. 26bis": superscripts in the court's text without stretching the line */
 sup { font-size: 0.72em; line-height: 0; vertical-align: baseline; position: relative; top: -0.45em; }
+
+/* "Nicht relevant": taken off the list; still visible (dimmed) under Alle */
+.m-act { flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; }
+.mrow.rejected .m-main, .mrow.rejected .m-score { opacity: 0.5; }
+.mrow.rejected .t { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--text) 40%, transparent); }

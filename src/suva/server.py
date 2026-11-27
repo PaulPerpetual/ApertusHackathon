@@ -93,7 +93,7 @@ class EditorIn(BaseModel):
 
 
 class StatusIn(BaseModel):
-    status: str = Field(pattern="^(new|done)$")
+    status: str = Field(pattern="^(new|done|rejected)$")
     editor: str = Field(min_length=1, max_length=60)
 
 
@@ -222,7 +222,8 @@ def set_score(slug: str, body: ScoreIn, request: Request):
 
 @app.put("/api/judgements/{slug}/status")
 def set_status(slug: str, body: StatusIn, request: Request):
-    """Team-wide workflow state: 'done' moves a ruling to Erledigt, 'new' puts it back. (Unread is per browser.)"""
+    """Team-wide workflow state: 'done' moves a ruling to Erledigt, 'rejected' to
+    Nicht relevant (taken off the list), 'new' puts it back. (Unread is per browser.)"""
     body.editor = _editor(request, body.editor)
     with db.connect() as con:
         j = con.execute("SELECT status FROM judgements WHERE slug=?", (slug,)).fetchone()
