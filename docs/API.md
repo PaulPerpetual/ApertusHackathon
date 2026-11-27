@@ -66,7 +66,7 @@ once: repo **Settings → Pages → Source: GitHub Actions** (repo admin = Paul)
 | Server-hosted UI (fallback) | <https://api.robotross.art/lex/>: the same UI, served by FastAPI |
 | Server | team droplet (DigitalOcean **Frankfurt**), systemd service `lex-aperta`, Caddy TLS. Demo host only, not the sovereign deployment (that's the Dockerfile) |
 | Data right now | 637 rulings: Suva's 54 example summaries + 583 April–June rulings scored by the **mock** model. Real Apertus results replace it tonight |
-| Deploy | `deploy/robotsales.sh [--db data/suva.sqlite]` (Miguel) |
+| Deploy | **Code:** automatic. The server checks `main` every minute (`lex-autodeploy.timer`) and pulls, installs and restarts on a new commit. **Data:** `deploy/robotsales.sh --db data/aprjun.sqlite` (Miguel). Logs: `journalctl -u lex-autodeploy` |
 
 ### Security model
 
