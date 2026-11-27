@@ -67,7 +67,8 @@ def main():
     con.commit()
 
     def work(r):
-        return r, iv_pass.assess_iv(r, ill)
+        # never show the model Suva's own summary of this ruling as an illustration (leakage on the examples set)
+        return r, iv_pass.assess_iv(r, [e for e in ill if e["docket"] != r["docket"]])
 
     with ThreadPoolExecutor(a.workers) as pool:
         futs = [pool.submit(work, r) for r in todo]

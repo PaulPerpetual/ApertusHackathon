@@ -18,6 +18,14 @@ if [ "${1:-}" = "--db" ]; then
   [ -s "$DB" ] || { echo "refuse: $DB missing or empty" >&2; exit 1; }
   N=$(sqlite3 "$DB" "SELECT COUNT(*) FROM judgements;" 2>/dev/null || echo 0)
   [ "$N" -gt 0 ] || { echo "refuse: $DB has no judgements" >&2; exit 1; }
+  # 1) Pull human decisions (status, overrides, edited texts, history, notes) from the live server into the
+  #    master DB first, so a deploy never overwrites what lawyers did in the UI. Abort if that fails.
+  LIVE=$(mktemp -t lexlive).sqlite
+  ssh "$HOST" "sqlite3 $DEST/data/suva.sqlite \".backup '/tmp/lex-live.sqlite'\"" && rsync -az "$HOST:/tmp/lex-live.sqlite" "$LIVE" \
+    || { echo "refuse: could not fetch the live DB to merge human edits" >&2; exit 1; }
+  PY="$(dirname "$0")/../.venv/bin/python"; [ -x "$PY" ] || PY="${LEX_PYTHON:-python3}"
+  "$PY" "$(dirname "$0")/../src/merge_server_edits.py" "$LIVE" "$DB" || { echo "refuse: merge of human edits failed" >&2; exit 1; }
+  rm -f "$LIVE"
   # Consistent snapshot (includes WAL content) instead of copying a live file
   SNAP=$(mktemp -t lexdb).sqlite
   sqlite3 "$DB" ".backup '$SNAP'"

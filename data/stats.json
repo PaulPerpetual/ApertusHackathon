@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T13:13:27Z",
+ "generated_at": "2026-11-27T14:43:52Z",
  "window": {
   "label": "Oct 2025 – Mar 2026 (Suva's list = ground truth)",
   "rulings": 733,
@@ -271,38 +271,38 @@
   "label": "Apr – Jun 2026 (target period, no labels)",
   "crawled": 2094,
   "candidates": 177,
-  "selected": 77,
+  "selected": 116,
   "selected_by_area": {
-   "accident": 37,
-   "invalidity": 40,
-   "daily_allowance": 2
+   "invalidity": 70,
+   "accident": 45,
+   "daily_allowance": 3
   },
   "summarised": 77,
   "months": {
    "2026-04": {
     "candidates": 61,
-    "selected": 30,
+    "selected": 46,
     "summarised": 30
    },
    "2026-05": {
     "candidates": 64,
-    "selected": 27,
+    "selected": 40,
     "summarised": 27
    },
    "2026-06": {
     "candidates": 52,
-    "selected": 20,
+    "selected": 30,
     "summarised": 20
    }
   },
   "score_hist": [
    {
     "bin": 0,
-    "count": 81
+    "count": 50
    },
    {
     "bin": 10,
-    "count": 19
+    "count": 11
    },
    {
     "bin": 20,
@@ -318,7 +318,7 @@
    },
    {
     "bin": 50,
-    "count": 0
+    "count": 39
    },
    {
     "bin": 60,
@@ -344,39 +344,70 @@
   "codex": {
    "codex_model": "GPT-6 (Codex; exact runtime version not exposed)",
    "codex_listed": 60,
-   "both": 55,
-   "only_apertus": 22,
-   "only_codex": 5,
+   "both": 59,
+   "only_apertus": 57,
+   "only_codex": 1,
    "only_codex_dockets": [
-    "8C_580/2025",
-    "9C_208/2025",
-    "9C_230/2025",
-    "9C_309/2025",
-    "9C_368/2025"
+    "9C_230/2025"
    ],
    "only_apertus_dockets": [
+    "4A_42/2026",
+    "8C_10/2026",
+    "8C_107/2026",
+    "8C_158/2025",
+    "8C_189/2026",
+    "8C_199/2026",
+    "8C_207/2026",
+    "8C_211/2026",
+    "8C_245/2026",
     "8C_248/2024",
     "8C_255/2025",
+    "8C_258/2026",
     "8C_261/2025",
+    "8C_279/2026",
+    "8C_281/2025",
+    "8C_354/2026",
+    "8C_386/2026",
     "8C_431/2025",
     "8C_444/2025",
+    "8C_453/2025",
+    "8C_460/2025",
+    "8C_480/2025",
     "8C_484/2025",
     "8C_503/2024",
     "8C_526/2025",
+    "8C_527/2025",
+    "8C_559/2025",
     "8C_688/2025",
+    "8C_701/2025",
+    "8C_714/2025",
+    "8C_72/2026",
     "8C_727/2024",
     "8C_753/2025",
     "9C_104/2026",
+    "9C_110/2026",
     "9C_137/2025",
+    "9C_137/2026",
     "9C_16/2026",
     "9C_166/2025",
+    "9C_168/2026",
     "9C_173/2025",
+    "9C_192/2025",
+    "9C_219/2025",
+    "9C_221/2026",
+    "9C_241/2025",
+    "9C_247/2025",
     "9C_336/2025",
+    "9C_343/2026",
+    "9C_355/2025",
     "9C_366/2025",
+    "9C_374/2025",
     "9C_498/2025",
     "9C_538/2024",
     "9C_547/2025",
-    "9C_73/2026"
+    "9C_619/2025",
+    "9C_73/2026",
+    "9C_8/2026"
    ]
   }
  }

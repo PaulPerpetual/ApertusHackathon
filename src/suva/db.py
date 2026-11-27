@@ -104,6 +104,10 @@ def _migrate(con):
     for name in ("tags_fr", "tags_human", "explanation_de_human", "explanation_fr_human", "explanation_edited_by", "explanation_edited_at"):
         if name not in acols:
             con.execute(f"ALTER TABLE assessments ADD COLUMN {name} TEXT")
+    # tier: 1 relevant, 2 Grenzfall, 3 not relevant (src/finalize.py --tiers); tier_reason: pass-4 reason
+    for name, ddl in (("tier", "INTEGER"), ("tier_reason", "TEXT")):
+        if name not in acols:
+            con.execute(f"ALTER TABLE assessments ADD COLUMN {name} {ddl}")
 
 
 def upsert_judgement(con, j):
@@ -154,7 +158,7 @@ def list_cards(con):
                   COALESCE(j.status, 'new') AS status, j.status_by, j.status_at,
                   a.ai_score, a.score_override, a.override_by, a.override_at, a.title_de, a.title_fr,
                   COALESCE(a.explanation_de_human, a.explanation_de) AS explanation_de,
-                  COALESCE(a.explanation_fr_human, a.explanation_fr) AS explanation_fr, a.tags, a.tags_fr, a.tags_human, a.suva_party, a.model,
+                  COALESCE(a.explanation_fr_human, a.explanation_fr) AS explanation_fr, a.tags, a.tags_fr, a.tags_human, a.suva_party, a.model, a.tier, a.tier_reason,
                   (SELECT COUNT(*) FROM summaries s WHERE s.slug=j.slug) AS n_summaries,
                   (SELECT COUNT(*) FROM notes n WHERE n.slug=j.slug) AS n_notes,
                   (SELECT e.editor FROM edits e WHERE e.slug=j.slug ORDER BY e.id DESC LIMIT 1) AS last_editor,

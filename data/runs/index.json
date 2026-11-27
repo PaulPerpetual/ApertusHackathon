@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T13:55:37Z",
+ "generated_at": "2026-11-27T14:43:52Z",
  "datasets": [
   {
    "id": "calibration40",
@@ -29,7 +29,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 40,
    "listed": 22,
    "metrics": {
@@ -48,7 +48,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 40,
    "listed": 37,
    "metrics": {
@@ -67,7 +67,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 40,
    "listed": 32,
    "metrics": {
@@ -86,7 +86,7 @@
    "dataset": "calibration40",
    "model": "GPT-6 (Codex; exact runtime version not exposed)",
    "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 40,
    "listed": 21,
    "metrics": {
@@ -105,7 +105,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 288,
    "listed": 101,
    "metrics": {
@@ -124,7 +124,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 288,
    "listed": 259,
    "metrics": {
@@ -143,7 +143,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 288,
    "listed": 211,
    "metrics": {
@@ -162,25 +162,25 @@
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Production. Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned). This is the submitted hit list.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 177,
-   "listed": 77
+   "listed": 116
   },
   {
    "id": "apertus70b-v3-atsg-rescue",
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, not submitted: v1 + ATSG rescue. Catches 4 of the 5 Codex-only rulings but adds 59 in total; on the labelled window only ~4 % of rescued rulings were Suva picks (F2 0.736 -> 0.598).",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 177,
-   "listed": 136
+   "listed": 143
   },
   {
    "id": "codex-gpt6",
    "dataset": "aprjun",
    "model": "GPT-6 (Codex; exact runtime version not exposed)",
    "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
-   "created_at": "2026-11-27T13:55:37Z",
+   "created_at": "2026-11-27T14:43:52Z",
    "rulings": 177,
    "listed": 60
   }

@@ -41,8 +41,37 @@ def overlap(a, b):
     return round(2 * p * r / (p + r), 3)
 
 
+def tiers(base):
+    """Selection result per example ruling: 1 = v1, 2 = Grenzfall (kept by pass 4), 3 = not selected."""
+    from suva import triage
+    con = sqlite3.connect(base)
+    con.row_factory = sqlite3.Row
+    t = {r[0] for r in con.execute("SELECT name FROM sqlite_master")}
+    out = {}
+    for r in con.execute(f"""SELECT j.docket, j.subject, j.text, a.ai_score m,
+            {'i.score' if 'iv_assessments' in t else 'NULL'} iv, {'ad.tier' if 'adjudications' in t else 'NULL'} adj,
+            {'ad.reason' if 'adjudications' in t else 'NULL'} reason
+            FROM judgements j JOIN assessments a ON a.slug = j.slug
+            {'LEFT JOIN iv_assessments i ON i.slug = j.slug' if 'iv_assessments' in t else ''}
+            {'LEFT JOIN adjudications ad ON ad.slug = j.slug' if 'adjudications' in t else ''}"""):
+        c = triage.classify({"subject": r["subject"], "text": r["text"]})
+        if (r["m"] or 0) >= 60 or ("invalidity" in c["areas"] and (r["iv"] or 0) >= 40):
+            out[r["docket"]] = (1, "")
+        elif r["adj"] in (1, 2):
+            out[r["docket"]] = (2, r["reason"] or "")
+        else:
+            out[r["docket"]] = (3, r["reason"] or "")
+    return out
+
+
 def main():
-    db = os.path.join(ROOT, "data", "examples_eval.sqlite")
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--db", default=os.path.join(ROOT, "data", "examples_eval.sqlite"), help="DB with the summaries")
+    ap.add_argument("--prompt", default="", help="label of the summary prompt, shown on the page")
+    args = ap.parse_args()
+    db = args.db
+    tier_of = tiers(os.path.join(ROOT, "data", "examples_eval.sqlite"))
     con = sqlite3.connect(db)
     con.row_factory = sqlite3.Row
     ours = {}
@@ -67,7 +96,8 @@ def main():
               "tags": {"de": json.loads(o["tags"] or "[]"), "fr": json.loads(o["tags_fr"] or "[]")},
               "suva": {"de": ex["de"], "fr": ex["fr"], "author": ex.get("author", "")},
               "ours": {"de": o["summaries"].get("de", ""), "fr": o["summaries"].get("fr", "")},
-              "considerations": valid, "metrics": {}}
+              "considerations": valid, "metrics": {},
+              "tier": tier_of.get(ex["docket"], (None, ""))[0], "tier_reason": tier_of.get(ex["docket"], (None, ""))[1]}
         for lang in ("de", "fr"):
             s, a = it["suva"][lang], it["ours"][lang]
             it["metrics"][lang] = {"words_suva": len(s.split()), "words_ours": len(a.split()),
@@ -79,7 +109,8 @@ def main():
     def agg(lang, k):
         v = [i["metrics"][lang][k] for i in items]
         return round(median(v), 3) if v else None
-    out = {"n": len(items),
+    out = {"n": len(items), "prompt": args.prompt,
+           "tiers": {str(k): sum(i["tier"] == k for i in items) for k in (1, 2, 3)},
            "summary": {lang: {k: agg(lang, k) for k in ("words_suva", "words_ours", "refs_suva", "refs_ours", "overlap")}
                        for lang in ("de", "fr")},
            "flagged_relevant": sum((i["score"] or 0) >= 60 for i in items),

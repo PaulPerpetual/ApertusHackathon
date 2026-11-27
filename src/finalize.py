@@ -45,6 +45,9 @@ def main():
     ap.add_argument("--recall-pass", type=int, metavar="CUTOFF", default=None,
                     help="also select rulings the recall pass (src/run_recall_pass.py) scored >= CUTOFF, and five-judge "
                          "rulings. Off by default; turn on once `eval_f2.py --variants` shows a better F2")
+    ap.add_argument("--tiers", action="store_true",
+                    help="Tier 1 = v1; Tier 2 'Grenzfall' = other candidates kept by pass 4 (src/run_adjudicate.py); "
+                         "hit list = Tier 1+2 minus status 'rejected' / score override < 40, plus overrides >= 60")
     a = ap.parse_args()
     con = sqlite3.connect(a.db, timeout=30)
     con.row_factory = sqlite3.Row
@@ -57,15 +60,23 @@ def main():
                 " leading TEXT, reason_de TEXT, model TEXT, created_at TEXT)")
     con.execute("CREATE TABLE IF NOT EXISTS iv_assessments (slug TEXT PRIMARY KEY, score INTEGER, principle TEXT,"
                 " reason_de TEXT, model TEXT, created_at TEXT)")
+    con.execute("CREATE TABLE IF NOT EXISTS adjudications (slug TEXT PRIMARY KEY, tier INTEGER, reason TEXT, model TEXT, created_at TEXT)")
+    acols = {r[1] for r in con.execute("PRAGMA table_info(assessments)")}
+    for name, ddl in (("tier", "INTEGER"), ("tier_reason", "TEXT")):  # same migration as db._migrate
+        if name not in acols:
+            con.execute(f"ALTER TABLE assessments ADD COLUMN {name} {ddl}")
     rows = [dict(r) for r in con.execute("""
-        SELECT j.slug, j.docket, j.decision_date, j.subject, j.text, a.ai_score, a.tags, a.suva_party, a.model,
+        SELECT j.slug, j.docket, j.decision_date, j.subject, j.text, COALESCE(j.status, 'new') AS status,
+               a.score_override, a.tags_fr, a.ai_score, a.tags, a.suva_party, a.model,
+               ad.tier AS adj_tier, ad.reason AS adj_reason,
                a.explanation_de, a.explanation_fr, i.score AS iv, i.principle,
                f.main_score AS f_main, f.orig_tags, f.orig_expl_de, f.orig_expl_fr,
                rc.score AS rc_score, rc.leading AS rc_leading, rt.grounds AS rt_grounds, rt.outcome AS rt_outcome, ex.de AS ex_de, ex.fr AS ex_fr
         FROM judgements j JOIN assessments a ON a.slug = j.slug
         LEFT JOIN reason_tags rt ON rt.slug = j.slug LEFT JOIN explanations ex ON ex.slug = j.slug
         LEFT JOIN recall_assessments rc ON rc.slug = j.slug
-        LEFT JOIN iv_assessments i ON i.slug = j.slug LEFT JOIN final_selection f ON f.slug = j.slug""")]
+        LEFT JOIN iv_assessments i ON i.slug = j.slug LEFT JOIN final_selection f ON f.slug = j.slug
+        LEFT JOIN adjudications ad ON ad.slug = j.slug""")]
     hit = []
     for r in rows:
         main_score = r["f_main"] if r["f_main"] is not None else r["ai_score"]
@@ -105,6 +116,42 @@ def main():
                          expl_de, expl_fr, r["slug"]))
         else:
             con.execute("UPDATE assessments SET ai_score=? WHERE slug=?", (score, r["slug"]))
+        if a.tiers:
+            tier, tier_reason = None, None
+            if c["areas"]:
+                if (main_score or 0) >= MAIN_CUTOFF or iv_flag:
+                    tier = 1
+                elif r["adj_tier"] in (1, 2):
+                    tier, tier_reason = 2, r["adj_reason"]
+                else:
+                    tier, tier_reason = 3, r["adj_reason"]
+            cur = con.execute("SELECT tags, tags_fr, explanation_de, explanation_fr FROM assessments WHERE slug=?", (r["slug"],)).fetchone()
+            t_de = [t for t in json.loads(cur["tags"] or "[]") if t != "Grenzfall"]
+            t_fr = [t for t in json.loads(cur["tags_fr"] or "[]") if t != "Cas limite"]
+            e_de, e_fr = cur["explanation_de"] or "", cur["explanation_fr"] or ""
+            e_de = re.sub(r"^Grenzfall – .*$", "", e_de, flags=re.S).strip() or e_de
+            if tier == 2:  # mark the Grenzfall: first tag, prefixed reasoning, score below every Tier 1 ruling
+                t_de, t_fr = ["Grenzfall"] + t_de, (["Cas limite"] + t_fr) if t_fr else t_fr
+                why = re.sub(r"^\s*(Grenzfall|Tier\s*\d)\s*[,:–-]?\s*", "", tier_reason or "", flags=re.I).strip()
+                why = why or "In der Zweitprüfung als möglicherweise relevant eingestuft."
+                e_de = f"Grenzfall – {why}"
+                if not e_fr.startswith("Cas limite"):
+                    e_fr = "Cas limite – " + e_fr
+                score = min(score or 0, 50) if (score or 0) < MAIN_CUTOFF else score
+                score = 50
+            elif e_fr.startswith("Cas limite – "):
+                e_fr = e_fr[len("Cas limite – "):]
+            con.execute("UPDATE assessments SET tier=?, tier_reason=?, ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? "
+                        "WHERE slug=?", (tier, tier_reason, score, json.dumps(t_de, ensure_ascii=False),
+                                         json.dumps(t_fr, ensure_ascii=False), e_de, e_fr, r["slug"]))
+            # human decisions win: 'Nicht relevant' (status rejected) or a score override
+            selected = tier in (1, 2)
+            if r["score_override"] is not None:
+                selected = r["score_override"] >= MAIN_CUTOFF
+            if r["status"] == "rejected":
+                selected = False
+            con.execute("UPDATE final_selection SET selected=?, rule=? WHERE slug=?",
+                        (int(selected), {1: rule or "main", 2: "grenzfall"}.get(tier, rule), r["slug"]))
         if selected and a.date_from <= (r["decision_date"] or "") <= a.date_to:
             hit.append(r["docket"])
     con.commit()
@@ -120,6 +167,9 @@ def main():
     print(f"  via main score: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('main',)))}"
           f", via IV second pass: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('iv_pass',)))}"
           f", via recall pass: {sum(1 for r in con.execute('SELECT rule FROM final_selection WHERE rule=?', ('recall_pass',)))}")
+    if a.tiers:
+        print("  tiers:", dict(con.execute("SELECT COALESCE(tier, 0), COUNT(*) FROM assessments GROUP BY tier").fetchall()),
+              "| Grenzfall on list:", con.execute("SELECT COUNT(*) FROM final_selection WHERE rule='grenzfall' AND selected=1").fetchone()[0])
 
 
 if __name__ == "__main__":

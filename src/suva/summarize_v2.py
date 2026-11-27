@@ -41,21 +41,22 @@ RECHTSSÄTZE: ALLE selbständig relevanten Rechtsfragen, auch Nebenfragen zu Ver
     angenommen ohne Entscheid) | E. <Nummer> | gilt auch für die Unfallversicherung? (ja/nein, welcher Rechtssatz)
 QUELLEN: Unterscheide, was Parteivorbringen, medizinische Einschätzung, Feststellung der Vorinstanz und Würdigung des
   Bundesgerichts ist. Nur die Würdigung des Bundesgerichts ist ein Rechtssatz.
-FOKUS: welcher Rechtssatz für die Suva am wichtigsten ist (einer, höchstens zwei).
+FOKUS: der Rechtssatz, dem das Bundesgericht den grössten Teil seiner Begründung widmet und der für die Suva gilt
+  (einer, höchstens zwei). Nicht eine Nebenbemerkung wählen.
 ABDECKUNG: "vollständig" oder "unvollständig: <was fehlt>", falls der Text gekürzt ist.
 Erfinde nichts. Verallgemeinere keine individuelle Heilungsdauer, Prognose oder Beweiswürdigung zu einer Regel."""
 
 STYLE = {
     "de": """Stil der Suva-Zusammenfassungen (gemessen an 54 echten Zusammenfassungen):
-- Beginne mit dem Rechtssatz (FOKUS) als zitierfähigem Satz im PRÄSENS, unpersönlich, z.B. "Erwartet der Versicherer
-  von einer arbeitsunfähigen Person einen Berufswechsel, muss er ihr eine Übergangsfrist einräumen." Nicht mit
-  "Das Bundesgericht" oder "In diesem Urteil" beginnen.
+- Beginne mit dem Rechtssatz aus FOKUS als zitierfähigem Satz im PRÄSENS, unpersönlich (Muster: "Wenn <Voraussetzung>,
+  dann <Rechtsfolge>." bzw. "<Begriff> setzt voraus, dass …"). Der Inhalt stammt NUR aus den Rechtssätzen dieses Urteils.
+  Nicht mit "Das Bundesgericht" oder "In diesem Urteil" beginnen.
 - Danach 1-2 Sätze Sachverhalt, allgemein ("Ein Versicherter, Maurer, …" bzw. "Eine Versicherte, …", Geschlecht wie
   im Urteil), ohne Daten, Orte und Namen; vom Leiden nur, worauf es rechtlich ankommt. Statt des Rechtsbegehrens
   das Kernargument der beschwerdeführenden Partei, auf das das Bundesgericht antwortet.
 - Dann die tragende Begründung; Voraussetzungen, Ausnahmen und offengelassene Fragen bewahren.
-- Länge nach Gehalt: 30-100 Wörter bei einer einzelnen prozessualen oder dogmatischen Frage, 120-240 Wörter bei
-  komplexen Kausalitäts-, Gutachtens-, Einkommens- oder Revisionsfällen; 2-3 Absätze, eher lange Sätze; Fliesstext.
+- Länge: in der Regel 150-250 Wörter, 2-3 Absätze, eher lange Sätze, Fliesstext. Nur wenn das Urteil eine einzige
+  prozessuale Frage betrifft: 40-100 Wörter. Alle Rechtssätze aus RECHTSSÄTZE, die für die Suva gelten, aufnehmen.
 - Keine Gerichtskosten, Parteientschädigungen, Geburtsjahre, Unfalldaten oder Aktenzeichen der Vorinstanz.
   Nie E. 1 (Eintreten) oder die Kostenfolgen zitieren.
 - Das Bundesgericht höchstens einmal nennen. 1-2 Verweise "(E. 5.2)" beim zentralen Rechtssatz.
@@ -67,15 +68,15 @@ STYLE = {
 - Schweizer Fachsprache: UVG, UVV, ATSG, IVG, IVV, LSE (nie LAA, LPGA, OLAA, LAI, RAI, ESS im deutschen Text);
   relatives Wagnis, Listenverletzung, Distorsion/Kontusion, Untersuchungshaft, Valideneinkommen, Einspracheentscheid.""",
     "fr": """Style des résumés de la Suva (mesuré sur 54 résumés réels):
-- Commencer par la règle (FOCUS) en une phrase citable, au PRÉSENT, impersonnelle, p.ex. "Lorsque l'assureur exige
-  d'une personne incapable de travailler un changement de profession, il doit lui accorder un délai d'adaptation."
+- Commencer par la règle du FOCUS en une phrase citable, au PRÉSENT, impersonnelle (modèle: "Lorsque <condition>,
+  <conséquence juridique>."). Le contenu provient UNIQUEMENT des règles de cet arrêt.
   Ne pas commencer par "Le Tribunal fédéral" ni "Dans cet arrêt".
 - Puis 1-2 phrases de faits, générales ("Un assuré, maçon, …" ou "Une assurée, …", selon l'arrêt), sans dates,
   lieux ni noms; de l'atteinte, seulement ce qui compte juridiquement. Au lieu des conclusions, l'argument central
   de la partie recourante auquel le Tribunal fédéral répond.
 - Ensuite le raisonnement déterminant; conserver conditions, exceptions et questions laissées ouvertes.
-- Longueur selon la substance: 40-120 mots pour une seule question procédurale ou dogmatique, 150-290 mots pour les
-  cas complexes (causalité, expertise, revenus, révision); 2-3 paragraphes, phrases plutôt longues; texte suivi.
+- Longueur: en règle générale 180-290 mots, 2-3 paragraphes, phrases plutôt longues, texte suivi. Seulement pour une
+  unique question procédurale: 50-120 mots. Reprendre toutes les règles pertinentes pour la Suva.
 - Pas de frais judiciaires, dépens, années de naissance, dates d'accident ni références de l'instance précédente.
   Ne jamais citer le consid. 1 (recevabilité) ni les frais.
 - Nommer le Tribunal fédéral au plus une fois. 1-2 renvois "(consid. 5.2)" sur la règle centrale.

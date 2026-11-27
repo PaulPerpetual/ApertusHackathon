@@ -131,6 +131,31 @@ Still open for Paul:
 score_override, override_by, title_de, title_fr, explanation_de, explanation_fr, tags, tags_fr (FR translation of tags, same order; [] for older rows),
 suva_party, model, has_summary`. The effective score is `score_override ?? ai_score`.
 
+### Tiers and Grenzfälle (live, additive)
+
+Every card and detail has two new fields (`src/finalize.py --tiers`, pass 4 = `src/run_adjudicate.py`):
+
+| Field | Values | Meaning |
+|---|---|---|
+| `tier` | `1` | Apertus: relevant for Suva (main triage ≥ 60 or IV pass) |
+| | `2` | **Grenzfall**: not in Tier 1, but the critical review (pass 4) keeps it; a lawyer should look |
+| | `3` | candidate in Suva's areas, not relevant according to pass 4 |
+| | `null` | outside accident / invalidity / daily-allowance insurance (prefilter) |
+| `tier_reason` | text | pass-4 reason (Tier 2/3) |
+
+Grenzfälle are also marked without any UI change: first tag `Grenzfall` (FR `Cas limite`), `explanation_de` starts with
+"Grenzfall – <reason>", and score 50 (below every Tier 1 ruling, which keep their Apertus score of 60-90).
+
+**Submitted hit list** (`data/submission/hitlist_*.txt`) = Tier 1 + Tier 2, then human decisions win:
+`status = 'rejected'` (your "Nicht relevant") removes a ruling; a score override ≥ 60 adds one, < 40 removes one.
+
+**UI suggestions (Paul):** amber "Grenzfall" badge from `tier == 2`; a filter "Grenzfälle"; on Grenzfälle the
+existing "Nicht relevant" = reject, and "Bestätigen" = score override 70. Tier 3 belongs under "Wenig relevante".
+
+**Human edits are safe:** `deploy/robotsales.sh --db` first copies all human decisions from the live server DB into
+the master DB (`src/merge_server_edits.py`: status, overrides, edited Begründung/tags/summaries, history, notes) and
+aborts the deploy if that fails.
+
 ### Pipeline additions proposed (Miguel; additive, no breaking change)
 
 | Field | Where | Meaning |

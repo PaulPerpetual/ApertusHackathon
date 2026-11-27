@@ -42,7 +42,7 @@
 <div class="suite">Lex Aperta <a href="./">Urteilsradar</a><a href="stats">Statistik</a><a href="compare">Vergleich</a><a class="on" href="examples">Suva-Beispiele</a></div>
 <main>
   <h1>Suva examples: expert vs Apertus</h1>
-  <div class="sub">The rulings Suva gave us with expert summaries, processed by our pipeline from scratch.
+  <div class="sub"><b id="promptlbl"></b> The rulings Suva gave us with expert summaries, processed by our pipeline from scratch.
     For each ruling, Suva's own summary was <b>not</b> shown to the model (blind). Left: Suva's lawyer. Right: Apertus v1.5 70B.
     Suva writes no "Begründung"; ours is shown above each pair.</div>
   <div class="kpis" id="kpis"></div>
@@ -64,7 +64,7 @@ function render() {
   document.querySelectorAll("#lang button").forEach((b) => b.classList.toggle("on", b.dataset.l === L));
   const s = D.summary[L];
   $("kpis").innerHTML = [
-    [D.n, "rulings with Suva summary"], [`${D.flagged_relevant} / ${D.n}`, "flagged relevant by Apertus (score ≥ 60)"],
+    [D.n, "rulings with Suva summary"], [`${(D.tiers?.["1"] || 0) + (D.tiers?.["2"] || 0)} / ${D.n}`, `found by our selection (Tier 1: ${D.tiers?.["1"] || 0}, Grenzfall: ${D.tiers?.["2"] || 0})`],
     [`${s.words_suva} / ${s.words_ours}`, "median words: Suva / ours"], [`${s.refs_suva} / ${s.refs_ours}`, "median Erw. refs: Suva / ours"],
     [Math.round(s.overlap * 100) + "%", "median content-word overlap with Suva"],
   ].map(([v, l]) => `<div class="kpi"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
@@ -79,7 +79,8 @@ function render() {
       <div class="head"><div><h2>${esc(i.title[L] || i.docket)}</h2>
         <div class="small muted">${i.url ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.docket)}</a>` : esc(i.docket)} · ${esc(i.date)} · ${esc(i.subject)} · Urteil ${esc((i.language || "").toUpperCase())}</div>
         <div class="tags">${(i.tags[L] || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div></div>
-        <span class="score" title="Apertus relevance score">${i.score ?? "–"}</span></div>
+        <span>${{1: '<span class="score">Tier 1 · relevant</span>', 2: '<span class="score" style="color:#8a5a00;background:color-mix(in srgb,#e0a800 18%,transparent)">Grenzfall</span>', 3: '<span class="score" style="color:#a4262c;background:color-mix(in srgb,#a4262c 12%,transparent)">nicht ausgewählt</span>'}[i.tier] || ""} <span class="score" title="Apertus relevance score">${i.score ?? "–"}</span></span></div>
+      ${i.tier && i.tier !== 1 && i.tier_reason ? `<div class="small muted" style="margin-top:4px">Auswahl (Apertus, Pass 4): ${esc(i.tier_reason)}</div>` : ""}
       <div class="why"><b>${L === "fr" ? "Justification (Apertus)" : "Begründung (Apertus)"}</b>${esc(i.begruendung[L])}</div>
       <div class="cols">
         <div class="col suva"><h3><span>${L === "fr" ? "Résumé Suva" : "Zusammenfassung Suva"}</span><span class="muted small">${esc(i.suva.author)}</span></h3>${paras(i.suva[L])}
@@ -91,7 +92,7 @@ function render() {
 }
 
 fetch("api/examples-compare").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((d) => {
-  D = d;
+  D = d; if (d.prompt) $("promptlbl").textContent = "Summary prompt: " + d.prompt + ".";
   document.querySelectorAll("#lang button").forEach((b) => b.onclick = () => { L = b.dataset.l; store.set("ex.lang", L); render(); });
   $("q").oninput = render; $("sort").onchange = render;
   render();
