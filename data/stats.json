@@ -1,0 +1,383 @@
+{
+ "generated_at": "2026-11-27T12:15:03Z",
+ "window": {
+  "label": "Oct 2025 – Mar 2026 (Suva's list = ground truth)",
+  "rulings": 733,
+  "suva_positives": 58,
+  "candidates": 288,
+  "curve": [
+   {
+    "cutoff": 0,
+    "listed": 733,
+    "hits": 58,
+    "recall": 1.0,
+    "precision": 0.079,
+    "f2": 0.301
+   },
+   {
+    "cutoff": 5,
+    "listed": 534,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.088,
+    "f2": 0.307
+   },
+   {
+    "cutoff": 10,
+    "listed": 531,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.089,
+    "f2": 0.308
+   },
+   {
+    "cutoff": 15,
+    "listed": 300,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.157,
+    "f2": 0.442
+   },
+   {
+    "cutoff": 20,
+    "listed": 90,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.522,
+    "f2": 0.73
+   },
+   {
+    "cutoff": 25,
+    "listed": 90,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.522,
+    "f2": 0.73
+   },
+   {
+    "cutoff": 30,
+    "listed": 90,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.522,
+    "f2": 0.73
+   },
+   {
+    "cutoff": 35,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 40,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 45,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 50,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 55,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 60,
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "cutoff": 65,
+    "listed": 58,
+    "hits": 31,
+    "recall": 0.534,
+    "precision": 0.534,
+    "f2": 0.534
+   },
+   {
+    "cutoff": 70,
+    "listed": 43,
+    "hits": 25,
+    "recall": 0.431,
+    "precision": 0.581,
+    "f2": 0.455
+   },
+   {
+    "cutoff": 75,
+    "listed": 43,
+    "hits": 25,
+    "recall": 0.431,
+    "precision": 0.581,
+    "f2": 0.455
+   },
+   {
+    "cutoff": 80,
+    "listed": 38,
+    "hits": 25,
+    "recall": 0.431,
+    "precision": 0.658,
+    "f2": 0.463
+   },
+   {
+    "cutoff": 85,
+    "listed": 4,
+    "hits": 1,
+    "recall": 0.017,
+    "precision": 0.25,
+    "f2": 0.021
+   },
+   {
+    "cutoff": 90,
+    "listed": 0,
+    "hits": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "f2": 0.0
+   },
+   {
+    "cutoff": 95,
+    "listed": 0,
+    "hits": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "f2": 0.0
+   },
+   {
+    "cutoff": 100,
+    "listed": 0,
+    "hits": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "f2": 0.0
+   }
+  ],
+  "comparison": [
+   {
+    "name": "Baseline: all subject-area candidates",
+    "kind": "rule",
+    "listed": 288,
+    "hits": 58,
+    "recall": 1.0,
+    "precision": 0.201,
+    "f2": 0.558
+   },
+   {
+    "name": "Baseline: accident insurance, on the merits",
+    "kind": "rule",
+    "listed": 66,
+    "hits": 39,
+    "recall": 0.672,
+    "precision": 0.591,
+    "f2": 0.654
+   },
+   {
+    "name": "Apertus 70B, score >= 60",
+    "kind": "apertus",
+    "listed": 89,
+    "hits": 47,
+    "recall": 0.81,
+    "precision": 0.528,
+    "f2": 0.732
+   },
+   {
+    "name": "Apertus 70B + IV second pass (selected rule)",
+    "kind": "apertus",
+    "listed": 101,
+    "hits": 49,
+    "recall": 0.845,
+    "precision": 0.485,
+    "f2": 0.736
+   }
+  ],
+  "by_area": {
+   "accident": {
+    "rulings": 92,
+    "suva_picked": 42,
+    "listed": 65,
+    "hits": 41,
+    "recall": 0.976,
+    "precision": 0.631,
+    "f2": 0.88
+   },
+   "invalidity": {
+    "rulings": 197,
+    "suva_picked": 16,
+    "listed": 36,
+    "hits": 8,
+    "recall": 0.5,
+    "precision": 0.222,
+    "f2": 0.4
+   },
+   "daily_allowance": {
+    "rulings": 0,
+    "suva_picked": 0,
+    "listed": 0,
+    "hits": 0,
+    "recall": 0.0,
+    "precision": 0.0,
+    "f2": 0.0
+   }
+  },
+  "iv_auc": {
+   "main_prompt": 0.6,
+   "iv_second_pass": 0.711
+  },
+  "calibration40": {
+   "codex_model": "GPT-6 (Codex; exact runtime version not exposed)",
+   "apertus": {
+    "listed": 22,
+    "hits": 16,
+    "recall": 0.8,
+    "precision": 0.727,
+    "f2": 0.784
+   },
+   "codex": {
+    "listed": 21,
+    "hits": 17,
+    "recall": 0.85,
+    "precision": 0.81,
+    "f2": 0.842
+   },
+   "agreement": 0.875,
+   "auc_codex": 0.897,
+   "auc_apertus": 0.752
+  }
+ },
+ "aprjun": {
+  "label": "Apr – Jun 2026 (target period, no labels)",
+  "crawled": 2094,
+  "candidates": 177,
+  "selected": 77,
+  "selected_by_area": {
+   "accident": 37,
+   "invalidity": 40,
+   "daily_allowance": 2
+  },
+  "summarised": 20,
+  "months": {
+   "2026-04": {
+    "candidates": 61,
+    "selected": 30,
+    "summarised": 0
+   },
+   "2026-05": {
+    "candidates": 64,
+    "selected": 27,
+    "summarised": 0
+   },
+   "2026-06": {
+    "candidates": 52,
+    "selected": 20,
+    "summarised": 20
+   }
+  },
+  "score_hist": [
+   {
+    "bin": 0,
+    "count": 81
+   },
+   {
+    "bin": 10,
+    "count": 19
+   },
+   {
+    "bin": 20,
+    "count": 0
+   },
+   {
+    "bin": 30,
+    "count": 0
+   },
+   {
+    "bin": 40,
+    "count": 0
+   },
+   {
+    "bin": 50,
+    "count": 0
+   },
+   {
+    "bin": 60,
+    "count": 44
+   },
+   {
+    "bin": 70,
+    "count": 6
+   },
+   {
+    "bin": 80,
+    "count": 27
+   },
+   {
+    "bin": 90,
+    "count": 0
+   },
+   {
+    "bin": 100,
+    "count": 0
+   }
+  ],
+  "codex": {
+   "codex_model": "GPT-6 (Codex; exact runtime version not exposed)",
+   "codex_listed": 60,
+   "both": 55,
+   "only_apertus": 22,
+   "only_codex": 5,
+   "only_codex_dockets": [
+    "8C_580/2025",
+    "9C_208/2025",
+    "9C_230/2025",
+    "9C_309/2025",
+    "9C_368/2025"
+   ],
+   "only_apertus_dockets": [
+    "8C_248/2024",
+    "8C_255/2025",
+    "8C_261/2025",
+    "8C_431/2025",
+    "8C_444/2025",
+    "8C_484/2025",
+    "8C_503/2024",
+    "8C_526/2025",
+    "8C_688/2025",
+    "8C_727/2024",
+    "8C_753/2025",
+    "9C_104/2026",
+    "9C_137/2025",
+    "9C_16/2026",
+    "9C_166/2025",
+    "9C_173/2025",
+    "9C_336/2025",
+    "9C_366/2025",
+    "9C_498/2025",
+    "9C_538/2024",
+    "9C_547/2025",
+    "9C_73/2026"
+   ]
+  }
+ }
+}

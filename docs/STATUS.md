@@ -3,6 +3,47 @@
 For Paul (and Paul's AI): where Miguel's side stands, what we found, what we propose.
 The API/data contract is in [`docs/API.md`](API.md).
 
+## ▶ Where the real data is (read this first, agents)
+
+Real Apertus v1.5 70B results for **April – June 2026** (no mock data any more), three ways:
+
+1. **In this repo (works from any sandbox, no network needed):**
+   - `site/api/judgements.json`: the 177 rulings Apertus scored (cards: score, DE/FR title and explanation,
+     hashtags, `has_summary`). Same shape as `GET /api/judgements`.
+   - `site/api/judgements/<slug>.json`: detail per ruling (full text, assessment, summaries DE/FR,
+     history), same shape as `GET /api/judgements/{slug}`. `slug` = `8C_137_2025`.
+   - `site/api/kb.json`, `site/api/status.json`: library and status.
+   - `data/submission/hitlist_2026-04-01_2026-06-30.txt`: **the hit list we submit** (77 rulings, Suva's format).
+   - `data/stats.json`: model comparison and evaluation numbers (what `/stats` shows).
+   This export is refreshed by Miguel after each pipeline run (`python -m suva export ../site` on a copy of the
+   DB limited to Apertus-scored rulings). The other ~1,900 crawled rulings were rejected by the subject-area
+   prefilter and aren't exported.
+2. **Live API:** `https://api.robotross.art/lex/api/judgements` (public reads, see API.md). Cloud sandboxes may not
+   reach this host; use option 1 there.
+3. **Pages:** the `pages.yml` workflow publishes `site/` → read-only UI on GitHub Pages.
+
+**Summaries are still being generated** (77 rulings, June first). The export and the live API are updated as they finish.
+
+New fields in the data (additive, no breaking change):
+- `tags` now start with **decision-criteria hashtags**, then Apertus' topic tags:
+  `#Unfallversicherung` / `#Invalidenversicherung` / `#Taggeld`, `#materiell` / `#prozessual`, `#SuvaPartei`,
+  `#IV-Grundsatz` (IV ruling promoted by the second Apertus pass), `#Trefferliste` (on the submitted hit list).
+- An IV ruling promoted by the second pass has `score = 60` and its explanation ends with
+  "— IV-Zweitprüfung (Apertus): <principle>".
+
+Other pages: model statistics at <https://api.robotross.art/lex/stats>, troubleshooting at `/lex/debug`.
+
+## How Suva scores us (from the challenge pitch, 27 Nov)
+
+1. **Hit score: Recall and F2** on a plain list of case numbers ("8C_691/2024, 9C_612/2025, …") for rulings
+   relevant in **Q2 2026**. F2 weighs recall 4× more than precision, so the cutoff is generous. Ranking order
+   doesn't count for this score.
+2. **Quality score: top 5 summaries**, checked against Suva's hold-out summaries **published in June 2026**.
+   So June summaries matter most.
+
+Current numbers on the labelled window (Oct 2025 – Mar 2026, 58 Suva picks): **F2 0.736, recall 84 %,
+precision 49 %** (baseline "all subject-area candidates": F2 0.560). Details on `/stats`.
+
 ## Decisions
 
 1. **Split:** Paul owns UI + API server + GitHub Pages; Miguel owns crawl, filter, relevance, summaries.
