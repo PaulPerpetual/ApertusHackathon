@@ -1,7 +1,52 @@
-# Lex Aperta — status (Fri 27 Nov 2026, afternoon)
+# Lex Aperta — status (Fri 27 Nov 2026, late afternoon)
 
 For Paul (and Paul's AI): where Miguel's side stands, what we found, what we propose.
 The API/data contract is in [`docs/API.md`](API.md).
+
+## ▶ Latest (Fri ~16:00): what changed in the data, and what it means for the UI
+
+**Pages:** UI <https://api.robotross.art/lex/> · stats `/lex/stats` · model comparison `/lex/compare` · troubleshooting `/lex/debug`.
+Same data in the repo: `site/api/` (177 Apertus-scored rulings, refreshed now).
+
+**Data changes (all additive, same fields):**
+1. **Tags = controlled vocabulary** (`src/suva/hashtags.py`, 52 tags in 6 groups, DE + FR). Each card has at most 5:
+   subject area (`UVG` / `IV` / `Taggeldversicherung`), 2–3 **deciding grounds** chosen by Apertus
+   (e.g. `natürliche-Kausalität`, `Beweiswert-Gutachten`, `Rentenrevision`, `öffentliche-Verhandlung-EMRK`), and the
+   outcome (`gutgeheissen` / `abgewiesen` / `Rückweisung-zur-Abklärung` …). **Stored without `#`** (your UI adds it),
+   no Suva-party tag (your `suva_party` badge covers it); `tags_fr` is aligned 1:1. Fixes the "##" and doubled tags.
+   *Optional UI idea:* the grouped vocabulary could drive a tag filter (we can expose it as `GET /api/hashtags`).
+2. **`explanation_de` / `_fr` ("Begründung") rewritten:** starts with the concrete legal question
+   ("Stabilisierung des Gesundheitszustands nach Art. 19 Abs. 1 UVG: …"), cites the deciding consideration
+   "(E. 5.2)" / "(consid. 5.2)", ends with the meaning for Suva. Never starts with "Das Bundesgericht / Das Urteil".
+3. **Summaries (all 77 on the hit list) regenerated:** every paragraph cites real considerations ("(E. 4.4)",
+   "(consid. 4.4)"), so your citation links now work. Outcome is taken from the Dispositiv and machine-checked; anonymisation
+   placeholders ("A.________") removed. Median 246 words (Suva style 120–300).
+4. **`text` re-extracted** without broken lines around statute links (was "(\nart. 90 LTF\n)"), and **`html` filled**
+   for every ruling (formatted original via your `_html_clean`), so the "Urteilstext" tab shows the formatted ruling.
+   Fix is in `scraper._html_text` (inline tags unwrapped). Consideration numbering unchanged.
+5. **Titles** re-done with your `python -m suva relabel` (run on the master DB, then deployed).
+6. **`GET /api/status` has `data_version`**; the UI polls every 30 s and reloads when data changes (paused while
+   editing). That's in `app.js`, at the end of `init()`. Please keep it if you restructure.
+
+**Evaluation (labelled window Oct 2025 – Mar 2026, 58 Suva picks; Suva scores Recall + F2):**
+
+| Run | Listed | Recall | Precision | **F2** |
+|---|---|---|---|---|
+| **Apertus v1 (production: main ≥ 60 + IV second pass ≥ 40)** | 101 | 84 % | 49 % | **0.736** |
+| Apertus v2 "general rule vs individual case" (rejected) | 259 | 98 % | 22 % | 0.580 |
+| Apertus v3 "ATSG rescue" for Codex-style misses (rejected) | 211 | 91 % | 25 % | 0.598 |
+| Baseline: all subject-area candidates | 288 | 100 % | 20 % | 0.558 |
+
+Codex (GPT-6, development reference only, blind) is better at telling a *general rule* from a *routine
+application* (on 40 labelled rulings: F2 0.84 vs Apertus 0.78). Two attempts to teach Apertus that distinction
+(v2, v3) made it say "yes" to almost everything, so **v1 stays**. All runs are on `/compare`.
+
+**Submission artefacts:** hit list `data/submission/hitlist_2026-04-01_2026-06-30.txt` (77 rulings, Suva format);
+summaries in the DB / `site/api/judgements/<slug>.json`.
+
+**Not done / known gaps:** Codex flags 5 April–June rulings Apertus doesn't (all IV/ATSG procedure:
+8C_580/2025, 9C_208/2025, 9C_230/2025, 9C_309/2025, 9C_368/2025). They're **not** on our list, because only Apertus may decide.
+Server-side edits are overwritten when Miguel deploys a new DB. Tell him before you edit real content.
 
 ## ▶ Where the real data is (read this first, agents)
 

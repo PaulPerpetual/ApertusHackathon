@@ -11,7 +11,7 @@ import re
 
 START = re.compile(r"(Erwägungen?|Erwägung|Considérant en droit|Considérants?|Considerando in diritto|Considerandi)\s*:?\s*\n")
 END = re.compile(r"\n\s*(Demnach erkennt|Par ces motifs|Per questi motivi)")
-NUM = re.compile(r"^[ \t]*(\d{1,2}(?:\.\d{1,2}){0,4})\.?[ \t]*$", re.M)  # a number alone on its line
+NUM = re.compile(r"^[ \t]*(\d{1,2}(?:\.\d{1,2}){0,4})(?:\.?[ \t]*$|\.[ \t]+(?=\S))", re.M)  # "5.2." alone on its line, or "5.2. Text" at line start
 REF = re.compile(r"\((?:E\.|Erw\.|Erwägung|consid\.|cons\.)\s*([0-9][0-9.]*(?:\s*(?:und|et|e|,|-|–)\s*[0-9][0-9.]*)*)\)")
 
 
@@ -57,3 +57,45 @@ def dispositiv(text, max_chars=900):
     """The operative part ("Demnach erkennt das Bundesgericht: 1. Die Beschwerde wird ...") verbatim."""
     e = END.search(text or "")
     return re.sub(r"\s+", " ", text[e.start():e.start() + max_chars]).strip() if e else ""
+
+
+_OUT = {
+    "admitted": r"(?:wird|werden)\s+(?:teilweise\s+)?gutgeheissen|est\s+(?:partiellement\s+)?admis|(?:è|sono)\s+(?:parzialmente\s+)?accolt",
+    "rejected": r"(?:wird|werden)\s+abgewiesen|est\s+rejeté|(?:è|sono)\s+respint",
+    "inadmissible": r"nicht\s+eingetreten|irrecevable|inammissibil",
+}
+_SUM = {
+    "admitted": r"hiess\s+(?:die\s+)?(?:Beschwerde\s+)?(?:teilweise\s+)?gut|(?:wird|wurde)\s+(?:teilweise\s+)?gutgeheissen|a\s+(?:partiellement\s+)?admis|admet\s+(?:partiellement\s+)?le\s+recours|est\s+(?:partiellement\s+)?admis",
+    "rejected": r"wies\s+(?:die\s+)?Beschwerde\s+ab|(?:wird|wurde)\s+abgewiesen|a\s+rejeté|rejette\s+le\s+recours|est\s+rejeté",
+}
+
+
+def outcome(text):
+    """Federal Court outcome from the Dispositiv: 'admitted' | 'rejected' | 'inadmissible' | None (first item)."""
+    d = dispositiv(text, 500)
+    first = re.split(r"\b2\.\s", d, maxsplit=1)[0]
+    for k, pat in _OUT.items():
+        if re.search(pat, first, re.I):
+            return k
+    return None
+
+
+def outcome_conflict(summary, text):
+    """A sentence in the summary that states the opposite outcome for the Federal Court, or None.
+    Sentences about the cantonal court / lower instance are ignored."""
+    real = outcome(text)
+    if real not in ("admitted", "rejected"):
+        return None
+    wrong = "rejected" if real == "admitted" else "admitted"
+    lower = re.compile(r"kantonal|Vorinstanz|Versicherungsgericht|Verwaltungsgericht|tribunal cantonal|cour cantonale|"
+                       r"autorité précédente|premiers juges|juges cantonaux|instance précédente|IV-Stelle|office AI", re.I)
+    for sent in re.split(r"(?<=[.!?])\s+", summary or ""):
+        m = re.search(_SUM[wrong], sent, re.I)
+        if not m or not re.search(r"Beschwerde|recours", sent, re.I):
+            continue
+        if re.search(r"surplus|im Übrigen|im übrigen|teilweise|partiellement|\d[A-Z]_\d+/\d{4}", sent, re.I):
+            continue  # partial outcome or another ruling cited
+        if lower.search(sent[:m.start()]) and not re.search(r"Bundesgericht|BGer|Tribunal fédéral|\bTF\b", sent[:m.start()]):
+            continue  # the sentence reports the lower instance's decision
+        return sent.strip()
+    return None

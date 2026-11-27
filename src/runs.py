@@ -71,11 +71,15 @@ def db_rows(db):
                    {'p.score' if 'principle_assessments' in tables else 'NULL'} AS p,
                    {'p.reason_de' if 'principle_assessments' in tables else 'NULL'} AS p_reason,
                    {'f.main_score' if 'final_selection' in tables else 'NULL'} AS main_orig,
-                   {'f.selected' if 'final_selection' in tables else 'NULL'} AS selected
+                   {'f.selected' if 'final_selection' in tables else 'NULL'} AS selected,
+                   {'r.rescue' if 'rescue_assessments' in tables else 'NULL'} AS rescue,
+                   {'r.norm' if 'rescue_assessments' in tables else 'NULL'} AS rescue_norm,
+                   {'r.reason' if 'rescue_assessments' in tables else 'NULL'} AS rescue_reason
             FROM judgements j JOIN assessments a ON a.slug = j.slug
             {'LEFT JOIN iv_assessments i ON i.slug = j.slug' if 'iv_assessments' in tables else ''}
             {'LEFT JOIN principle_assessments p ON p.slug = j.slug' if 'principle_assessments' in tables else ''}
-            {'LEFT JOIN final_selection f ON f.slug = j.slug' if 'final_selection' in tables else ''}"""
+            {'LEFT JOIN final_selection f ON f.slug = j.slug' if 'final_selection' in tables else ''}
+            {'LEFT JOIN rescue_assessments r ON r.slug = j.slug' if 'rescue_assessments' in tables else ''}"""
     out = []
     for r in con.execute(q):
         d = dict(r)
@@ -132,6 +136,14 @@ def build():
         write_run(ds, "apertus70b-v1", "Apertus v1.5 70B (CSCS/Keera)", v1rows(rows), v1_notes)
         if any(r["p"] is not None for r in rows):
             write_run(ds, "apertus70b-v2-principle", "Apertus v1.5 70B (CSCS/Keera)", v2rows(rows), v2_notes)
+        if any(r["rescue"] is not None for r in rows):
+            write_run(ds, "apertus70b-v3-atsg-rescue", "Apertus v1.5 70B (CSCS/Keera)",
+                      [{"docket": r["docket"], "score": 60 if (v1_selected(r) or r["rescue"]) else r["main"],
+                        "relevant": v1_selected(r) or bool(r["rescue"]),
+                        "reason": (f"ATSG-Rescue ({r['rescue_norm']}): {r['rescue_reason']}" if r["rescue"] and not v1_selected(r)
+                                   else r["explanation_de"])} for r in rows],
+                      "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: "
+                      "ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.")
     write_run("aprjun", "apertus70b-v1", "Apertus v1.5 70B (CSCS/Keera)",
               [{"docket": r["docket"], "score": r["main"], "relevant": bool(r["selected"]) if r["selected"] is not None
                 else v1_selected(r), "reason": r["explanation_de"]} for r in apr], v1_notes + " This is the submitted hit list.")

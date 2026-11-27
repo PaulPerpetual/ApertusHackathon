@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T12:39:30Z",
+ "generated_at": "2026-11-27T12:54:53Z",
  "window": {
   "label": "Oct 2025 – Mar 2026 (Suva's list = ground truth)",
   "rulings": 733,
@@ -277,12 +277,12 @@
    "invalidity": 40,
    "daily_allowance": 2
   },
-  "summarised": 63,
+  "summarised": 77,
   "months": {
    "2026-04": {
     "candidates": 61,
     "selected": 30,
-    "summarised": 16
+    "summarised": 30
    },
    "2026-05": {
     "candidates": 64,

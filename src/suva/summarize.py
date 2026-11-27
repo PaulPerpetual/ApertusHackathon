@@ -129,6 +129,15 @@ def write_summary(j, notes, examples, lang):
         text = llm.chat(msgs + [{"role": "assistant", "content": text}, {"role": "user", "content": fix}],
                         temperature=0.2, max_tokens=900).strip()
         found, bad = erwaegungen.check_refs(text, valid)
+    conflict = erwaegungen.outcome_conflict(text, j.get("text") or "")
+    if conflict:  # the outcome must match the Dispositiv: one targeted correction
+        real = {"admitted": "gutgeheissen / admis", "rejected": "abgewiesen / rejeté"}[erwaegungen.outcome(j.get("text") or "")]
+        text = llm.chat(msgs + [{"role": "assistant", "content": text},
+                                {"role": "user", "content": f"Falsches Ergebnis: \"{conflict}\". Laut Dispositiv wurde die Beschwerde vor "
+                                                            f"Bundesgericht {real}. Korrigiere nur das, gib die ganze Zusammenfassung "
+                                                            f"aus, nur den Text."}],
+                        temperature=0.1, max_tokens=900).strip()
+        found, bad = erwaegungen.check_refs(text, valid)
     text = PLACEHOLDER.sub("", text).replace(" ,", ",").replace("  ", " ")  # last resort for placeholders
     for nr in set(bad):  # last resort: never ship an invented reference
         text = re.sub(r"\s*\((?:E\.|Erw\.|consid\.)\s*" + re.escape(nr) + r"\)", "", text)
