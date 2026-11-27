@@ -14,7 +14,7 @@ const I18N = {
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
-    edit: "Bearbeiten", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
+    edit: "Bearbeiten", edit_summary: "Zusammenfassung bearbeiten", adjust_score: "Score anpassen", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
     st_new: "neu", st_done: "erledigt", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
@@ -34,7 +34,7 @@ const I18N = {
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
-    edit: "Modifier", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
+    edit: "Modifier", edit_summary: "Modifier le résumé", adjust_score: "Ajuster le score", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
     st_new: "nouveau", st_done: "traité", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
@@ -231,7 +231,7 @@ async function editScore(slug, el) {
     if (save && !Number.isNaN(v) && v !== c.score) {
       el.classList.add("manual"); el.innerHTML = `<span class="n">${v}</span><span class="level"><i class="${band(v)}" style="width:${v}%"></i></span>`;
       await setScore(slug, v);
-    } else { await pointerReleased(); renderList(); }
+    } else { await pointerReleased(); renderList(); if (state.open) renderPanel(); }
   };
   inp.addEventListener("keydown", (e) => { e.stopPropagation(); if (e.key === "Enter") commit(true); if (e.key === "Escape") commit(false); });
   inp.addEventListener("blur", () => commit(true));
@@ -324,8 +324,9 @@ async function renderPanel() {
   const tabs = ["summary_de", "summary_fr", "text", "history"];
   let html = `
     <div class="section"><h4>${t("relevance")}</h4>
-      <div class="bigscore"><span class="n">${score ?? "–"}</span><span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
+      <div class="bigscore"><span class="n" id="pScoreN">${score ?? "–"}</span><span class="level"><i class="${band(score ?? 0)}" style="width:${score ?? 0}%"></i></span>
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
+        ${readOnly() ? "" : `<button class="btn" id="scoreBtn">✎ ${t("adjust_score")}</button>`}
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
       ${done && d.status_by ? `<p class="muted">${esc(t("done_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}</h4><p>${esc(L === "fr" ? a.explanation_fr : a.explanation_de)}</p>
@@ -351,9 +352,9 @@ async function renderPanel() {
     } else {
       const meta = s.edited_by ? `<span class="edited">✎ ${t("edited_by")} ${esc(s.edited_by)} · ${esc(fmtTime(s.edited_at))}</span>`
         : s.model === "suva-human-example" ? `<span class="tag">${t("human_example")}</span>` : `<span class="tag">${t("ai")} · ${esc(s.model)}</span>`;
-      html += `<div class="c-sub">${meta}</div><div class="summary">${linkCitations(s.text)}</div>
-        <div class="row">${s.edited_by && s.ai_text ? `<button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button>` : ""}
-        ${readOnly() ? "" : `<button class="btn" id="editBtn">${t("edit")}</button>`}</div>
+      html += `<div class="sum-head"><div class="c-sub">${meta}</div>${readOnly() ? "" : `<button class="btn primary" id="editBtn">✎ ${t("edit_summary")}</button>`}</div>
+        <div class="summary">${linkCitations(s.text)}</div>
+        ${s.edited_by && s.ai_text ? `<div class="row"><button class="btn small" id="toggleAi">${state.showAi ? t("hide_ai") : t("show_ai")}</button></div>` : ""}
         ${state.showAi && s.ai_text ? `<div class="ai-orig">${linkCitations(s.ai_text)}</div>` : ""}`;
     }
   } else if (state.tab === "text") {
@@ -381,6 +382,7 @@ async function renderPanel() {
   }
   const on = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
   on("editBtn", async () => { if (await requireName()) { state.editing = true; renderPanel(); } });
+  on("scoreBtn", () => editScore(d.slug, $("#pScoreN")));
   on("cancelEdit", () => { state.editing = false; renderPanel(); });
   on("toggleAi", () => { state.showAi = !state.showAi; renderPanel(); });
   on("saveEdit", async () => {
