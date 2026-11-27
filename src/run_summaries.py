@@ -23,10 +23,13 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--month", default="", help="only rulings decided in this month, e.g. 2026-06")
     ap.add_argument("--redo", action="store_true", help="regenerate even if summaries exist")
+    ap.add_argument("--variant", default="v1", choices=["v1", "v2"], help="v1 = summarize.py, v2 = summarize_v2.py")
     ap.add_argument("--only", default="", help="file with one docket per line (implies --redo for those)")
     a = ap.parse_args()
     os.environ["SUVA_DB"] = os.path.abspath(a.db)  # before importing suva.config
-    from suva import db, examples, llm, summarize
+    from suva import db, examples, llm, summarize, summarize_v2
+    if a.variant == "v2":
+        summarize = summarize_v2  # noqa: F811
 
     exs = examples.load_examples()
     con = sqlite3.connect(a.db, timeout=30)

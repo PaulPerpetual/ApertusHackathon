@@ -27,7 +27,10 @@ Spätfolgen ↔ séquelles tardives | Berufskrankheit ↔ maladie professionnell
 Fallabschluss ↔ clôture du cas | Rentenrevision ↔ révision de la rente | Gutachten ↔ expertise
 rechtliches Gehör ↔ droit d'être entendu | öffentliche Verhandlung ↔ débats publics | Vorinstanz ↔ autorité précédente
 Kantonsgericht/Versicherungsgericht ↔ tribunal cantonal des assurances | gutheissen ↔ admettre | abweisen ↔ rejeter
-zurückweisen ↔ renvoyer | Nichteintreten ↔ irrecevabilité"""
+zurückweisen ↔ renvoyer | Nichteintreten ↔ irrecevabilité
+relatives/absolutes Wagnis ↔ entreprise téméraire relative/absolue | Listenverletzung (unfallähnliche Körperschädigung)
+↔ lésion assimilée à un accident | Distorsion/Kontusion ↔ distorsion/contusion | Untersuchungshaft ↔ détention provisoire
+Einspracheentscheid ↔ décision sur opposition | Status quo sine/ante ↔ statu quo sine/ante | Tabellenlohnabzug ↔ abattement"""
 
 STYLE = {
     "de": """Stil der Suva-Zusammenfassungen (Deutsch):
