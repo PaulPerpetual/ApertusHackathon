@@ -147,6 +147,14 @@ def build():
     write_run("aprjun", "apertus70b-v1", "Apertus v1.5 70B (CSCS/Keera)",
               [{"docket": r["docket"], "score": r["main"], "relevant": bool(r["selected"]) if r["selected"] is not None
                 else v1_selected(r), "reason": r["explanation_de"]} for r in apr], v1_notes + " This is the submitted hit list.")
+    if any(r["rescue"] is not None for r in apr):
+        write_run("aprjun", "apertus70b-v3-atsg-rescue", "Apertus v1.5 70B (CSCS/Keera)",
+                  [{"docket": r["docket"], "score": 60 if ((r["selected"] or v1_selected(r)) or r["rescue"]) else r["main"],
+                    "relevant": bool(r["selected"]) or v1_selected(r) or bool(r["rescue"]),
+                    "reason": (f"ATSG-Rescue ({r['rescue_norm']}): {r['rescue_reason']}"
+                               if r["rescue"] and not (r["selected"] or v1_selected(r)) else r["explanation_de"])} for r in apr],
+                  "Experiment, not submitted: v1 + ATSG rescue. Catches 4 of the 5 Codex-only rulings but adds 59 in total; "
+                  "on the labelled window only ~4 % of rescued rulings were Suva picks (F2 0.736 -> 0.598).")
     for ds, path in (("calibration40", "codex_calibration.jsonl"), ("aprjun", "codex_aprjun.jsonl")):
         p = os.path.join(ROOT, "data", "second_opinion", path)
         if os.path.exists(p):
