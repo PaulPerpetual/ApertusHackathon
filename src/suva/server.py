@@ -1,5 +1,6 @@
 """FastAPI backend for the triage UI. Serves the static frontend and a small JSON API."""
 import base64
+import hashlib
 import re
 import secrets
 import threading
@@ -37,7 +38,27 @@ async def guard(request: Request, call_next):
                             headers={"WWW-Authenticate": 'Basic realm="Suva Urteilsradar"'})
     if config.READ_ONLY and request.method in ("POST", "PUT", "DELETE", "PATCH"):
         return Response("Read-only demo", status_code=403)
+    if config.EDITOR_KEYS and request.method in ("POST", "PUT", "DELETE", "PATCH"):
+        digest = hashlib.sha256(request.headers.get("x-lex-key", "").encode()).hexdigest()
+        editor = next((n for d, n in config.EDITOR_KEYS.items() if secrets.compare_digest(d, digest)), None)
+        if not editor:
+            return Response('{"detail":"editor key required (X-Lex-Key header)"}', status_code=401,
+                            media_type="application/json")
+        request.state.editor = editor
     return await call_next(request)
+
+
+def _editor(request: Request, claimed):
+    """Editor of record: the key's owner when keys are enforced, else what the client sent."""
+    return getattr(request.state, "editor", None) or claimed
+
+
+if config.CORS_ORIGINS:
+    # Registered after the guard, so it wraps it: preflight (OPTIONS) never needs a key,
+    # and 401s still carry CORS headers so the browser can show the error.
+    from fastapi.middleware.cors import CORSMiddleware
+    app.add_middleware(CORSMiddleware, allow_origins=config.CORS_ORIGINS, allow_credentials=False,
+                       allow_methods=["GET", "POST", "PUT", "DELETE"], allow_headers=["Content-Type", "X-Lex-Key"])
 
 
 class ScoreIn(BaseModel):
@@ -64,9 +85,16 @@ def index():
     return FileResponse(STATIC / "index.html")
 
 
+@app.get("/debug")
+def debug_page():
+    """Troubleshooting page for the hosted API (status, data counts, key test)."""
+    return FileResponse(STATIC / "debug.html")
+
+
 @app.get("/api/status")
 def status():
     return {"model": llm.model_name(), "mock": config.USE_MOCK_LLM, "read_only": config.READ_ONLY,
+            "editor_key_required": bool(config.EDITOR_KEYS),
             "threshold": config.RELEVANCE_SUMMARY_THRESHOLD, "jobs": JOBS}
 
 
@@ -86,7 +114,8 @@ def judgement(slug: str):
 
 
 @app.put("/api/judgements/{slug}/score")
-def set_score(slug: str, body: ScoreIn):
+def set_score(slug: str, body: ScoreIn, request: Request):
+    body.editor = _editor(request, body.editor)
     with db.connect() as con:
         a = con.execute("SELECT ai_score, score_override FROM assessments WHERE slug=?", (slug,)).fetchone()
         if not a:
@@ -99,7 +128,8 @@ def set_score(slug: str, body: ScoreIn):
 
 
 @app.delete("/api/judgements/{slug}/score")
-def revert_score(slug: str, body: EditorIn):
+def revert_score(slug: str, body: EditorIn, request: Request):
+    body.editor = _editor(request, body.editor)
     with db.connect() as con:
         a = con.execute("SELECT ai_score, score_override FROM assessments WHERE slug=?", (slug,)).fetchone()
         if not a:
@@ -111,7 +141,8 @@ def revert_score(slug: str, body: EditorIn):
 
 
 @app.put("/api/judgements/{slug}/summary/{lang}")
-def set_summary(slug: str, lang: str, body: SummaryIn):
+def set_summary(slug: str, lang: str, body: SummaryIn, request: Request):
+    body.editor = _editor(request, body.editor)
     if lang not in ("de", "fr"):
         raise HTTPException(400, "lang must be de or fr")
     with db.connect() as con:
@@ -139,8 +170,12 @@ def _run_add(docket):
 @app.post("/api/judgements")
 def add_judgement(body: AddIn):
     key = body.docket.strip()
+    if not re.fullmatch(r"\d{1,2}[A-Z]_\d{1,5}/\d{4}", key):
+        raise HTTPException(400, "docket must look like 8C_123/2026")
     if JOBS.get(key, {}).get("status") == "running":
         return JOBS[key]
+    if sum(j.get("status") == "running" for j in JOBS.values()) >= config.MAX_JOBS:
+        raise HTTPException(429, "too many summaries running, try again in a minute")
     JOBS[key] = {"status": "running"}
     threading.Thread(target=_run_add, args=(key,), daemon=True).start()
     return JOBS[key]

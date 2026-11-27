@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lex Aperta API check</title>
+<style>
+  :root { --bg:#fafaf8; --fg:#1c1c1a; --muted:#6b6b66; --line:#deded8; --ok:#1f7a3a; --bad:#b3261e; --warn:#8a5a00; --card:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161615; --fg:#ececea; --muted:#9a9a94; --line:#33332f; --ok:#5cc47a; --bad:#f2827a; --warn:#e0b04a; --card:#1f1f1d; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:14px/1.45 system-ui, sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:20px; margin:0 0 4px; } h2 { font-size:15px; margin:24px 0 8px; }
+  .muted { color:var(--muted); } code, pre { font:12px/1.4 ui-monospace, Menlo, monospace; }
+  pre { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px; overflow:auto; max-height:320px; white-space:pre-wrap; word-break:break-word; }
+  table { border-collapse:collapse; width:100%; background:var(--card); border:1px solid var(--line); border-radius:6px; }
+  td { padding:6px 10px; border-top:1px solid var(--line); vertical-align:top; } tr:first-child td { border-top:0; }
+  td:first-child { width:38%; color:var(--muted); }
+  .ok { color:var(--ok); font-weight:600; } .bad { color:var(--bad); font-weight:600; } .warn { color:var(--warn); font-weight:600; }
+  input { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); width:100%; box-sizing:border-box; }
+  button { font:inherit; padding:6px 12px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); cursor:pointer; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:6px 0; } .row > input { flex:1 1 240px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Lex Aperta: API check</h1>
+  <div class="muted">Troubleshooting page for the hosted API. It only reads, unless you run the key test.
+    API base: <code id="base"></code></div>
+
+  <h2>Health</h2>
+  <table id="health"><tr><td>Loading…</td><td></td></tr></table>
+
+  <h2>Data</h2>
+  <table id="data"><tr><td>Loading…</td><td></td></tr></table>
+
+  <h2>Editor key test</h2>
+  <div class="muted">Sends a write with no effect (revert the score of a card that has no override),
+    so it checks the key without changing data. The key stays in this browser's memory and isn't saved.</div>
+  <div class="row"><input id="key" type="password" placeholder="X-Lex-Key" autocomplete="off">
+    <button id="testKey">Test key</button></div>
+  <pre id="keyOut" class="muted">–</pre>
+
+  <h2>Raw request</h2>
+  <div class="row"><input id="path" value="api/status"><button id="get">GET</button></div>
+  <pre id="raw">–</pre>
+</main>
+<script>
+const base = new URL("./", location.href);              // works at / and behind a prefix like /lex/
+document.getElementById("base").textContent = base.href;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const row = (k, v, cls = "") => `<tr><td>${esc(k)}</td><td class="${cls}">${v}</td></tr>`;
+
+async function call(path, opts = {}) {
+  const t0 = performance.now();
+  const r = await fetch(new URL(path, base), opts);
+  const ms = Math.round(performance.now() - t0);
+  const text = await r.text();
+  let json = null; try { json = JSON.parse(text); } catch {}
+  return { status: r.status, ms, json, text, headers: r.headers };
+}
+
+async function health() {
+  let out = "";
+  try {
+    const s = await call("api/status");
+    const j = s.json || {};
+    out += row("GET api/status", `${s.status} in ${s.ms} ms`, s.status === 200 ? "ok" : "bad");
+    out += row("Model", esc(j.model) + (j.mock ? ' <span class="warn">(MOCK: no LLM configured)</span>' : ""));
+    out += row("Editor key required for writes", j.editor_key_required ? '<span class="ok">yes</span>' : '<span class="warn">no (open writes)</span>');
+    out += row("Read-only mode", j.read_only ? "yes" : "no");
+    out += row("Summary threshold", esc(j.threshold));
+    const jobs = Object.entries(j.jobs || {});
+    out += row("On-demand jobs", jobs.length ? jobs.map(([k, v]) => `${esc(k)}: <b>${esc(v.status)}</b> ${esc(v.message || v.slug || "")}`).join("<br>") : "none");
+  } catch (e) {
+    out += row("GET api/status", "failed: " + esc(e.message), "bad");
+  }
+  $("health").innerHTML = out;
+}
+
+async function data() {
+  let out = "";
+  try {
+    const r = await call("api/judgements");
+    const cards = Array.isArray(r.json) ? r.json : [];
+    out += row("GET api/judgements", `${r.status} in ${r.ms} ms, ${(r.text.length / 1024).toFixed(0)} KB`, r.status === 200 ? "ok" : "bad");
+    const score = (c) => c.score ?? c.score_override ?? c.ai_score;
+    const scored = cards.filter((c) => score(c) != null);
+    const bands = { "≥70": 0, "40–69": 0, "<40": 0 };
+    scored.forEach((c) => { const s = score(c); bands[s >= 70 ? "≥70" : s >= 40 ? "40–69" : "<40"]++; });
+    out += row("Rulings", `${cards.length} (scored ${scored.length}; ${Object.entries(bands).map(([k, v]) => `${k}: ${v}`).join(", ")})`);
+    out += row("With summary", String(cards.filter((c) => c.has_summary).length));
+    out += row("Edited by a person", String(cards.filter((c) => c.score_override != null).length) + " score overrides");
+    const models = [...new Set(cards.map((c) => c.model).filter(Boolean))];
+    out += row("Models in data", esc(models.join(", ") || "–"), models.some((m) => /mock/i.test(m)) ? "warn" : "");
+    const dates = cards.map((c) => c.decision_date).filter(Boolean).sort();
+    out += row("Decision dates", dates.length ? `${esc(dates[0])} → ${esc(dates[dates.length - 1])}` : "–");
+    const top = [...scored].sort((a, b) => score(b) - score(a)).slice(0, 5);
+    out += row("Top 5", top.map((c) => `${score(c)} · ${esc(c.docket)} · ${esc(c.title_de || c.subject || "")}`).join("<br>") || "–");
+  } catch (e) {
+    out += row("GET api/judgements", "failed: " + esc(e.message), "bad");
+  }
+  $("data").innerHTML = out;
+}
+
+$("testKey").onclick = async () => {
+  $("keyOut").textContent = "testing…";
+  try {
+    const cards = (await call("api/judgements")).json || [];
+    const c = cards.find((x) => x.score_override == null);
+    if (!c) { $("keyOut").textContent = "No card without an override to test against."; return; }
+    const r = await call(`api/judgements/${encodeURIComponent(c.slug)}/score`, {
+      method: "DELETE", headers: { "Content-Type": "application/json", "X-Lex-Key": $("key").value },
+      body: JSON.stringify({ editor: "debug-page" }) });
+    $("keyOut").textContent = r.status === 200 ? `OK: key accepted (tested on ${c.docket}, nothing changed)`
+      : r.status === 401 ? "401: key rejected" : `${r.status}: ${r.text}`;
+    $("keyOut").className = r.status === 200 ? "ok" : "bad";
+  } catch (e) { $("keyOut").textContent = "failed: " + e.message; $("keyOut").className = "bad"; }
+};
+
+$("get").onclick = async () => {
+  $("raw").textContent = "…";
+  try {
+    const r = await call($("path").value.replace(/^\//, ""));
+    const cors = r.headers.get("access-control-allow-origin");
+    $("raw").textContent = `HTTP ${r.status} · ${r.ms} ms${cors ? " · CORS: " + cors : ""}\n\n` +
+      (r.json ? JSON.stringify(r.json, null, 2).slice(0, 20000) : r.text.slice(0, 20000));
+  } catch (e) { $("raw").textContent = "failed: " + e.message; }
+};
+
+health(); data();
+</script>
+</body>
+</html>

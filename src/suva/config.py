@@ -32,3 +32,17 @@ DEMO_USER = os.getenv("DEMO_USER", "suva")
 DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "")
 # READ_ONLY=1 disables edits and on-demand summaries (e.g. for a public showcase link)
 READ_ONLY = os.getenv("READ_ONLY", "").lower() in ("1", "true", "yes")
+
+# Hosted API (docs/API.md "Hosted API"): reads are public, writes need a personal editor key
+# in the X-Lex-Key header. Only SHA-256 hashes live on the server:
+#   LEX_EDITOR_KEYS="miguel:<sha256 hex>,paul:<sha256 hex>"
+# The key's name becomes the editor of record, so the "editor" field in a request can't be spoofed.
+# Unset = no key check (local development).
+EDITOR_KEYS = {}
+for _pair in filter(None, (p.strip() for p in os.getenv("LEX_EDITOR_KEYS", "").split(","))):
+    _name, _, _digest = _pair.partition(":")
+    EDITOR_KEYS[_digest.strip().lower()] = _name.strip()
+# Browser origins allowed to call the API cross-site, e.g. "https://paulperpetual.github.io"
+CORS_ORIGINS = [o.strip() for o in os.getenv("LEX_CORS_ORIGINS", "").split(",") if o.strip()]
+# Cap on concurrent on-demand Apertus jobs (POST /api/judgements), to protect the gateway quota
+MAX_JOBS = int(os.getenv("LEX_MAX_JOBS", "2"))
