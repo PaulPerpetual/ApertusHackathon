@@ -589,8 +589,29 @@ async function startAdd(docket) {
   setTimeout(poll, 3000);
 }
 
+/* ---------- resizable detail panel (drag the left edge; double-click resets; width kept per browser) ---------- */
+function initResizer() {
+  const r = $("#resizer"), layout = $("#layout");
+  const apply = (w) => layout.style.setProperty("--panel-w", w ? w + "px" : "");
+  const clamp = (w) => Math.round(Math.max(340, Math.min(w, layout.clientWidth - 380)));
+  const saved = parseInt(store.get("lex.panelW", "0"), 10);
+  if (saved) apply(saved);
+  r.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); r.setPointerCapture(e.pointerId); r.classList.add("drag"); document.body.classList.add("resizing");
+    const move = (ev) => apply(clamp(layout.getBoundingClientRect().right - ev.clientX));
+    const up = () => {
+      r.removeEventListener("pointermove", move); r.removeEventListener("pointerup", up);
+      r.classList.remove("drag"); document.body.classList.remove("resizing");
+      const w = parseInt(layout.style.getPropertyValue("--panel-w"), 10); if (w) store.set("lex.panelW", String(w));
+    };
+    r.addEventListener("pointermove", move); r.addEventListener("pointerup", up);
+  });
+  r.ondblclick = () => { apply(0); store.set("lex.panelW", "0"); };
+}
+
 /* ---------- wiring ---------- */
 function init() {
+  initResizer();
   state.month = store.get("lex.month", "2026-06");  // default: June 2026 (Suva's top-5 review is about June)
   state.byPublication = store.get("lex.byPublication", "0") === "1";
   if ($("#pubToggle")) $("#pubToggle").onchange = (e) => { state.byPublication = e.target.checked; store.set("lex.byPublication", state.byPublication ? "1" : "0"); renderList(); };
