@@ -23,6 +23,7 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--month", default="", help="only rulings decided in this month, e.g. 2026-06")
     ap.add_argument("--redo", action="store_true", help="regenerate even if summaries exist")
+    ap.add_argument("--long", action="store_true", help="long mode for top rulings (expansion + re-check); short versions kept in summaries_short")
     ap.add_argument("--variant", default="v1", choices=["v1", "v2"], help="v1 = summarize.py, v2 = summarize_v2.py")
     ap.add_argument("--only", default="", help="file with one docket per line (implies --redo for those)")
     a = ap.parse_args()
@@ -53,10 +54,18 @@ def main():
     if a.limit:
         rows = rows[:a.limit]
     print(f"{len(rows)} rulings to summarise", flush=True)
+    if a.long:  # keep the current (short) versions so each ruling can be switched back
+        c = sqlite3.connect(a.db, timeout=30)
+        c.execute("CREATE TABLE IF NOT EXISTS summaries_short AS SELECT * FROM summaries WHERE 0")
+        for j in rows:
+            c.execute("DELETE FROM summaries_short WHERE slug = ?", (j["slug"],))
+            c.execute("INSERT INTO summaries_short SELECT * FROM summaries WHERE slug = ?", (j["slug"],))
+        c.commit()
+        c.close()
 
     def work(j):
         shots = [e for e in exs if e["docket"] != j["docket"]]  # never leak Suva's own summary
-        return j, summarize.summarize(j, shots)
+        return j, (summarize.summarize(j, shots, long=True) if a.long else summarize.summarize(j, shots))
 
     with ThreadPoolExecutor(a.workers) as pool:
         futs = [pool.submit(work, j) for j in rows]

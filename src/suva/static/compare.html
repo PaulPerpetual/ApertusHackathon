@@ -50,6 +50,9 @@
       <label>Dataset<select id="ds"></select></label>
       <label>Run A<select id="ra"></select></label>
       <label>Run B<select id="rb"></select></label>
+      <label>Monat (Entscheid)<select id="month"><option value="">Alle</option><option value="2026-04">April 2026</option>
+        <option value="2026-05">Mai 2026</option><option value="2026-06">Juni 2026</option></select></label>
+      <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="pubmode"> nach Suva-Publikation (≈ +33 Tage)</label>
     </div>
     <div class="note" id="dsnote"></div>
   </div>
@@ -136,8 +139,15 @@ async function load() {
   A = a; B = b; fillRuns(); render();
 }
 
+function monthOk(d) {  // month filter: decision date, or estimated Suva publication (decision + 33 days)
+  const m = $("month").value; if (!m) return true;
+  const date = (DOCK[d] || {}).date; if (!date) return false;
+  if (!$("pubmode").checked) return date.startsWith(m);
+  const x = new Date(date + "T00:00:00Z"); x.setUTCDate(x.getUTCDate() + 33); return x.toISOString().startsWith(m);
+}
 function render() {
-  const ma = new Map(A.rows.map((r) => [r.docket, r])), mb = new Map(B.rows.map((r) => [r.docket, r]));
+  const AR = A.rows.filter((r) => monthOk(r.docket)), BR = B.rows.filter((r) => monthOk(r.docket));
+  const ma = new Map(AR.map((r) => [r.docket, r])), mb = new Map(BR.map((r) => [r.docket, r]));
   const ids = [...new Set([...ma.keys(), ...mb.keys()])];
   const both = ids.filter((d) => ma.get(d)?.relevant && mb.get(d)?.relevant);
   const onlyA = ids.filter((d) => ma.get(d)?.relevant && !mb.get(d)?.relevant);
@@ -156,9 +166,9 @@ function render() {
 
   // ranking view
   const rankOf = (rows) => { const m = new Map(); [...rows].sort((x, y) => (y.score ?? -1) - (x.score ?? -1)).forEach((r, i) => m.set(r.docket, i + 1)); return m; };
-  const ra = rankOf(A.rows), rb = rankOf(B.rows);
+  const ra = rankOf(AR), rb = rankOf(BR);
   const topN = (n) => { const ta = new Set([...ra].filter(([, r]) => r <= n).map(([d]) => d)); return [...rb].filter(([d, r]) => r <= n && ta.has(d)).length; };
-  const nA = A.rows.filter((r) => r.relevant).length;
+  const nA = AR.filter((r) => r.relevant).length;
   $("topn").innerHTML = [10, 30, nA].filter((n, i, a) => n && a.indexOf(n) === i).map((n) =>
     `<div class="vbox"><b>${topN(n)} / ${n}</b><span>top-${n} overlap${n === nA ? " (size of A's list)" : ""}</span></div>`).join("");
   const top = [...ra].sort((x, y) => x[1] - y[1]).slice(0, 40);
@@ -193,6 +203,9 @@ function render() {
     fillRuns();
     $("ds").onchange = () => { fillRuns(); load(); };
     $("ra").onchange = load; $("rb").onchange = load; $("q").oninput = () => render();
+    $("month").value = store.get("cmp.month", ""); $("pubmode").checked = store.get("cmp.pub", "0") === "1";
+    $("month").onchange = () => { store.set("cmp.month", $("month").value); render(); };
+    $("pubmode").onchange = () => { store.set("cmp.pub", $("pubmode").checked ? "1" : "0"); render(); };
     await load();
   } catch (e) { $("dsnote").textContent = "Could not load runs: " + e.message; }
 })();

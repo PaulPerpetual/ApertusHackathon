@@ -149,7 +149,7 @@ def verify(j, notes, out):
         return []
 
 
-def write(j, notes, examples, lang, ref=None):
+def write(j, notes, examples, lang, ref=None, long=False):
     text = j.get("text") or ""
     shots = pick_examples(text + notes, examples, lang)
     shot_txt = "\n\n".join(f"Beispiel {i + 1}:\n{ex[lang]}" for i, ex in enumerate(shots))
@@ -167,23 +167,29 @@ def write(j, notes, examples, lang, ref=None):
             f"Regel darstellen; keine individuelle medizinische Feststellung verallgemeinern. Gib nur den Text aus.")
     msgs = [{"role": "system", "content": system}, {"role": "user", "content": user}]
     out = llm.chat(msgs, temperature=0.3, max_tokens=900).strip()
-    problems = []
-    conflict = erwaegungen.outcome_conflict(out, text)
-    if conflict:
-        problems.append(f"Ergebnis widerspricht dem Dispositiv: \"{conflict}\"")
-    _, bad = erwaegungen.check_refs(out, valid)
-    if bad:
-        problems.append(f"Erwägungen {', '.join(bad)} gibt es nicht (gültig: {', '.join(valid)})")
-    if PLACEHOLDER.search(out):
-        problems.append("Platzhalter wie \"A.________\" entfernen")
-    if re.match(r"\s*(Das Bundesgericht|In diesem Urteil|Le Tribunal fédéral|Dans cet arrêt)", out):
-        problems.append("mit dem Rechtssatz beginnen, nicht mit dem Gericht")
-    if re.search(r"\bSuva\b", out) and not re.search(r"\b(Suva|SUVA|CNA|INSAI)\b|Unfallversicherungsanstalt|"
-                                                      r"Caisse nationale suisse d'assurance", text):
-        problems.append("die Suva ist in diesem Urteil nicht Partei: neutral 'der Unfallversicherer' schreiben")
-    if re.search(r"\b(?:in|bei|des|der|vom)\s+(?:ansässige|AG|GmbH|Dr\.)\s+(?:vom|Gesellschaft|in)\b", out):
-        problems.append("Lücken der Anonymisierung neutral umschreiben")
-    problems += postcheck.problems(postcheck.clean_summary(out, lang), j, lang, words=260 if lang == "de" else 310)
+    def check(t):
+        """All automatic checks; returns (problems, conflict, bad_refs)."""
+        problems = []
+        conflict = erwaegungen.outcome_conflict(t, text)
+        if conflict:
+            problems.append(f"Ergebnis widerspricht dem Dispositiv: \"{conflict}\"")
+        _, bad = erwaegungen.check_refs(t, valid)
+        if bad:
+            problems.append(f"Erwägungen {', '.join(bad)} gibt es nicht (gültig: {', '.join(valid)})")
+        if PLACEHOLDER.search(t):
+            problems.append("Platzhalter wie \"A.________\" entfernen")
+        if re.match(r"\s*(Das Bundesgericht|In diesem Urteil|Le Tribunal fédéral|Dans cet arrêt)", t):
+            problems.append("mit dem Rechtssatz beginnen, nicht mit dem Gericht")
+        if re.search(r"\bSuva\b", t) and not re.search(r"\b(Suva|SUVA|CNA|INSAI)\b|Unfallversicherungsanstalt|"
+                                                        r"Caisse nationale suisse d'assurance", text):
+            problems.append("die Suva ist in diesem Urteil nicht Partei: neutral 'der Unfallversicherer' schreiben")
+        if re.search(r"\b(?:in|bei|des|der|vom)\s+(?:ansässige|AG|GmbH|Dr\.)\s+(?:vom|Gesellschaft|in)\b", t):
+            problems.append("Lücken der Anonymisierung neutral umschreiben")
+        limit = (330 if lang == "de" else 390) if long else (260 if lang == "de" else 310)
+        problems += postcheck.problems(postcheck.clean_summary(t, lang), j, lang, words=limit)
+        return problems, conflict, bad
+
+    problems, conflict, bad = check(out)
 
     def fix(t, what):
         return llm.chat(msgs + [{"role": "assistant", "content": t}, {"role": "user", "content": what}],
@@ -201,7 +207,21 @@ def write(j, notes, examples, lang, ref=None):
                           "Gleiche Sprache. Gib den vollständigen Text aus.")
             if postcheck.better(out, fixed, j, lang) or not postcheck.problems(fixed, j, lang):
                 out = fixed
-    # (S2.3 mechanical lengthening removed: longer text but fewer Suva points and new errors on the dev set)
+    # (S2.3 mechanical lengthening for ALL summaries was removed: fewer Suva points and new errors on the dev set.)
+    if long:  # top rulings only: deliberate expansion from the extraction, then the SAME checks again
+        goal = "220-280 Wörter" if lang == "de" else "260-320 mots"
+        longer = fix(out, f"Erweitere die Zusammenfassung auf {goal}: ergänze die Rechtssätze aus RECHTSSÄTZE, die für die "
+                          f"Suva gelten und noch fehlen, mit ihren Voraussetzungen, Ausnahmen und offengelassenen Fragen, "
+                          f"und erkläre kurz die Bedeutung für die Praxis der Suva. Gleicher Anfang, gleicher Stil, keine "
+                          f"neuen Tatsachen, nichts ausserhalb des Urteils. Gib den vollständigen Text aus, nur den Text.")
+        p2, c2, b2 = check(longer)
+        if p2:
+            again = fix(longer, "Korrigiere: " + "; ".join(p2) + ". Gib den vollständigen korrigierten Text aus, nur den Text.")
+            if not check(again)[1]:
+                longer = again
+        # keep the longer text only if it is really longer and introduces no outcome error
+        if len(longer.split()) > len(out.split()) * 1.15 and not erwaegungen.outcome_conflict(longer, text):
+            out = longer
     out = PLACEHOLDER.sub("", out)
     if re.search(r"\b(Suva|SUVA|CNA|INSAI)\b", text):
         out = SUVA_ALIAS.sub("Suva", out)
@@ -212,13 +232,13 @@ def write(j, notes, examples, lang, ref=None):
     return out
 
 
-def summarize(j, examples):
+def summarize(j, examples, long=False):
     """Write the ruling's own language first (checked against the ruling), then the other language from it,
     so DE and FR state the same rules, outcome, parties and gender."""
     notes = extract(j)
     first = "fr" if (j.get("language") or "") in ("fr", "it") else "de"
     second = "de" if first == "fr" else "fr"
-    out = {"notes": notes, first: write(j, notes, examples, first)}
+    out = {"notes": notes, first: write(j, notes, examples, first, long=long)}
     cross = os.getenv("SUMMARY_CROSSLANG") == "1"  # experimental: second language written from the first
-    out[second] = write(j, notes, examples, second, ref=out[first] if cross else None)
+    out[second] = write(j, notes, examples, second, ref=out[first] if cross else None, long=long)
     return out

@@ -12,6 +12,7 @@ Inputs (all local; whatever exists is used):
 import collections
 import datetime as dt
 import json
+import math
 import os
 import sqlite3
 import sys
@@ -77,6 +78,64 @@ def read_jsonl(path):
             continue
         out[o["docket"]] = o
     return model, out
+
+
+def month_match():
+    """Top-list agreement per month (June by decision date / by estimated Suva publication = decision + 33 days)."""
+    import datetime as dt
+    import itertools
+    R = os.path.join(ROOT, "data", "runs", "aprjun")
+    names = {"Apertus": "apertus70b-v4-tiers-ranked", "Konsens": "consensus-weighted", "Gem": "gem", "Codex": "codex-gpt6",
+             "Muse": "muse", "Clau": "clau"}
+    runs = {}
+    for n, f in names.items():
+        p = os.path.join(R, f + ".jsonl")
+        if os.path.exists(p):
+            _, rows = read_jsonl_run(p)
+            runs[n] = rows
+    if "Apertus" not in runs:
+        return None
+    dockets = json.load(open(os.path.join(R, "_dockets.json")))
+    pub = lambda d: (dt.date.fromisoformat(d) + dt.timedelta(days=33)).isoformat()  # noqa: E731
+    cand = [d for d in runs["Apertus"] if all(d in r for r in runs.values())]
+
+    def top(n, ids, k):
+        r = runs[n]
+        return sorted(ids, key=lambda d: -(r[d]["score"] if r[d].get("score") is not None else -1))[:k]
+
+    def rho(a, b, ids):
+        ra = {d: i for i, d in enumerate(top(a, ids, len(ids)))}
+        rb = {d: i for i, d in enumerate(top(b, ids, len(ids)))}
+        n = len(ids); m = (n - 1) / 2
+        den = math.sqrt(sum((ra[d] - m) ** 2 for d in ids) * sum((rb[d] - m) ** 2 for d in ids))
+        return round(sum((ra[d] - m) * (rb[d] - m) for d in ids) / den, 2) if den else None
+    out = []
+    for key, label, f in (("decision", "Juni nach Entscheiddatum", lambda d: dockets[d]["date"].startswith("2026-06")),
+                          ("suva_pub", "Juni nach Suva-Publikation (≈ +33 Tage)", lambda d: pub(dockets[d]["date"]).startswith("2026-06"))):
+        ids = [d for d in cand if dockets.get(d, {}).get("date") and f(d)]
+        if len(ids) < 10:
+            continue
+        rows = [{"model": n, "top5": len(set(top("Apertus", ids, 5)) & set(top(n, ids, 5))),
+                 "top10": len(set(top("Apertus", ids, 10)) & set(top(n, ids, 10))), "spearman": rho("Apertus", n, ids)}
+                for n in runs if n != "Apertus"]
+        agents = [n for n in ("Gem", "Codex", "Muse", "Clau") if n in runs]
+        pair = [len(set(top(a, ids, 10)) & set(top(b, ids, 10))) for a, b in itertools.combinations(agents, 2)]
+        out.append({"key": key, "label": label, "candidates": len(ids), "rows": rows,
+                    "agents_pairwise_top10": round(sum(pair) / len(pair), 1) if pair else None,
+                    "apertus_top10": top("Apertus", ids, 10), "consensus_top10": top("Konsens", ids, 10) if "Konsens" in runs else []})
+    return out
+
+
+def read_jsonl_run(path):
+    meta, rows = {}, {}
+    for line in open(path, encoding="utf-8"):
+        if line.strip():
+            o = json.loads(line)
+            if "docket" in o:
+                rows[o["docket"]] = o
+            else:
+                meta.update(o)
+    return meta, rows
 
 
 def main():
@@ -172,6 +231,9 @@ def main():
                 "only_codex_dockets": sorted((c_rel & cand_set) - sel_set),
                 "only_apertus_dockets": sorted(sel_set - c_rel),
             }
+    mm = month_match()
+    if mm:
+        stats["month_match"] = mm
     json.dump(stats, open(D("stats.json"), "w"), ensure_ascii=False, indent=1)
     print("wrote", D("stats.json"), "| sections:", [k for k in stats if k != "generated_at"])
 

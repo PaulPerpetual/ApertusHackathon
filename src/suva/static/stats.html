@@ -46,6 +46,14 @@
       Only Apertus can be used in the submitted solution; other models are a development reference only.</div>
   </div>
 
+
+  <div class="card">
+    <h2>Top list per month: Apertus vs the other models</h2>
+    <div class="sub">Suva's top-5 check looks at June. How many of Apertus' top 5 / top 10 in that month also are in each model's
+      top 5 / top 10 (same month, same candidates). Two readings of "June": by decision date, or by estimated Suva publication.</div>
+    <div id="monthMatch"></div>
+  </div>
+
   <div class="grid">
     <div class="card">
       <h2>Recall, precision and F2 by score cutoff</h2>
@@ -167,6 +175,13 @@ fetch("api/stats", { cache: "no-store" }).then((r) => r.json()).then((s) => {
     [["candidates", "Candidates", css("--s3")], ["selected", "On hit list", css("--s1")], ["summarised", "Summarised", css("--s4")]]);
   if (p.score_hist) hbars($("hist"), p.score_hist.slice().reverse().map((h) => ({ label: `${h.bin}–${h.bin + 9}`, value: h.count, color: h.bin >= 60 ? css("--s1") : css("--s3") })), Math.max(...p.score_hist.map((h) => h.count)));
 
+
+  const mm = s.month_match;
+  if (mm && $("monthMatch")) $("monthMatch").innerHTML = mm.map((m) => `<h3 style="font-size:14px;margin:12px 0 4px">${esc(m.label)} · ${m.candidates} Kandidaten</h3>
+    <div class="scroll"><table><tr><th>Modell</th><th>Top-5 gleich</th><th>Top-10 gleich</th><th>Spearman</th></tr>
+    ${m.rows.map((r) => `<tr${r.model === "Konsens" ? ' class="best"' : ""}><td>${esc(r.model)}</td><td>${r.top5} / 5</td><td>${r.top10} / 10</td><td>${r.spearman ?? "–"}</td></tr>`).join("")}
+    <tr><td colspan="4" class="note" style="text-align:left">Agenten untereinander: Ø ${m.agents_pairwise_top10} / 10 gleich in den Top 10.
+      Apertus Top 10: <code>${m.apertus_top10.map(esc).join(", ")}</code></td></tr></table></div>`).join("");
   const cx = p.codex;
   if (cx) {
     hbars($("agree"), [
