@@ -297,10 +297,8 @@ a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items
 .ver-text { white-space: pre-wrap; font-size: 12.5px; line-height: 1.45; max-height: 260px; overflow: auto; }
 @container (max-width: 620px) { .ver-pair { grid-template-columns: 1fr; } }
 
-/* large view of the detail panel */
-#backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 45; }
-body.panel-big #panel { position: fixed; z-index: 50; top: 3vh; bottom: 3vh; left: 50%; transform: translateX(-50%);
-  width: min(1100px, 94vw); border: 1px solid var(--sep); border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-body.panel-big #resizer { display: none; }
-body.panel-big .summary, body.panel-big .ver-text { font-size: 14.5px; line-height: 1.6; }
+/* a ruling in its own browser window (?view=detail): only the detail view, full width */
+body.detail-only .toolbar, body.detail-only .filterbar, body.detail-only #listPane, body.detail-only #resizer { display: none !important; }
+body.detail-only #panel { width: 100% !important; border-left: 0; position: static; }
+body.detail-only .summary { font-size: 14.5px; line-height: 1.6; }
 @media (max-width: 900px) { #pExpand { display: none; } }

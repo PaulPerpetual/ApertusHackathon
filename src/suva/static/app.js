@@ -13,7 +13,7 @@ const I18N = {
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     name: "Name", key: "Editor-Schlüssel (nur für den Server)", editor_set: (n) => n ? `Name: ${n} …` : "Name festlegen …",
     model: "Modell", mock: "Mock (kein LLM)", read_only: "Nur lesen",
-    mark_done: "Freigeben", reopen: "Freigabe zurückziehen", done_by: (n, at) => `Freigegeben von ${n}, ${at}`, approved: "Freigegeben", v_before: "Vorher", v_after: "Nachher", v_restore: "Diese Fassung wiederherstellen", v_show: "Fassungen ansehen", v_restored: "Fassung wiederhergestellt (im Verlauf protokolliert)", expand: "Gross anzeigen", shrink: "Seitlich anzeigen", moved_done: "Freigegeben (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
+    mark_done: "Freigeben", reopen: "Freigabe zurückziehen", done_by: (n, at) => `Freigegeben von ${n}, ${at}`, approved: "Freigegeben", v_before: "Vorher", v_after: "Nachher", v_restore: "Diese Fassung wiederherstellen", v_show: "Fassungen ansehen", v_restored: "Fassung wiederhergestellt (im Verlauf protokolliert)", expand: "In eigenem Fenster öffnen (oder Doppelklick)", moved_done: "Freigegeben (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
@@ -36,7 +36,7 @@ const I18N = {
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     name: "Nom", key: "Clé d'éditeur (serveur uniquement)", editor_set: (n) => n ? `Nom : ${n} …` : "Définir le nom …",
     model: "Modèle", mock: "Fictif (sans LLM)", read_only: "Lecture seule",
-    mark_done: "Valider", reopen: "Retirer la validation", done_by: (n, at) => `Validé par ${n}, ${at}`, approved: "Validé", v_before: "Avant", v_after: "Après", v_restore: "Restaurer cette version", v_show: "voir les versions", v_restored: "Version restaurée (consignée dans l’historique)", expand: "Agrandir", shrink: "Afficher sur le côté", moved_done: "Validé (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
+    mark_done: "Valider", reopen: "Retirer la validation", done_by: (n, at) => `Validé par ${n}, ${at}`, approved: "Validé", v_before: "Avant", v_after: "Après", v_restore: "Restaurer cette version", v_show: "voir les versions", v_restored: "Version restaurée (consignée dans l’historique)", expand: "Ouvrir dans une fenêtre (ou double-clic)", moved_done: "Validé (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
@@ -85,6 +85,15 @@ const inScopeOf = (c) => (state.scope === "border" ? isBorder(c)
 const readOnly = () => !!state.status?.read_only;
 
 /* ---------- API (live FastAPI, or static JSON export on GitHub Pages; see docs/API.md) ---------- */
+// A ruling can open in its own browser window (⤢ or double-click, like Mail): same page with ?view=detail.
+const DETAIL_ONLY = new URLSearchParams(location.search).get("view") === "detail";
+const syncChannel = typeof BroadcastChannel === "function" ? new BroadcastChannel("lex-sync") : null;
+function openWindow(slug) {
+  if (!slug) return;
+  const url = `${location.pathname}?view=detail&open=${encodeURIComponent(slug)}`;
+  const w = window.open(url, "lex_" + slug, "popup,width=980,height=1000");
+  if (w) w.focus(); else location.href = url;  // popup blocked: open it here
+}
 const STATIC = location.hostname.endsWith("github.io") || window.LEX_STATIC === true || location.protocol === "file:";
 const staticUrl = (p) => p.replace(/^\/api\//, "api/").replace(/%2F/gi, "_") + ".json";
 async function api(path, opts = {}) {
@@ -110,6 +119,7 @@ async function api(path, opts = {}) {
     if (await askEditor(true)) r = await send();
   }
   if (!r.ok) { const e = new Error(await r.text()); e.status = r.status; throw e; }
+  if (opts.method && opts.method !== "GET") syncChannel?.postMessage("changed");  // other windows reload
   return r.json();
 }
 function errText(e) {
@@ -392,7 +402,7 @@ async function setStatus(slug, status) {
   if (!(await requireName())) return;
   await api(`/api/judgements/${encodeURIComponent(slug)}/status`, { method: "PUT", body: JSON.stringify({ status, editor: state.editor }) });
   toast(t({ done: "moved_done", rejected: "moved_rejected" }[status] || "moved_new"));
-  if (status !== "new" && state.scope === "new" && state.open === slug) {
+  if (!DETAIL_ONLY && status !== "new" && state.scope === "new" && state.open === slug) {
     const rows = visible(); const i = rows.findIndex((c) => c.slug === slug);
     const next = rows[i + 1] || rows[i - 1];
     await load(); next ? openPanel(next.slug) : closePanel();
@@ -455,15 +465,11 @@ async function openPanel(slug) {
   $("#panel").hidden = false; renderList(); await renderPanel();
   const tr = document.querySelector(`#rows [data-slug="${CSS.escape(slug)}"]`); if (tr) tr.scrollIntoView({ block: "nearest" });
 }
-function closePanel() { setBig(false); state.open = null; $("#panel").hidden = true; renderList(); }
-// "Gross anzeigen": the same detail view as a large centred window over the list (Esc / backdrop / ⤡ go back)
-function setBig(on) {
-  document.body.classList.toggle("panel-big", on); $("#backdrop").hidden = !on;
-  const b = $("#pExpand"); if (b) { b.textContent = on ? "⤡" : "⤢"; b.title = t(on ? "shrink" : "expand"); b.setAttribute("aria-label", b.title); }
-}
+function closePanel() { if (DETAIL_ONLY) { window.close(); return; } state.open = null; $("#panel").hidden = true; renderList(); }
 
 async function renderPanel() {
   const d = await api(`/api/judgements/${encodeURIComponent(state.open)}`);
+  if (DETAIL_ONLY) document.title = `${d.docket} · ${(state.lang === "fr" ? d.assessment?.title_fr : d.assessment?.title_de) || ""}`;
   const a = d.assessment || {};
   const L = state.lang;
   const done = d.status === "done";
@@ -675,9 +681,10 @@ function initResizer() {
 /* ---------- wiring ---------- */
 function init() {
   initResizer();
-  $("#pExpand").onclick = () => setBig(!document.body.classList.contains("panel-big"));
-  $("#backdrop").onclick = () => setBig(false);
-  setBig(false);
+  document.body.classList.toggle("detail-only", DETAIL_ONLY);
+  $("#pExpand").hidden = DETAIL_ONLY; $("#pExpand").title = t("expand"); $("#pExpand").setAttribute("aria-label", t("expand"));
+  $("#pExpand").onclick = () => openWindow(state.open);
+  if (syncChannel) syncChannel.onmessage = () => { if (!state.editing) load().catch(() => {}); };
   state.month = store.get("lex.month", "2026-06");  // default: June 2026 (Suva's top-5 review is about June)
   state.byPublication = store.get("lex.byPublication", "0") === "1";
   state.showRej = store.get("lex.showRej", "0") === "1";
@@ -733,12 +740,13 @@ function init() {
     if (act) { e.stopPropagation(); setStatus(tr.dataset.slug, act.dataset.act); return; }
     const sc = e.target.closest("[data-score]");
     if (sc && !readOnly()) { e.stopPropagation(); editScore(tr.dataset.slug, sc); return; }
+    // double-click (2nd click of a pair; the list re-renders after the 1st, so no "dblclick" event): own window
+    if (e.detail === 2) { openWindow(tr.dataset.slug); return; }
     openPanel(tr.dataset.slug);
   });
   // keyboard like Mail: ↑/↓ move, Esc closes, E marks done / reopens
   document.addEventListener("keydown", (e) => {
     if (document.querySelector("dialog[open]") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName)) return;
-    if (e.key === "Escape" && document.body.classList.contains("panel-big")) { setBig(false); return; }
     if (e.key === "Escape" && state.open) closePanel();
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       const rows = visible(); if (!rows.length) return;
