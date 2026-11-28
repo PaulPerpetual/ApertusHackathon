@@ -55,7 +55,7 @@ window.addEventListener('keydown', event => {
 let touchX = null;
 $('stage').addEventListener('touchstart', event => { touchX = event.changedTouches[0].clientX; }, {passive:true});
 $('stage').addEventListener('touchend', event => { if (touchX === null) return; const delta = event.changedTouches[0].clientX - touchX; if (Math.abs(delta) > 60) go(current + (delta < 0 ? 1 : -1)); touchX = null; }, {passive:true});
-fetch('deck.json', {cache: 'no-store'}).then(response => { if (!response.ok) throw new Error('Deck unavailable'); return response.json(); }).then(data => {
+fetch('deck.json?v=title-overview-20261128', {cache: 'no-store'}).then(response => { if (!response.ok) throw new Error('Deck unavailable'); return response.json(); }).then(data => {
   slides = data;
   slides.forEach(item => { const image = new Image(); image.src = item.image; });
   fromHash();
