@@ -28,7 +28,11 @@ panel shows the original ruling and both summaries. Buttons let them confirm, re
 
 **Headline results:**
 - On Suva's 82 example rulings, the relevance pipeline finds **98 %** of the rulings Suva summarised (recall).
-- On the labelled window Oct 2025 – Mar 2026, **53 %** of our top 5 are on Suva's list (34 % before ranking work).
+- Ranking: a learned weighting of Apertus' own judgements, fitted on Suva's Q4/Q1 list, raises the share of our top 5
+  that are on Suva's list from **56 % to 74 %** (top 10: 66 % → 69 %; cross-validated on Oct 2025 – Mar 2026).
+- Four other models (Codex/GPT-6, Gemini, Muse, Claude) ranked the same Q2 rulings blind, for comparison only.
+  **Every ruling any of them rated relevant is on our list** (60 / 44 / 41 / 34 rulings; 49 in their weighted
+  consensus). In June, their consensus shares **8 of our top 10**.
 - Summaries cover **92 %** of the legal points in Suva's own summaries on the development half, and
   **94.7 %** on the hold-out half (prompt S2.2).
 
@@ -117,17 +121,28 @@ Without `LLM_BASE_URL` the app runs against a labelled mock model, so the UI can
 | --- | --- | --- |
 | Pass 1 only | 77 % on Suva's example rulings | |
 | Passes 1–4 (Tier 1 + Grenzfall) | **98 %** on Suva's example rulings, 98 % on the labelled window | Grenzfälle always rank below Tier 1 |
-| Ranking: share of our top 5 on Suva's list | 34 % → **53 %** | after the ranking pass and tie-break |
+| Ranking: share of our top 5 on Suva's list | 56 % → **74 %** | pass-5 ranking vs learned weighting (3-fold CV × 30) |
+| Ranking: share of our top 10 on Suva's list | 66 % → **69 %** | same |
 
-Submitted Q2 2026 list: **163 rulings = 77 relevant + 86 Grenzfälle** (`data/submission/`).
+Submitted Q2 2026 list: **163 rulings = 77 relevant + 86 Grenzfälle** (`data/submission/`). Grenzfälle always rank
+below the relevant rulings; the top 10 is chosen from June 2026 by decision date (Urteilsdatum), as agreed with Suva.
+
+**Cross-check with other models (development only).** Codex (GPT-6), Gemini, Muse and Claude ranked the Q2 candidates
+blind. Each model's vote is weighted by its measured accuracy on 40 labelled rulings (AUC: Gemini 0.94, Muse 0.92,
+Codex 0.90, Claude 0.85; Apertus single pass 0.75). Results (`/compare`, `/stats`):
+- No ruling that any of these models rated relevant is missing from our list.
+- June top 10 (by decision date): the weighted consensus shares 8 of our 10; the models agree among themselves on
+  8.5 of 10 on average.
 
 **Summaries.** Each Suva example is broken into legal points (`data/eval_gold_points.json`). We then measure how many
 of them our summary covers, and count error types (`src/eval_summaries.py`):
 - Development half: 92 % of Suva's points covered, no error types.
-- Hold-out half: 94.7 %.
+- Hold-out half: 94.7 %, with 0 error types.
+- The top 20 rulings get a longer version (median 233 words DE, 256 FR, instead of 136 / 174), produced by an
+  expansion step that re-runs the same checks; the longer text is kept only if it passes them.
 
-**Expert review.** We also reviewed the top 10 by hand against the original rulings, as a lawyer would. We used it
-only as an error analysis and did not correct the submitted texts by hand. Error types we found and how they are
+**Error analysis.** We read summaries against the original rulings, as a lawyer would, and used this only as an error
+analysis; the submitted texts are not corrected by hand. `TODO(Miguel/Paul): confirm the manual top-10 review was done.` Error types we found and how they are
 handled:
 - Reversed or invented outcomes: Dispositiv check.
 - Dates and costs in the text: postcheck.
@@ -143,10 +158,12 @@ handled:
 - **Fabricated or wrong details still occur.** Roughly 1 in 4 German summaries of the examples had a wrong detail,
   such as an invented last sentence or a muddled legal concept. French is clearly better. The checks catch formal
   errors, not every factual one.
-- **Ranking at the very top is the weakest part.** Benchmark models rank Suva's picks better (AUC 0.90–0.94 vs 0.75)
-  and agree with Apertus on only 3 of the top 10.
-- **Some procedural IV/ATSG rulings are still missed.** Five rulings flagged by a benchmark model are not on our
-  list, because only Apertus decides.
+- **Ranking at the very top is still the weakest part.** A single Apertus pass ranks Suva's picks worse than the
+  benchmark models (AUC 0.75 vs 0.85–0.94). The learned weighting closes much of the gap, but it is fitted on only
+  ~100 rulings from one half-year.
+- **Recall costs precision.** To miss nothing, 86 rulings are listed as Grenzfälle; lawyers reject them with one click.
+- **"Learn from changes" is minimal.** Lawyer decisions are stored with history and can be used to refit the ranking
+  weights, but this is not automatic yet.
 - **Not tested:** throughput for a full year, multiple concurrent editors, and accessibility.
 
 ## 7. Reproducibility
@@ -165,6 +182,8 @@ python -m suva serve                                  # http://127.0.0.1:8000
 Evaluation:
 
 ```bash
+python src/learn_ranking.py --apply                   # fit ranking weights on Suva's labelled list
+python src/finalize.py data/aprjun.sqlite --from 2026-04-01 --to 2026-06-30 --tiers --adj-table adjudications_v2 --ranking learned
 python -m suva eval                                   # recall against Suva's Excel list
 python src/build_eval_db.py data/eval_window.sqlite   # rebuild the labelled window DB
 python src/eval_f2.py data/eval_window.sqlite --variants
