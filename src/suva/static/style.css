@@ -125,7 +125,7 @@ body.resizing { cursor: col-resize; user-select: none; }
 .panel-head { display: flex; justify-content: space-between; gap: 12px; padding: 14px 18px 10px; position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--sep); z-index: 1; }
 .panel-head h2 { margin: 2px 0 0; font-size: 17px; font-weight: 650; line-height: 1.3; }
 .panel-actions { display: flex; gap: 6px; align-items: flex-start; }
-.docket { color: var(--muted); font-size: 12px; }
+.docket { color: var(--muted); font-size: 12px; white-space: nowrap; }
 #pBody { padding: 6px 18px 40px; }
 .section { margin: 14px 0; }
 .section h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
@@ -250,6 +250,13 @@ dialog.info-dlg { width: min(640px, 94vw); max-height: 86vh; overflow: auto; }
 a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items: center; }
 /* phone: docket line, then the buttons, then the title (the buttons covered the docket and date) */
 @media (max-width: 600px) {
+  .panel-head .docket { grid-column: 1 / -1; grid-row: 1; }
+  .panel-head .panel-actions { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; }
+  .panel-head h2 { grid-row: 3; }
+}
+/* same when the panel itself is narrow (resized by dragging its edge) */
+#panel { container-type: inline-size; }
+@container (max-width: 620px) {
   .panel-head .docket { grid-column: 1 / -1; grid-row: 1; }
   .panel-head .panel-actions { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; }
   .panel-head h2 { grid-row: 3; }
