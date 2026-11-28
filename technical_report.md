@@ -39,11 +39,12 @@ panel shows the original ruling and both summaries. Buttons let them confirm, re
 ## 2. Architecture
 
 ```
-entscheidsuche.ch ─ crawl_period.py ─▶ SQLite ─ prefilter (division + subject) ─▶ Apertus passes 1–4 (relevance, tier, reason, tags)
-                                                                               └▶ Apertus pass 5 + learned weights (ranking)
-                                                                               └▶ Apertus extract → write DE / write FR (summaries)
-                                                                               └▶ postcheck (rule-based checks, one guarded retry)
-FastAPI (server.py) ◀── plain HTML/JS UI (no build step): list · Trefferliste · detail panel · edit history
+entscheidsuche.ch ─ crawl_period.py ─▶ SQLite ─ prefilter (division + subject)
+   ├▶ Apertus passes 1–4        relevance, tier (relevant / Grenzfall / not), reason, tags
+   ├▶ Apertus pass 5 + learned weights      ranking
+   ├▶ Apertus extract → write DE / write FR summaries
+   └▶ postcheck                 rule-based checks, one guarded retry
+FastAPI (server.py) ◀── plain HTML/JS UI (no build step): list · Trefferliste · detail · edit history
 ```
 
 The components are listed below.
@@ -183,7 +184,8 @@ Evaluation:
 
 ```bash
 python src/learn_ranking.py --apply                   # fit ranking weights on Suva's labelled list
-python src/finalize.py data/aprjun.sqlite --from 2026-04-01 --to 2026-06-30 --tiers --adj-table adjudications_v2 --ranking learned
+python src/finalize.py data/aprjun.sqlite --from 2026-04-01 --to 2026-06-30 \
+    --tiers --adj-table adjudications_v2 --ranking learned
 python -m suva eval                                   # recall against Suva's Excel list
 python src/build_eval_db.py data/eval_window.sqlite   # rebuild the labelled window DB
 python src/eval_f2.py data/eval_window.sqlite --variants
