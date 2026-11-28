@@ -237,3 +237,9 @@ dialog.info-dlg { width: min(640px, 94vw); max-height: 86vh; overflow: auto; }
 .info-dlg ul { padding-left: 18px; margin: 0 0 6px; }
 .info-dlg .row { display: flex; justify-content: flex-end; margin-top: 12px; }
 a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items: center; }
+/* phone: docket line, then the buttons, then the title (the buttons covered the docket and date) */
+@media (max-width: 600px) {
+  .panel-head .docket { grid-column: 1 / -1; grid-row: 1; }
+  .panel-head .panel-actions { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; }
+  .panel-head h2 { grid-row: 3; }
+}
