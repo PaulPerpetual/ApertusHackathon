@@ -1,6 +1,6 @@
 # Lex Aperta pitch
 
-[Download the PowerPoint](Lex_Aperta_Pitch.pptx) for the Hack Apertus Suva challenge, or open [the browser presentation](index.html) through this repository's GitHub Pages site.
+[Download the PowerPoint](Lex_Aperta_Pitch.pptx) or [the PDF](Lex_Aperta_Pitch.pdf) for the Hack Apertus Suva challenge, or open [the browser presentation](index.html) through this repository's GitHub Pages site.
 
 Seven slides, a five-minute talk and two minutes of Q&A. Speaker notes include the spoken script, slide timings, sources and evaluation context. The browser version uses the exact rendered PowerPoint slides and includes a rehearsal timer and speaker notes.
 
