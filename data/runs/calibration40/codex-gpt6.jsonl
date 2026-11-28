@@ -1,4 +1,4 @@
-{"run": "codex-gpt6", "model": "GPT-6 (Codex; exact runtime version not exposed)", "dataset": "calibration40", "created_at": "2026-11-28T07:29:49Z", "notes": "Development reference only (closed model, not allowed at runtime). Blind."}
+{"run": "codex-gpt6", "model": "GPT-6 (Codex; exact runtime version not exposed)", "dataset": "calibration40", "created_at": "2026-11-28T07:38:35Z", "notes": "Development reference only (closed model, not allowed at runtime). Blind."}
 {"docket": "8C_626/2024", "score": 100, "relevant": true, "reason": "The scope of UVG medical home nursing, ancillary basic care and the nonbinding status of ad-hoc recommendations directly governs Suva benefits."}
 {"docket": "8C_177/2025", "score": 99, "relevant": true, "reason": "Whether sagittal-band damage qualifies as a listed accident-like injury and requires independent medical clarification directly affects UVG coverage."}
 {"docket": "8C_399/2025", "score": 98, "relevant": true, "reason": "The timing of pension suspension during detention and corresponding recovery under Article 21(5) ATSG directly affect UVG benefit administration."}

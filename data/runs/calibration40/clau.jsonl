@@ -1,4 +1,4 @@
-{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "calibration40", "created_at": "2026-11-28T07:29:49Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
+{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "calibration40", "created_at": "2026-11-28T07:38:35Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
 {"docket": "8C_536/2024", "score": 93, "relevant": true, "reason": "UVG; accident concept with pre-existing degeneration - requires particularly striking circumstances to trigger liability."}
 {"docket": "8C_508/2025", "score": 91, "relevant": true, "reason": "UVG; IPAI must be standardised across identical medical status; duty of investigation when opinions conflict."}
 {"docket": "8C_525/2025", "score": 88, "relevant": true, "reason": "UVG; revision of accident disability pension (Art. 17 ATSG) - trigger and date for revision determined."}

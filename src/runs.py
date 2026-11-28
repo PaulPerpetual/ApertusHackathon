@@ -158,8 +158,8 @@ def build():
     write_run("aprjun", "apertus70b-v4-tiers-ranked", "Apertus v1.5 70B (CSCS/Keera)",
               [{"docket": r["docket"], "score": r["ai_score"], "relevant": bool(r["selected"]),
                 "reason": r["explanation_de"]} for r in apr],
-              "PRODUCTION (submitted): Tier 1 + Grenzfälle (adapted pass 4: procedural traps / cross-branch rules), "
-              "ordered by pass-5 importance (Tier 1 score 60-99, Grenzfall 20-59).")
+              "PRODUCTION (submitted): Tier 1 + Grenzfälle (adapted pass 4), Tier 1 ordered by the LEARNED ranking "
+              "(weighting of Apertus' judgements fitted on Suva's Q4/Q1 list; src/learn_ranking.py), Grenzfälle below.")
     sh = os.path.join(ROOT, "data", "aprjun.sqlite")
     con = sqlite3.connect(sh)
     if con.execute("SELECT 1 FROM sqlite_master WHERE name='rankings_shadow'").fetchone():

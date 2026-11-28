@@ -45,6 +45,8 @@ def main():
     ap.add_argument("--recall-pass", type=int, metavar="CUTOFF", default=None,
                     help="also select rulings the recall pass (src/run_recall_pass.py) scored >= CUTOFF, and five-judge "
                          "rulings. Off by default; turn on once `eval_f2.py --variants` shows a better F2")
+    ap.add_argument("--ranking", choices=["pass5", "learned"], default="pass5",
+                    help="order of Tier 1: pass5 (importance + tie-break) or learned (src/learn_ranking.py, rankings_learned)")
     ap.add_argument("--adj-table", default="adjudications", help="pass-4 table (adjudications_v2 = adapted prompt)")
     ap.add_argument("--tiers", action="store_true",
                     help="Tier 1 = v1; Tier 2 'Grenzfall' = other candidates kept by pass 4 (src/run_adjudicate.py); "
@@ -82,6 +84,13 @@ def main():
         LEFT JOIN {a.adj_table} ad ON ad.slug = j.slug LEFT JOIN rankings rk ON rk.slug = j.slug""")]
     con.execute("CREATE TABLE IF NOT EXISTS tiebreak (slug TEXT PRIMARY KEY, rank INTEGER, score INTEGER)")
     tiebreak = dict(con.execute("SELECT slug, score FROM tiebreak").fetchall())
+    learned = {}
+    if a.ranking == "learned":  # Tier 1 order from the learned weighting of Apertus' judgements -> scores 60-99 by rank
+        con.execute("CREATE TABLE IF NOT EXISTS rankings_learned (slug TEXT PRIMARY KEY, p REAL)")
+        lp = sorted(con.execute("SELECT slug, p FROM rankings_learned").fetchall(), key=lambda x: -x[1])
+        for i, (slug, _) in enumerate(lp):  # top 10 get unique scores 99..90 (no ties where the lawyer reads)
+            learned[slug] = 99 - i if i < 10 else 89 - round(29 * (i - 10) / max(1, len(lp) - 11))
+        tiebreak = {}
     hit = []
     for r in rows:
         main_score = r["f_main"] if r["f_main"] is not None else r["ai_score"]
@@ -150,6 +159,8 @@ def main():
                 score = 60 + round(r["importance"] * 0.39)
             if tier == 1 and r["slug"] in tiebreak:  # direct comparison of the top (src/tiebreak_top.py)
                 score = tiebreak[r["slug"]]
+            if tier == 1 and r["slug"] in learned:
+                score = learned[r["slug"]]
             elif r["importance"] is not None and tier == 2:
                 score = 20 + round(r["importance"] * 0.39)
             con.execute("UPDATE assessments SET tier=?, tier_reason=?, ai_score=?, tags=?, tags_fr=?, explanation_de=?, explanation_fr=? "

@@ -1,4 +1,4 @@
-{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "aprjun", "created_at": "2026-11-28T07:29:49Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
+{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "aprjun", "created_at": "2026-11-28T07:38:35Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
 {"docket": "8C_516/2025", "score": 100, "relevant": true, "reason": "UVG; Unfallbegriff AND Art. 6 Abs. 2 listed injury; core accident concept directly relevant to Suva."}
 {"docket": "8C_686/2025", "score": 99.5, "relevant": true, "reason": "UVG; Unfallbegriff - back-loading lift; core accident concept question for Suva."}
 {"docket": "8C_256/2025", "score": 99, "relevant": true, "reason": "UVG; psychological sequelae - natural and adequate causation test (ATF 115 V 133 criteria)."}

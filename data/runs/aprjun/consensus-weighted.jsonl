@@ -1,4 +1,4 @@
-{"run": "consensus-weighted", "model": "Weighted consensus (clau, codex-gpt6, gem, muse)", "dataset": "aprjun", "created_at": "2026-11-28T07:29:49Z", "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: clau 0.69, codex-gpt6 0.795, gem 0.885, muse 0.415"}
+{"run": "consensus-weighted", "model": "Weighted consensus (clau, codex-gpt6, gem, muse)", "dataset": "aprjun", "created_at": "2026-11-28T07:38:35Z", "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: clau 0.69, codex-gpt6 0.795, gem 0.885, muse 0.415"}
 {"docket": "8C_739/2024", "score": 97.5, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
 {"docket": "8C_184/2026", "score": 97.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
 {"docket": "8C_254/2025", "score": 96.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
@@ -17,8 +17,8 @@
 {"docket": "8C_442/2025", "score": 88.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
 {"docket": "8C_365/2025", "score": 87.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
 {"docket": "8C_307/2025", "score": 87.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_340/2025", "score": 86.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
 {"docket": "8C_66/2026", "score": 86.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "8C_340/2025", "score": 86.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
 {"docket": "9C_597/2025", "score": 85.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 60%"}
 {"docket": "8C_63/2026", "score": 85.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
 {"docket": "8C_470/2025", "score": 84.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
@@ -34,8 +34,8 @@
 {"docket": "9C_29/2026", "score": 81.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 75%"}
 {"docket": "8C_347/2025", "score": 81.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 60%"}
 {"docket": "8C_27/2026", "score": 81.0, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 68%"}
-{"docket": "8C_119/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
 {"docket": "8C_552/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 85%"}
+{"docket": "8C_119/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
 {"docket": "8C_689/2025", "score": 80.7, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
 {"docket": "8C_213/2025", "score": 80.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 68%"}
 {"docket": "9C_368/2025", "score": 77.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 60%"}
@@ -84,8 +84,8 @@
 {"docket": "9C_374/2025", "score": 49.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
 {"docket": "9C_355/2025", "score": 48.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
 {"docket": "8C_729/2025", "score": 48.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
-{"docket": "9C_241/2025", "score": 48.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
 {"docket": "8C_261/2025", "score": 48.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
+{"docket": "9C_241/2025", "score": 48.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
 {"docket": "8C_732/2025", "score": 47.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
 {"docket": "8C_527/2025", "score": 47.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
 {"docket": "8C_72/2026", "score": 46.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
@@ -96,8 +96,8 @@
 {"docket": "8C_431/2025", "score": 44.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
 {"docket": "8C_702/2025", "score": 44.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.25; Relevanz-Stimmen 15%"}
 {"docket": "9C_375/2025", "score": 44.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_482/2025", "score": 44.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
 {"docket": "8C_255/2025", "score": 44.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
+{"docket": "8C_482/2025", "score": 44.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
 {"docket": "9C_619/2025", "score": 44.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
 {"docket": "9C_8/2026", "score": 43.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
 {"docket": "8C_107/2026", "score": 43.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
@@ -106,8 +106,8 @@
 {"docket": "9C_91/2026", "score": 42.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
 {"docket": "9C_110/2026", "score": 42.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
 {"docket": "8C_283/2025", "score": 42.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "9C_247/2025", "score": 42.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
 {"docket": "8C_700/2025", "score": 42.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
+{"docket": "9C_247/2025", "score": 42.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
 {"docket": "8C_130/2026", "score": 42.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
 {"docket": "9C_16/2026", "score": 42.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
 {"docket": "9C_192/2025", "score": 41.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
@@ -135,8 +135,8 @@
 {"docket": "8C_705/2025", "score": 27.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
 {"docket": "9C_300/2026", "score": 27.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
 {"docket": "8C_354/2026", "score": 26.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "9C_270/2026", "score": 26.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
 {"docket": "8C_208/2026", "score": 26.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "9C_270/2026", "score": 26.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
 {"docket": "8C_209/2026", "score": 25.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
 {"docket": "8C_279/2026", "score": 24.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
 {"docket": "8C_220/2026", "score": 24.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
@@ -147,8 +147,8 @@
 {"docket": "8C_245/2026", "score": 22.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
 {"docket": "8C_222/2026", "score": 20.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
 {"docket": "8C_31/2026", "score": 19.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
-{"docket": "8C_742/2025", "score": 18.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
 {"docket": "8C_30/2026", "score": 18.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "8C_742/2025", "score": 18.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
 {"docket": "8C_197/2026", "score": 18.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
 {"docket": "9C_168/2026", "score": 17.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
 {"docket": "8C_35/2026", "score": 17.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
@@ -172,7 +172,7 @@
 {"docket": "8C_722/2025", "score": 10.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
 {"docket": "8C_716/2025", "score": 10.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
 {"docket": "9C_617/2025", "score": 9.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "9C_697/2025", "score": 8.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
 {"docket": "9C_196/2026", "score": 8.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "9C_697/2025", "score": 8.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
 {"docket": "8C_417/2026", "score": 8.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
 {"docket": "9C_195/2026", "score": 6.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
