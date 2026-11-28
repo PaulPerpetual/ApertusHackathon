@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T16:08:39Z",
+ "generated_at": "2026-11-28T07:29:49Z",
  "datasets": [
   {
    "id": "calibration40",
@@ -29,7 +29,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Earlier production (until Fri evening). Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 22,
    "metrics": {
@@ -48,7 +48,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 37,
    "metrics": {
@@ -67,7 +67,7 @@
    "dataset": "calibration40",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 32,
    "metrics": {
@@ -82,11 +82,30 @@
    }
   },
   {
+   "id": "clau",
+   "dataset": "calibration40",
+   "model": "claude-sonnet-4-6",
+   "notes": "Fleet agent, blind second opinion (development reference only).",
+   "created_at": "2026-11-28T07:29:49Z",
+   "rulings": 40,
+   "listed": 15,
+   "metrics": {
+    "rulings": 40,
+    "positives": 20,
+    "listed": 15,
+    "hits": 13,
+    "recall": 0.65,
+    "precision": 0.867,
+    "f2": 0.684,
+    "auc": 0.845
+   }
+  },
+  {
    "id": "codex-gpt6",
    "dataset": "calibration40",
    "model": "GPT-6 (Codex; exact runtime version not exposed)",
    "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 21,
    "metrics": {
@@ -103,20 +122,20 @@
   {
    "id": "consensus-weighted",
    "dataset": "calibration40",
-   "model": "Weighted consensus (codex-gpt6, gem, muse)",
-   "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: codex-gpt6 0.795, gem 0.885, muse 0.415",
-   "created_at": "2026-11-27T16:08:39Z",
+   "model": "Weighted consensus (clau, codex-gpt6, gem, muse)",
+   "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: clau 0.69, codex-gpt6 0.795, gem 0.885, muse 0.415",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
-   "listed": 19,
+   "listed": 17,
    "metrics": {
     "rulings": 40,
     "positives": 20,
-    "listed": 19,
-    "hits": 17,
-    "recall": 0.85,
-    "precision": 0.895,
-    "f2": 0.859,
-    "auc": 0.941
+    "listed": 17,
+    "hits": 15,
+    "recall": 0.75,
+    "precision": 0.882,
+    "f2": 0.773,
+    "auc": 0.925
    }
   },
   {
@@ -124,7 +143,7 @@
    "dataset": "calibration40",
    "model": "Gemini 4 Neon (High)",
    "notes": "Fleet agent, blind second opinion (development reference only).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 14,
    "metrics": {
@@ -143,7 +162,7 @@
    "dataset": "calibration40",
    "model": "Muse Code powered by Meta Muse Spark",
    "notes": "Fleet agent, blind second opinion (development reference only).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 40,
    "listed": 18,
    "metrics": {
@@ -162,7 +181,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Earlier production (until Fri evening). Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 288,
    "listed": 101,
    "metrics": {
@@ -181,7 +200,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: 'general rule vs individual case' principle pass for invalidity and procedural rulings. Apertus labels almost everything a general rule.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 288,
    "listed": 259,
    "metrics": {
@@ -200,7 +219,7 @@
    "dataset": "window",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, rejected: v1 plus an 'ATSG rescue' pass over rejected candidates (lesson from Codex: ATSG rules bind IV and UVG alike; quote required). Rescued 110, only 4 were Suva picks.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 288,
    "listed": 211,
    "metrics": {
@@ -219,7 +238,7 @@
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "EXPERIMENT (not live): same list as production, order from the shadow ranking (sub-scores + listwise top 15).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 163
   },
@@ -228,7 +247,7 @@
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Earlier production (until Fri evening). Main triage score >= 60, plus IV second pass >= 40 for invalidity rulings (F2-tuned).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 77
   },
@@ -237,7 +256,7 @@
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "Experiment, not submitted: v1 + ATSG rescue. Catches 4 of the 5 Codex-only rulings but adds 59 in total; on the labelled window only ~4 % of rescued rulings were Suva picks (F2 0.736 -> 0.598).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 136
   },
@@ -246,34 +265,43 @@
    "dataset": "aprjun",
    "model": "Apertus v1.5 70B (CSCS/Keera)",
    "notes": "PRODUCTION (submitted): Tier 1 + Grenzfälle (adapted pass 4: procedural traps / cross-branch rules), ordered by pass-5 importance (Tier 1 score 60-99, Grenzfall 20-59).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 163
+  },
+  {
+   "id": "clau",
+   "dataset": "aprjun",
+   "model": "claude-sonnet-4-6",
+   "notes": "Fleet agent, blind second opinion (development reference only).",
+   "created_at": "2026-11-28T07:29:49Z",
+   "rulings": 177,
+   "listed": 34
   },
   {
    "id": "codex-gpt6",
    "dataset": "aprjun",
    "model": "GPT-6 (Codex; exact runtime version not exposed)",
    "notes": "Development reference only (closed model, not allowed at runtime). Blind.",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 60
   },
   {
    "id": "consensus-weighted",
    "dataset": "aprjun",
-   "model": "Weighted consensus (codex-gpt6, gem, muse)",
-   "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: codex-gpt6 0.795, gem 0.885, muse 0.415",
-   "created_at": "2026-11-27T16:08:39Z",
+   "model": "Weighted consensus (clau, codex-gpt6, gem, muse)",
+   "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: clau 0.69, codex-gpt6 0.795, gem 0.885, muse 0.415",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
-   "listed": 50
+   "listed": 49
   },
   {
    "id": "gem",
    "dataset": "aprjun",
    "model": "Gemini 4 Neon (High)",
    "notes": "Fleet agent, blind second opinion (development reference only).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 44
   },
@@ -282,7 +310,7 @@
    "dataset": "aprjun",
    "model": "Muse Code powered by Meta Muse Spark",
    "notes": "Fleet agent, blind second opinion (development reference only).",
-   "created_at": "2026-11-27T16:08:39Z",
+   "created_at": "2026-11-28T07:29:49Z",
    "rulings": 177,
    "listed": 41
   }

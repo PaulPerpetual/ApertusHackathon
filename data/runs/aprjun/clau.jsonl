@@ -1,0 +1,178 @@
+{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "aprjun", "created_at": "2026-11-28T07:29:49Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
+{"docket": "8C_516/2025", "score": 100, "relevant": true, "reason": "UVG; Unfallbegriff AND Art. 6 Abs. 2 listed injury; core accident concept directly relevant to Suva."}
+{"docket": "8C_686/2025", "score": 99.5, "relevant": true, "reason": "UVG; Unfallbegriff - back-loading lift; core accident concept question for Suva."}
+{"docket": "8C_256/2025", "score": 99, "relevant": true, "reason": "UVG; psychological sequelae - natural and adequate causation test (ATF 115 V 133 criteria)."}
+{"docket": "8C_17/2026", "score": 98.5, "relevant": true, "reason": "UVG; causation - unrehealed muscle tear disproves status quo ante; relevant to case-closure decisions."}
+{"docket": "8C_739/2024", "score": 98, "relevant": true, "reason": "UVG; insured earnings - Art. 24 Abs. 2 UVV precludes career-advancement hypotheticals in Valideneinkommen."}
+{"docket": "8C_654/2024", "score": 97.5, "relevant": true, "reason": "UVG; surindemnisation - coordination of accident insurance benefit instalments."}
+{"docket": "8C_66/2026", "score": 97, "relevant": true, "reason": "UVG; Unfallkausalität - status quo sine principle; clarifies when UVG liability ends post-relapse."}
+{"docket": "8C_607/2025", "score": 96.5, "relevant": true, "reason": "UVG; relapse causation - confirms probative weight of second expert over treating doctors."}
+{"docket": "8C_442/2025", "score": 96, "relevant": true, "reason": "UVG; Integritätsentschädigung - functional range criteria for IPAI; Suva table values examined."}
+{"docket": "8C_441/2025", "score": 95.5, "relevant": true, "reason": "UVG; Valideneinkommen - GAV wages are appropriate reference in accident income comparison."}
+{"docket": "8C_365/2025", "score": 95, "relevant": true, "reason": "UVG; causation - expert conclusion that injury persists overrides insurer's case-closure decision."}
+{"docket": "8C_184/2026", "score": 94.5, "relevant": true, "reason": "UVG; Unfallkausalität - Art. 6 Abs. 1 vs Abs. 2 UVG distinguished; causation remanded."}
+{"docket": "8C_343/2025", "score": 94, "relevant": true, "reason": "UVG; Valideneinkommen - methodology when employer went bankrupt post-accident."}
+{"docket": "8C_349/2025", "score": 93.5, "relevant": true, "reason": "UVG; revenu sans invalidité - collective-agreement wages when employer insolvent after accident."}
+{"docket": "8C_27/2026", "score": 93, "relevant": true, "reason": "UVG; indemnité journalière + rente after COVID anosmia/dysgeusia sequelae."}
+{"docket": "8C_609/2025", "score": 92.5, "relevant": true, "reason": "UVG; causation of ACL rupture to accident confirmed; preponderance standard applied."}
+{"docket": "8C_493/2025", "score": 92, "relevant": true, "reason": "UVG; Rückfall + Invalidenrente - relapse pension; confirms procedural and substantive standards."}
+{"docket": "8C_419/2025", "score": 91.5, "relevant": true, "reason": "UVG; rechute - relapse causation and stabilisation date assessed."}
+{"docket": "8C_340/2025", "score": 91, "relevant": true, "reason": "UVG; rente + IPAI - IPAI as lasting immaterial damage beyond treatment phase."}
+{"docket": "8C_459/2025", "score": 90.5, "relevant": true, "reason": "UVG; Invalidenrente + IPAI - medical endpoint and work capacity post-accident."}
+{"docket": "8C_689/2025", "score": 90, "relevant": true, "reason": "UVG; rente + IPAI - expert report probative value for accident disability pension."}
+{"docket": "8C_738/2025", "score": 89.5, "relevant": true, "reason": "UVG; revenu d'invalide - ESS reference wage for experienced secretary post-accident."}
+{"docket": "8C_739/2025", "score": 89, "relevant": true, "reason": "UVG; rente d'invalidité - disability pension with single-arm limitation confirmed."}
+{"docket": "8C_213/2025", "score": 88.5, "relevant": true, "reason": "UVG; unfallähnliche Körperschädigung - shoulder injury qualification under Art. 6 Abs. 2 UVG."}
+{"docket": "8C_571/2025", "score": 88, "relevant": true, "reason": "UVG; Kausalzusammenhang - Suva in-house doctor report probative absent concrete counter-evidence."}
+{"docket": "8C_119/2025", "score": 87.5, "relevant": true, "reason": "UVG; Invalideneinkommen - ESS table for accident pension; no abatement for missing work experience."}
+{"docket": "8C_137/2025", "score": 87, "relevant": true, "reason": "UVG; rente + IPAI - no obligation to commission new expertise absent concrete doubts."}
+{"docket": "8C_307/2025", "score": 86.5, "relevant": true, "reason": "UVG; decision notification + rechute - when limitation period starts for relapse claim."}
+{"docket": "8C_254/2025", "score": 86, "relevant": true, "reason": "UVG; confronto redditi - Art. 26bis RAI reform applies via ATSG to UVG income comparison."}
+{"docket": "8C_63/2026", "score": 85.5, "relevant": true, "reason": "UVG; indemnité journalière accident - daily allowance continuity after return to partial work."}
+{"docket": "8C_703/2025", "score": 85, "relevant": true, "reason": "UVG; opposition admissibility - duty to grant extension when opposition insufficiently motivated."}
+{"docket": "8C_552/2025", "score": 84.5, "relevant": true, "reason": "UVG; procédure administrative - accident insurer must follow procedural requirements."}
+{"docket": "8C_657/2025", "score": 84, "relevant": true, "reason": "UVG; procédure de première instance - insurer must comply with cantonal court remand."}
+{"docket": "8C_470/2025", "score": 83.5, "relevant": true, "reason": "UVG; Beitragspflicht - premium contribution obligation with multi-employer arrangement."}
+{"docket": "8C_681/2025", "score": 83, "relevant": false, "reason": "Accident + procedural; condition de recevabilité for administrative opposition; procedural."}
+{"docket": "8C_718/2025", "score": 82.5, "relevant": false, "reason": "Accident + procedural; first-instance admissibility ruling; purely procedural."}
+{"docket": "9C_597/2025", "score": 82, "relevant": false, "reason": "IV + prozessuale Revision (Art. 53 Abs. 1 ATSG); revision threshold - cross-insurer but IV context."}
+{"docket": "8C_248/2024", "score": 81.5, "relevant": false, "reason": "IV; Valideneinkommen methodology from accident date; cross-over for UVG insured earnings."}
+{"docket": "8C_580/2025", "score": 81, "relevant": false, "reason": "Accident + procedural; condition de recevabilité in accident insurance administration."}
+{"docket": "8C_454/2025", "score": 80.5, "relevant": false, "reason": "IV; frais d'expertise judiciaire - expert cost allocation; ATSG general procedure."}
+{"docket": "8C_347/2025", "score": 80, "relevant": false, "reason": "IV; nouvelle demande + first-instance procedural; ATSG principle with limited cross-over."}
+{"docket": "8C_3/2026", "score": 79.5, "relevant": false, "reason": "IV + revision; retroactive pension cancellation for non-cooperation; ATSG revision cross-over."}
+{"docket": "8C_563/2025", "score": 79, "relevant": false, "reason": "IV; Hilflosenentschädigung - UVG Art. 26 helplessness parallel; mild cross-over."}
+{"docket": "8C_676/2025", "score": 78.5, "relevant": false, "reason": "IV; allocation pour impotent - mild cross-over via UVG Art. 26 helplessness."}
+{"docket": "9C_336/2025", "score": 78, "relevant": false, "reason": "IV; allocation pour impotent - mild UVG Art. 26 cross-over."}
+{"docket": "8C_255/2025", "score": 77.5, "relevant": false, "reason": "IV; Assistenzbeitrag hours; purely IV instrument."}
+{"docket": "8C_444/2025", "score": 77, "relevant": false, "reason": "IV; Assistenzbeitrag - IV-specific benefit."}
+{"docket": "8C_484/2025", "score": 76.5, "relevant": false, "reason": "IV; Kinderrente + Rückerstattung; IV-specific restitution."}
+{"docket": "4A_124/2026", "score": 76, "relevant": false, "reason": "Private Krankentaggeldversicherung (VVG); private-law daily allowance, no UVG relevance."}
+{"docket": "4A_42/2026", "score": 75.5, "relevant": false, "reason": "Private Krankentaggeldversicherung (VVG); private contractual daily allowance, no UVG relevance."}
+{"docket": "8C_448/2025", "score": 74.5, "relevant": false, "reason": "UVG; whether GmbH managing partner is mandatorily insured under UVG; premium base determination."}
+{"docket": "9C_98/2026", "score": 63.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_91/2026", "score": 62.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_85/2025", "score": 62.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_8/2026", "score": 61.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_78/2026", "score": 61.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_73/2026", "score": 60.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_683/2024", "score": 60.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_619/2025", "score": 59.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_615/2025", "score": 59.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_547/2025", "score": 58.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_538/2024", "score": 58.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_498/2025", "score": 57.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_44/2026", "score": 57.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_375/2025", "score": 56.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_374/2025", "score": 56.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_368/2025", "score": 55.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_366/2025", "score": 55.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_355/2025", "score": 54.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_331/2026", "score": 54.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_322/2025", "score": 53.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_309/2025", "score": 53.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_305/2025", "score": 52.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_300/2026", "score": 52.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_29/2026", "score": 51.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_270/2026", "score": 51.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_263/2026", "score": 50.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_247/2025", "score": 50.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_241/2025", "score": 49.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_230/2025", "score": 49.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_219/2025", "score": 48.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_213/2025", "score": 48.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_208/2025", "score": 47.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_197/2026", "score": 47.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_192/2025", "score": 46.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_173/2025", "score": 46.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_166/2025", "score": 45.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_16/2026", "score": 45.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_137/2026", "score": 44.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_137/2025", "score": 44.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_110/2026", "score": 43.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "9C_104/2026", "score": 43.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_753/2025", "score": 42.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_732/2025", "score": 42.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_729/2025", "score": 41.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_727/2024", "score": 41.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_724/2025", "score": 40.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_72/2026", "score": 40.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_714/2025", "score": 39.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_705/2025", "score": 39.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_701/2025", "score": 38.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_700/2025", "score": 38.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_688/2025", "score": 37.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_675/2025", "score": 37.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_602/2025", "score": 36.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_590/2025", "score": 36.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_559/2025", "score": 35.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_554/2025", "score": 35.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_535/2025", "score": 34.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_529/2025", "score": 34.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_527/2025", "score": 33.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_526/2025", "score": 33.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_503/2024", "score": 32.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_490/2024", "score": 32.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_482/2025", "score": 31.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_480/2025", "score": 31.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_460/2025", "score": 30.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_453/2025", "score": 30.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_431/2025", "score": 29.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_395/2025", "score": 29.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_35/2026", "score": 28.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_283/2025", "score": 28.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_281/2025", "score": 27.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_261/2025", "score": 27.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_201/2026", "score": 26.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_189/2026", "score": 26.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_158/2025", "score": 25.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_130/2026", "score": 25.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_113/2026", "score": 24.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_107/2026", "score": 24.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_103/2026", "score": 23.5, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_10/2026", "score": 23.0, "relevant": false, "reason": "IV ruling; no UVG-specific principle identified that accident insurer must apply."}
+{"docket": "8C_742/2025", "score": 22.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_702/2025", "score": 22.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_42/2026", "score": 21.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_40/2026", "score": 21.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_386/2026", "score": 20.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_354/2026", "score": 20.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_314/2026", "score": 19.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_31/2026", "score": 19.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_309/2026", "score": 18.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_30/2026", "score": 18.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_279/2026", "score": 17.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_258/2026", "score": 17.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_239/2026", "score": 16.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_222/2026", "score": 16.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_211/2026", "score": 15.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_209/2026", "score": 15.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_207/2026", "score": 14.5, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "8C_199/2026", "score": 14.0, "relevant": false, "reason": "Accident + procedural; dismissal on admissibility grounds with no substantive UVG principle settled."}
+{"docket": "9C_697/2025", "score": 13.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_617/2025", "score": 13.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_343/2026", "score": 12.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_221/2026", "score": 12.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_196/2026", "score": 11.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_195/2026", "score": 11.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_168/2026", "score": 10.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_143/2026", "score": 10.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "9C_111/2026", "score": 9.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_62/2026", "score": 9.4, "relevant": false, "reason": "UVG; non-entry for failure to pay advance costs; administrative procedural dismissal."}
+{"docket": "8C_722/2025", "score": 9.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_716/2025", "score": 8.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_672/2025", "score": 8.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_341/2023", "score": 7.6, "relevant": false, "reason": "UVG; case struck off after insured company entered liquidation; no substantive principle."}
+{"docket": "8C_417/2026", "score": 7.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_391/2026", "score": 7.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_359/2026", "score": 6.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_307/2026", "score": 6.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_272/2026", "score": 5.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_256/2026", "score": 5.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_245/2026", "score": 4.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_233/2026", "score": 4.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_220/2026", "score": 3.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_216/2026", "score": 3.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_214/2026", "score": 2.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_208/2026", "score": 2.0, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}
+{"docket": "8C_197/2026", "score": 1.5, "relevant": false, "reason": "IV + procedural; non-entry or inadmissible appeal, no substance for Suva."}

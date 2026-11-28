@@ -1,4 +1,10 @@
 {
+ "clau": {
+  "prior": 1.0,
+  "auc": 0.845,
+  "skill": 0.69,
+  "weight": 0.69
+ },
  "codex-gpt6": {
   "prior": 1.0,
   "auc": 0.897,

@@ -1,0 +1,41 @@
+{"run": "clau", "model": "claude-sonnet-4-6", "dataset": "calibration40", "created_at": "2026-11-28T07:29:49Z", "notes": "Fleet agent, blind second opinion (development reference only)."}
+{"docket": "8C_536/2024", "score": 93, "relevant": true, "reason": "UVG; accident concept with pre-existing degeneration - requires particularly striking circumstances to trigger liability."}
+{"docket": "8C_508/2025", "score": 91, "relevant": true, "reason": "UVG; IPAI must be standardised across identical medical status; duty of investigation when opinions conflict."}
+{"docket": "8C_525/2025", "score": 88, "relevant": true, "reason": "UVG; revision of accident disability pension (Art. 17 ATSG) - trigger and date for revision determined."}
+{"docket": "8C_626/2024", "score": 85, "relevant": true, "reason": "UVG; Pflegeleistung - delimits accessory basic care from treatment nursing (Art. 10 UVG), cites BGE 147 V 35."}
+{"docket": "8C_56/2025", "score": 82, "relevant": true, "reason": "UVG; causation - confirms preponderance-of-evidence standard for accident mechanism, no certainty required."}
+{"docket": "8C_179/2025", "score": 78, "relevant": true, "reason": "UVG; case closure (stabilisation) and natural causation examined; relevant to Suva on when to end benefits."}
+{"docket": "8C_399/2025", "score": 76, "relevant": true, "reason": "UVG; benefit reduction during pre-trial detention and resulting restitution obligation in accident insurance."}
+{"docket": "8C_656/2024", "score": 75, "relevant": true, "reason": "UVG; insured earnings - confirms use of GAV collective-agreement wages to determine Valideneinkommen."}
+{"docket": "8C_177/2025", "score": 72, "relevant": true, "reason": "UVG; settles which structures qualify as assimilated bodily injury under Art. 6 al. 2 LAA (sagittal band); remanded."}
+{"docket": "8C_385/2025", "score": 68, "relevant": true, "reason": "UVG; natural causation examined for relapse linked to decades-old foreign-body injury; Suva defendant."}
+{"docket": "8C_162/2025", "score": 65, "relevant": true, "reason": "UVG; Invalidenrente income comparison under Art. 28 UVV, confirms validity of that methodology."}
+{"docket": "8C_18/2026", "score": 62, "relevant": true, "reason": "UVG; daily allowance (Taggeld) calculation contested, settled by applying established rules."}
+{"docket": "8C_224/2025", "score": 60, "relevant": true, "reason": "UVG; confirms probative value of Suva in-house doctor report vs treating physiotherapist."}
+{"docket": "8C_398/2025", "score": 58, "relevant": true, "reason": "UVG; work capacity + IPAI left open due to incomplete expert opinion, remanded for further instruction."}
+{"docket": "8C_695/2025", "score": 55, "relevant": true, "reason": "UVG; occupational disease (Berufskrankheit) causation; topically relevant to Suva even if dismissed."}
+{"docket": "8C_351/2025", "score": 48, "relevant": false, "reason": "Accident + procedural; establishes anti-formalism principle for opposition admissibility across all ATSG insurers."}
+{"docket": "8C_239/2025", "score": 44, "relevant": false, "reason": "IV; confirms TA1 median wage as standard ESS reference, methodology applies equally in UVG income comparison."}
+{"docket": "8C_275/2025", "score": 42, "relevant": false, "reason": "UVG; causation dismissed in simplified procedure without new principle; routine confirmation."}
+{"docket": "8C_803/2023", "score": 37, "relevant": false, "reason": "IV; discusses probative value of surveillance footage in ATSG evidence proceedings, some procedural cross-over."}
+{"docket": "8C_320/2025", "score": 32, "relevant": false, "reason": "IV; confirms max 25% ESS table abatement rule, minor cross-over potential for UVG income comparison."}
+{"docket": "8C_704/2024", "score": 30, "relevant": false, "reason": "IV; expert report probative value with epilepsy; general ATSG evidence standard, weak cross-over."}
+{"docket": "8C_313/2024", "score": 29, "relevant": false, "reason": "IV; establishes reference date for revision review; IV-specific with weak procedural cross-over."}
+{"docket": "8C_54/2025", "score": 25, "relevant": false, "reason": "IV pension revision; Suva doctor referenced but ruling is on IV rent entitlement, not a UVG-binding principle."}
+{"docket": "8C_69/2025", "score": 24, "relevant": false, "reason": "IV; pension, psychiatrist treating vs expert opinion value; no specific UVG cross-over."}
+{"docket": "8C_557/2025", "score": 22, "relevant": false, "reason": "IV new application; routine ESS income comparison without UVG cross-over principle."}
+{"docket": "8C_149/2025", "score": 21, "relevant": false, "reason": "IV; neurological/psychiatric expert assessment, no UVG-specific principle."}
+{"docket": "8C_86/2025", "score": 20, "relevant": false, "reason": "IV; work capacity assessment for blind person, no UVG cross-over principle."}
+{"docket": "8C_400/2025", "score": 17, "relevant": false, "reason": "IV; new application and sheltered-workshop placement; purely IV principle."}
+{"docket": "9C_145/2025", "score": 15, "relevant": false, "reason": "IV; work capacity in adapted employment, no UVG-binding principle."}
+{"docket": "8C_368/2025", "score": 14, "relevant": false, "reason": "Accident + procedural; manifestly unfounded dismissal on opposition scope, no substantive UVG principle."}
+{"docket": "9C_311/2025", "score": 11, "relevant": false, "reason": "IV; procedural ruling on mandatory joinder of parties; IV-specific administrative context."}
+{"docket": "8C_153/2025", "score": 10, "relevant": false, "reason": "IV; manifestly inadmissible appeal, no substance."}
+{"docket": "8C_319/2025", "score": 8, "relevant": false, "reason": "IV; simplified dismissal with no substantive principle."}
+{"docket": "9C_640/2025", "score": 7, "relevant": false, "reason": "IV + procedural; inadmissible appeal, no substance."}
+{"docket": "8C_16/2026", "score": 6, "relevant": false, "reason": "IV + procedural; insufficiently reasoned appeal, non-entry."}
+{"docket": "8C_217/2026", "score": 5, "relevant": false, "reason": "IV + procedural; non-entry for manifestly inadmissible appeal, no substantive principle."}
+{"docket": "8C_720/2025", "score": 4, "relevant": false, "reason": "IV + procedural; non-entry for manifestly inadmissible appeal."}
+{"docket": "8C_697/2025", "score": 3, "relevant": false, "reason": "IV; inadmissible appeal dismissed in simplified procedure, no substance."}
+{"docket": "8C_156/2026", "score": 2, "relevant": false, "reason": "IV + procedural; appeal withdrawn, case struck off."}
+{"docket": "9C_599/2025", "score": 1, "relevant": false, "reason": "IV + procedural; time-barred appeal, non-entry."}

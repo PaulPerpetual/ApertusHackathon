@@ -1,178 +1,178 @@
-{"run": "consensus-weighted", "model": "Weighted consensus (codex-gpt6, gem, muse)", "dataset": "aprjun", "created_at": "2026-11-27T16:08:39Z", "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: codex-gpt6 0.795, gem 0.885, muse 0.415"}
-{"docket": "8C_254/2025", "score": 100.0, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.00; Relevanz-Stimmen 100%"}
-{"docket": "8C_184/2026", "score": 98.5, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_739/2024", "score": 97.5, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_137/2025", "score": 96.6, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_17/2026", "score": 95.3, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_654/2024", "score": 95.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
-{"docket": "8C_256/2025", "score": 94.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_448/2025", "score": 94.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_657/2025", "score": 93.7, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
-{"docket": "8C_703/2025", "score": 93.4, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
-{"docket": "8C_516/2025", "score": 92.5, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_441/2025", "score": 92.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
-{"docket": "8C_681/2025", "score": 91.5, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_419/2025", "score": 89.6, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "9C_29/2026", "score": 88.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
-{"docket": "8C_686/2025", "score": 88.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_307/2025", "score": 88.0, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "9C_597/2025", "score": 88.0, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 80%"}
-{"docket": "8C_454/2025", "score": 86.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_63/2026", "score": 85.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
-{"docket": "8C_442/2025", "score": 85.7, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
-{"docket": "8C_365/2025", "score": 85.6, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
-{"docket": "8C_470/2025", "score": 85.5, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_340/2025", "score": 85.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
-{"docket": "8C_672/2025", "score": 84.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 80%"}
-{"docket": "8C_718/2025", "score": 84.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 80%"}
-{"docket": "8C_3/2026", "score": 84.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 80%"}
-{"docket": "8C_580/2025", "score": 83.7, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_66/2026", "score": 82.8, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "9C_263/2026", "score": 82.7, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_347/2025", "score": 82.4, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 80%"}
-{"docket": "9C_368/2025", "score": 82.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 80%"}
-{"docket": "8C_738/2025", "score": 81.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_343/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
-{"docket": "8C_552/2025", "score": 80.4, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 80%"}
-{"docket": "8C_349/2025", "score": 80.3, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_119/2025", "score": 79.3, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
-{"docket": "8C_395/2025", "score": 78.8, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 80%"}
-{"docket": "8C_459/2025", "score": 78.8, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
-{"docket": "8C_689/2025", "score": 78.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
-{"docket": "8C_213/2025", "score": 78.1, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 58%"}
-{"docket": "8C_27/2026", "score": 77.3, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 58%"}
-{"docket": "8C_607/2025", "score": 76.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 58%"}
-{"docket": "9C_230/2025", "score": 72.2, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 58%"}
-{"docket": "8C_739/2025", "score": 71.7, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 58%"}
-{"docket": "8C_571/2025", "score": 71.0, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 58%"}
-{"docket": "8C_602/2025", "score": 70.0, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 80%"}
-{"docket": "8C_503/2024", "score": 69.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.24; Relevanz-Stimmen 42%"}
-{"docket": "8C_675/2025", "score": 67.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 38%"}
-{"docket": "8C_493/2025", "score": 67.6, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 58%"}
-{"docket": "8C_490/2024", "score": 67.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 38%"}
-{"docket": "8C_158/2025", "score": 67.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 42%"}
-{"docket": "8C_535/2025", "score": 67.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 38%"}
-{"docket": "8C_609/2025", "score": 66.9, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 58%"}
-{"docket": "8C_529/2025", "score": 64.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 38%"}
-{"docket": "9C_137/2025", "score": 64.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "8C_10/2026", "score": 63.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 0%"}
-{"docket": "8C_724/2025", "score": 62.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 38%"}
-{"docket": "9C_547/2025", "score": 62.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "8C_248/2024", "score": 62.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "9C_85/2025", "score": 61.4, "relevant": true, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.30; Relevanz-Stimmen 80%"}
-{"docket": "9C_538/2024", "score": 61.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "9C_213/2025", "score": 61.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.22; Relevanz-Stimmen 38%"}
-{"docket": "9C_208/2025", "score": 60.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.22; Relevanz-Stimmen 38%"}
-{"docket": "9C_322/2025", "score": 58.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.23; Relevanz-Stimmen 38%"}
-{"docket": "8C_688/2025", "score": 57.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_526/2025", "score": 57.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "9C_166/2025", "score": 56.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
-{"docket": "8C_753/2025", "score": 56.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "8C_189/2026", "score": 55.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "9C_73/2026", "score": 55.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.26; Relevanz-Stimmen 0%"}
-{"docket": "8C_199/2026", "score": 54.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_261/2025", "score": 54.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "9C_683/2024", "score": 53.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.25; Relevanz-Stimmen 38%"}
-{"docket": "9C_219/2025", "score": 53.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
-{"docket": "8C_103/2026", "score": 53.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "9C_309/2025", "score": 51.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.22; Relevanz-Stimmen 38%"}
-{"docket": "8C_702/2025", "score": 51.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.25; Relevanz-Stimmen 20%"}
-{"docket": "8C_527/2025", "score": 50.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "8C_460/2025", "score": 50.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "8C_729/2025", "score": 49.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_107/2026", "score": 49.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "8C_431/2025", "score": 48.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "8C_239/2026", "score": 47.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_482/2025", "score": 47.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "9C_498/2025", "score": 47.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.22; Relevanz-Stimmen 0%"}
-{"docket": "8C_732/2025", "score": 47.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_72/2026", "score": 47.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "8C_281/2025", "score": 47.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "8C_130/2026", "score": 46.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "9C_241/2025", "score": 46.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "8C_714/2025", "score": 46.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "8C_444/2025", "score": 46.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_283/2025", "score": 46.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_484/2025", "score": 45.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "9C_336/2025", "score": 45.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
-{"docket": "9C_355/2025", "score": 44.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
-{"docket": "9C_374/2025", "score": 44.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "9C_98/2026", "score": 43.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.23; Relevanz-Stimmen 0%"}
-{"docket": "8C_676/2025", "score": 42.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_700/2025", "score": 42.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "4A_42/2026", "score": 41.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "9C_104/2026", "score": 41.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_554/2025", "score": 41.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
-{"docket": "9C_110/2026", "score": 40.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_563/2025", "score": 40.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_480/2025", "score": 39.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_314/2026", "score": 39.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "8C_701/2025", "score": 39.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "9C_16/2026", "score": 39.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_453/2025", "score": 39.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "8C_201/2026", "score": 38.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "9C_375/2025", "score": 38.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "8C_559/2025", "score": 38.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
-{"docket": "9C_247/2025", "score": 37.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
-{"docket": "9C_192/2025", "score": 37.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "8C_727/2024", "score": 36.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
-{"docket": "9C_173/2025", "score": 36.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "9C_619/2025", "score": 36.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
-{"docket": "9C_8/2026", "score": 35.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
-{"docket": "8C_113/2026", "score": 35.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_208/2026", "score": 34.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_255/2025", "score": 34.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "8C_590/2025", "score": 34.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
-{"docket": "8C_207/2026", "score": 34.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
-{"docket": "9C_91/2026", "score": 33.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
-{"docket": "8C_258/2026", "score": 33.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
-{"docket": "9C_366/2025", "score": 32.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "9C_305/2025", "score": 32.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "8C_220/2026", "score": 32.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "9C_197/2026", "score": 31.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "9C_615/2025", "score": 28.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_209/2026", "score": 28.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
-{"docket": "8C_245/2026", "score": 28.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_354/2026", "score": 28.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "8C_279/2026", "score": 26.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_211/2026", "score": 26.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
-{"docket": "9C_78/2026", "score": 25.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
-{"docket": "8C_386/2026", "score": 24.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "8C_197/2026", "score": 24.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "8C_705/2025", "score": 22.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
-{"docket": "8C_233/2026", "score": 22.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_256/2026", "score": 21.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_222/2026", "score": 20.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
-{"docket": "4A_124/2026", "score": 20.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
-{"docket": "9C_168/2026", "score": 19.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "9C_44/2026", "score": 19.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
-{"docket": "8C_307/2026", "score": 19.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_216/2026", "score": 18.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_31/2026", "score": 18.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_30/2026", "score": 18.1, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
-{"docket": "8C_341/2023", "score": 18.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
-{"docket": "8C_214/2026", "score": 17.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_272/2026", "score": 16.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
-{"docket": "9C_300/2026", "score": 16.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 0%"}
-{"docket": "8C_391/2026", "score": 16.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
-{"docket": "8C_742/2025", "score": 16.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "9C_270/2026", "score": 15.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
-{"docket": "9C_143/2026", "score": 15.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
-{"docket": "8C_359/2026", "score": 14.9, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
-{"docket": "9C_343/2026", "score": 14.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "9C_137/2026", "score": 13.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
-{"docket": "9C_221/2026", "score": 13.4, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "8C_35/2026", "score": 12.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
-{"docket": "9C_111/2026", "score": 12.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
-{"docket": "8C_62/2026", "score": 12.2, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
-{"docket": "8C_722/2025", "score": 11.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "9C_331/2026", "score": 11.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
-{"docket": "8C_42/2026", "score": 11.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
-{"docket": "8C_716/2025", "score": 10.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
-{"docket": "8C_309/2026", "score": 9.8, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
-{"docket": "8C_40/2026", "score": 9.6, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
-{"docket": "8C_417/2026", "score": 8.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
-{"docket": "9C_617/2025", "score": 8.3, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 0%"}
-{"docket": "9C_196/2026", "score": 7.7, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
-{"docket": "9C_697/2025", "score": 7.0, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
-{"docket": "9C_195/2026", "score": 4.5, "relevant": false, "reason": "Konsens aus 3 Agent(en) (codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"run": "consensus-weighted", "model": "Weighted consensus (clau, codex-gpt6, gem, muse)", "dataset": "aprjun", "created_at": "2026-11-28T07:29:49Z", "notes": "Weighted consensus of the second-opinion agents (reference only, not submitted). Percentile ranks, weight = prior (Clau/Codex/Gem 1.0, Misty/Muse 0.5) x skill (2*(AUC-0.5) on calibration40). Weights: clau 0.69, codex-gpt6 0.795, gem 0.885, muse 0.415"}
+{"docket": "8C_739/2024", "score": 97.5, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.01; Relevanz-Stimmen 100%"}
+{"docket": "8C_184/2026", "score": 97.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
+{"docket": "8C_254/2025", "score": 96.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_17/2026", "score": 96.0, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
+{"docket": "8C_654/2024", "score": 95.7, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
+{"docket": "8C_256/2025", "score": 95.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
+{"docket": "8C_516/2025", "score": 94.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
+{"docket": "8C_137/2025", "score": 93.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "8C_441/2025", "score": 92.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
+{"docket": "8C_686/2025", "score": 90.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "8C_703/2025", "score": 90.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_657/2025", "score": 90.7, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_419/2025", "score": 89.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
+{"docket": "8C_681/2025", "score": 88.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 75%"}
+{"docket": "8C_448/2025", "score": 88.5, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 75%"}
+{"docket": "8C_442/2025", "score": 88.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_365/2025", "score": 87.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_307/2025", "score": 87.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
+{"docket": "8C_340/2025", "score": 86.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 100%"}
+{"docket": "8C_66/2026", "score": 86.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "9C_597/2025", "score": 85.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 60%"}
+{"docket": "8C_63/2026", "score": 85.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
+{"docket": "8C_470/2025", "score": 84.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 100%"}
+{"docket": "8C_454/2025", "score": 84.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 75%"}
+{"docket": "8C_343/2025", "score": 83.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 100%"}
+{"docket": "8C_349/2025", "score": 83.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "8C_718/2025", "score": 83.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 60%"}
+{"docket": "8C_738/2025", "score": 82.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 100%"}
+{"docket": "8C_580/2025", "score": 82.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 75%"}
+{"docket": "8C_3/2026", "score": 82.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 60%"}
+{"docket": "8C_607/2025", "score": 81.6, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 68%"}
+{"docket": "8C_459/2025", "score": 81.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "9C_29/2026", "score": 81.2, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 75%"}
+{"docket": "8C_347/2025", "score": 81.1, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 60%"}
+{"docket": "8C_27/2026", "score": 81.0, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 68%"}
+{"docket": "8C_119/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 100%"}
+{"docket": "8C_552/2025", "score": 80.9, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 85%"}
+{"docket": "8C_689/2025", "score": 80.7, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 100%"}
+{"docket": "8C_213/2025", "score": 80.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 68%"}
+{"docket": "9C_368/2025", "score": 77.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 60%"}
+{"docket": "9C_263/2026", "score": 76.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 75%"}
+{"docket": "8C_739/2025", "score": 75.6, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 68%"}
+{"docket": "8C_571/2025", "score": 74.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 68%"}
+{"docket": "8C_493/2025", "score": 73.4, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 68%"}
+{"docket": "8C_609/2025", "score": 73.0, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 68%"}
+{"docket": "9C_230/2025", "score": 68.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 43%"}
+{"docket": "8C_395/2025", "score": 67.3, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.26; Relevanz-Stimmen 60%"}
+{"docket": "8C_248/2024", "score": 66.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "8C_672/2025", "score": 65.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.34; Relevanz-Stimmen 60%"}
+{"docket": "9C_85/2025", "score": 63.5, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.27; Relevanz-Stimmen 60%"}
+{"docket": "9C_547/2025", "score": 63.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
+{"docket": "8C_602/2025", "score": 62.8, "relevant": true, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 60%"}
+{"docket": "9C_538/2024", "score": 62.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "8C_675/2025", "score": 61.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 29%"}
+{"docket": "8C_503/2024", "score": 61.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.25; Relevanz-Stimmen 32%"}
+{"docket": "9C_137/2025", "score": 60.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"docket": "8C_535/2025", "score": 60.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 29%"}
+{"docket": "8C_490/2024", "score": 59.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 29%"}
+{"docket": "9C_213/2025", "score": 59.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 29%"}
+{"docket": "9C_322/2025", "score": 59.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 29%"}
+{"docket": "9C_73/2026", "score": 58.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.23; Relevanz-Stimmen 0%"}
+{"docket": "8C_724/2025", "score": 58.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 29%"}
+{"docket": "9C_208/2025", "score": 58.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 29%"}
+{"docket": "8C_529/2025", "score": 58.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 29%"}
+{"docket": "8C_158/2025", "score": 57.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 32%"}
+{"docket": "9C_683/2024", "score": 57.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.22; Relevanz-Stimmen 29%"}
+{"docket": "9C_166/2025", "score": 55.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "8C_10/2026", "score": 54.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "8C_753/2025", "score": 54.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "9C_219/2025", "score": 53.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "8C_688/2025", "score": 53.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "9C_309/2025", "score": 53.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 29%"}
+{"docket": "8C_444/2025", "score": 53.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "9C_336/2025", "score": 52.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
+{"docket": "8C_484/2025", "score": 52.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_526/2025", "score": 52.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "9C_498/2025", "score": 51.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "8C_676/2025", "score": 50.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "9C_98/2026", "score": 50.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.23; Relevanz-Stimmen 0%"}
+{"docket": "8C_563/2025", "score": 49.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "4A_42/2026", "score": 49.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_189/2026", "score": 49.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "9C_374/2025", "score": 49.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "9C_355/2025", "score": 48.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_729/2025", "score": 48.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "9C_241/2025", "score": 48.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_261/2025", "score": 48.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
+{"docket": "8C_732/2025", "score": 47.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
+{"docket": "8C_527/2025", "score": 47.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
+{"docket": "8C_72/2026", "score": 46.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
+{"docket": "8C_103/2026", "score": 46.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_460/2025", "score": 46.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
+{"docket": "8C_714/2025", "score": 45.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
+{"docket": "8C_199/2026", "score": 45.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "8C_431/2025", "score": 44.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
+{"docket": "8C_702/2025", "score": 44.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.25; Relevanz-Stimmen 15%"}
+{"docket": "9C_375/2025", "score": 44.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_482/2025", "score": 44.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "8C_255/2025", "score": 44.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
+{"docket": "9C_619/2025", "score": 44.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
+{"docket": "9C_8/2026", "score": 43.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
+{"docket": "8C_107/2026", "score": 43.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "8C_281/2025", "score": 43.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_104/2026", "score": 43.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_91/2026", "score": 42.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
+{"docket": "9C_110/2026", "score": 42.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "8C_283/2025", "score": 42.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "9C_247/2025", "score": 42.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "8C_700/2025", "score": 42.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
+{"docket": "8C_130/2026", "score": 42.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "9C_16/2026", "score": 42.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "9C_192/2025", "score": 41.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "8C_554/2025", "score": 40.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "8C_239/2026", "score": 40.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "8C_701/2025", "score": 40.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_173/2025", "score": 40.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "9C_366/2025", "score": 39.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "8C_727/2024", "score": 39.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"docket": "9C_305/2025", "score": 38.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_559/2025", "score": 38.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.06; Relevanz-Stimmen 0%"}
+{"docket": "8C_480/2025", "score": 38.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_615/2025", "score": 38.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.19; Relevanz-Stimmen 0%"}
+{"docket": "8C_453/2025", "score": 37.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
+{"docket": "9C_197/2026", "score": 36.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.11; Relevanz-Stimmen 0%"}
+{"docket": "8C_201/2026", "score": 36.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.09; Relevanz-Stimmen 0%"}
+{"docket": "9C_78/2026", "score": 35.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.21; Relevanz-Stimmen 0%"}
+{"docket": "8C_590/2025", "score": 35.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "8C_314/2026", "score": 35.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "4A_124/2026", "score": 33.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.28; Relevanz-Stimmen 0%"}
+{"docket": "8C_113/2026", "score": 33.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_44/2026", "score": 30.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "8C_258/2026", "score": 29.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_207/2026", "score": 29.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.20; Relevanz-Stimmen 0%"}
+{"docket": "8C_705/2025", "score": 27.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "9C_300/2026", "score": 27.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_354/2026", "score": 26.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"docket": "9C_270/2026", "score": 26.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.18; Relevanz-Stimmen 0%"}
+{"docket": "8C_208/2026", "score": 26.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "8C_209/2026", "score": 25.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "8C_279/2026", "score": 24.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.10; Relevanz-Stimmen 0%"}
+{"docket": "8C_220/2026", "score": 24.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_386/2026", "score": 24.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
+{"docket": "8C_211/2026", "score": 24.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "9C_331/2026", "score": 23.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.23; Relevanz-Stimmen 0%"}
+{"docket": "9C_137/2026", "score": 22.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "8C_245/2026", "score": 22.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_222/2026", "score": 20.1, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_31/2026", "score": 19.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "8C_742/2025", "score": 18.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
+{"docket": "8C_30/2026", "score": 18.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "8C_197/2026", "score": 18.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "9C_168/2026", "score": 17.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"docket": "8C_35/2026", "score": 17.5, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "8C_233/2026", "score": 17.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_256/2026", "score": 16.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_307/2026", "score": 15.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "8C_341/2023", "score": 15.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "8C_216/2026", "score": 14.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "8C_42/2026", "score": 14.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "9C_143/2026", "score": 14.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
+{"docket": "8C_391/2026", "score": 14.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.12; Relevanz-Stimmen 0%"}
+{"docket": "9C_343/2026", "score": 14.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.02; Relevanz-Stimmen 0%"}
+{"docket": "8C_272/2026", "score": 13.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_214/2026", "score": 13.7, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.17; Relevanz-Stimmen 0%"}
+{"docket": "9C_221/2026", "score": 13.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
+{"docket": "8C_40/2026", "score": 13.0, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.15; Relevanz-Stimmen 0%"}
+{"docket": "8C_359/2026", "score": 12.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.14; Relevanz-Stimmen 0%"}
+{"docket": "8C_309/2026", "score": 12.4, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.16; Relevanz-Stimmen 0%"}
+{"docket": "9C_111/2026", "score": 11.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "8C_62/2026", "score": 11.6, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
+{"docket": "8C_722/2025", "score": 10.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
+{"docket": "8C_716/2025", "score": 10.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.08; Relevanz-Stimmen 0%"}
+{"docket": "9C_617/2025", "score": 9.8, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.03; Relevanz-Stimmen 0%"}
+{"docket": "9C_697/2025", "score": 8.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.04; Relevanz-Stimmen 0%"}
+{"docket": "9C_196/2026", "score": 8.9, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.05; Relevanz-Stimmen 0%"}
+{"docket": "8C_417/2026", "score": 8.2, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.13; Relevanz-Stimmen 0%"}
+{"docket": "9C_195/2026", "score": 6.3, "relevant": false, "reason": "Konsens aus 4 Agent(en) (clau, codex-gpt6, gem, muse); Streuung 0.07; Relevanz-Stimmen 0%"}
