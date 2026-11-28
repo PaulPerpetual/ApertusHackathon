@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Lex Aperta · Pitch rehearsal</title>
+<link rel="stylesheet" href="presentation.css">
+<script src="presentation.js" defer></script>
+</head>
+<body>
+<main id="app">
+<section id="viewer" aria-label="Slide presentation">
+<div id="stage"><img id="slide" alt="Loading the Lex Aperta presentation"><p id="error" role="alert" hidden></p></div>
+<div id="controls">
+<div class="navigation"><button id="previous" aria-label="Previous slide">Previous</button><span id="counter" aria-live="polite">1 / 7</span><button id="next" aria-label="Next slide">Next</button></div>
+<div class="rehearsal"><span id="timer" aria-label="Elapsed rehearsal time">0:00 / 5:00</span><button id="start" aria-label="Start rehearsal timer">Start timer</button><button id="reset" aria-label="Reset rehearsal timer">Reset</button></div>
+<div class="tools"><button id="notes-toggle" aria-expanded="false" aria-controls="notes-panel">Notes</button><button id="fullscreen">Full screen</button><a href="Lex_Aperta_Pitch.pptx" download>PowerPoint</a></div>
+</div>
+</section>
+<aside id="notes-panel" aria-label="Speaker notes" hidden>
+<div class="notes-header"><span>LEX APERTA · REHEARSAL</span><button id="notes-close" aria-label="Close speaker notes">Close</button></div>
+<h1 id="notes-title"></h1>
+<p id="slide-target"></p><div id="notes"></div>
+<details><summary>Keyboard shortcuts</summary><p>Right / Space: next slide<br>Left: previous slide<br>Home / End: first / last slide<br>N: speaker notes<br>F: full screen<br>T: start or pause timer<br>R: reset timer</p></details>
+<a class="demo-link" href="https://api.robotross.art/lex/" target="_blank" rel="noopener">Open live Urteilsradar</a>
+</aside>
+</main>
+<noscript>Enable JavaScript to present these slides, or download <a href="Lex_Aperta_Pitch.pptx">the PowerPoint</a>.</noscript>
+</body>
+</html>

@@ -1,0 +1,51 @@
+[
+  {
+    "title": "Urteilsradar: the lawyer’s workspace",
+    "image": "slides/slide-1.png",
+    "duration": 120,
+    "notes": "SLIDE 1 · 120 seconds · 00:00–02:00 · Paul\n00:00–00:25 [Show the list.] This is our result: Urteilsradar, a workspace for the lawyer. On the left are the rulings, sorted by relevance. The most useful ruling opens immediately, so the lawyer can start reading without configuring the screen.\n00:25–00:55 [Point to the details and switch language.] On the right is the selected ruling, with its relevance reason, metadata and summary. German and French summaries are available in the same detail view. Links to the considerations connect the summary with the underlying ruling.\n00:55–01:20 [Point to Bearbeiten and Verlauf.] The lawyer can edit the summary and inspect its history. That makes the generated text a draft they can take responsibility for, with the corrections recorded.\n01:20–01:45 [Show borderline cases and Nicht relevant without saving.] We distinguish ordinary relevant cases from borderline cases. The second category preserves uncertain cases for a lawyer's attention. Nicht relevant removes an unwanted case from the working list. The current confirmation action is labelled Erledigt.\n01:45–02:00 [Point to add-ruling and Trefferliste.] Additional rulings can be summarised, and the hit list exports as CSV. Next we will explain the algorithms behind the selection and order.",
+    "text": "THE PRODUCT\nUrteilsradar: the lawyer’s workspace\nLex Aperta\nHack Apertus · Suva challenge\n01\nSorted rulings\nMost relevant first\nRuling details\nGerman / French summaries + source links\nLawyer edits\nCorrect text, inspect history\nRelevance decisions\nReject cases + flag borderline cases"
+  },
+  {
+    "title": "Four passes collect and review evidence",
+    "image": "slides/slide-2.png",
+    "duration": 40,
+    "notes": "SLIDE 2 · 40 seconds · 02:00–02:40 · Miguel\nThe selection uses four Apertus passes. Triage assesses overall relevance. A separate invalidity pass checks IV rulings for rules that transfer to accident insurance. ATSG rescue then revisits candidates those earlier passes rejected, requiring a quotation from the ruling. Critical review compares this evidence with the actual considerations and operative part. The final selection preserves the earlier positives, adds plausible cases as borderline cases and excludes the rest. The three evidence boxes are separate views, not three unconditional parallel jobs.",
+    "text": "SELECTION ALGORITHM\nFour passes collect and review evidence\nLex Aperta\nHack Apertus · Suva challenge\n02\n1  Triage\nScore overall relevance\nExplain the legal question\n89\n47 / 58 Suva picks found\n2  Invalidity\nCheck disability rulings for\nrules that also matter to Suva\n+12\n+2 Suva picks (49 / 58 total)\n3  ATSG rescue\nRevisit earlier rejections\nRequire a quote from the ruling\n+110\n+4 Suva picks before review\n4  Review\nWeigh all available evidence\nagainst the ruling itself\n98%\nReported Suva recall\nFinal list\nKeep earlier positives\nAdd borderline cases\nExclude the rest\n163\nQ2 output; labels pending\nOrange counts: selected / added rulings in Oct 2025–Mar 2026; final count: Q2 2026.\nATSG = Federal Act on the General Part of Social Insurance Law. IV = disability insurance."
+  },
+  {
+    "title": "A separate ranker orders the selected cases",
+    "image": "slides/slide-3.png",
+    "duration": 40,
+    "notes": "SLIDE 3 · 40 seconds · 02:40–03:20 · Miguel\nSelection tells us what enters the list. A separate algorithm decides what comes first. Apertus assesses relevance, importance, legal substance, broad impact and procedural value. The selected ranker learns how to weight these assessments, together with facts such as a five-judge panel, from Suva's yes-or-no decisions. We compare the learned model with triage-only and importance-based ranking through repeated cross-validation. Separately, blind rankings from other models check whether the resulting order makes sense. Relevant cases lead the list, and borderline cases remain below them.",
+    "text": "RANKING ALGORITHM\nA separate ranker orders the selected cases\nLex Aperta\nHack Apertus · Suva challenge\n03\nApertus assessments\nRelevance and importance\nLegal rule and broad impact\nProcedural value and case facts\nLearned weighting\nLogistic ranking model\nTrained on Suva’s yes / no list\nFinal order\nRelevant cases first\nBorderline cases stay below\nSelection of the ranker\nCross-validation on Suva labels compares ranking methods\nBlind rankings from other models provide an independent check"
+  },
+  {
+    "title": "Other models benchmark the final ranking",
+    "image": "slides/slide-4.png",
+    "duration": 30,
+    "notes": "SLIDE 4 · 30 seconds · 03:20–03:50 · Miguel\nWe asked Codex, Gemini, Muse and Claude to rank the same rulings blind. To combine them, we normalise each model's scores to percentile ranks, then take a weighted average. The weights reflect calibration performance on labelled rulings. The graph compares their June top tens with the final Apertus list. Orange shows Apertus itself as the ten-case reference. We use consensus disagreements to fine-tune the algorithm through prompt and ranking refinements. In that development sense, Apertus learns from the comparison. The runtime still uses Apertus, not the reference models.",
+    "text": "INDEPENDENT MODEL COMPARISON\nOther models benchmark the final ranking\nLex Aperta\nHack Apertus · Suva challenge\n04\nCodex · Gemini · Muse · Claude\nComparable ranks\nConvert each model’s scores\nto percentile ranks\nWeighted consensus\nAverage ranks using weights\ncalibrated on labelled rulings\nJune top-10 shared with final Apertus\nConsensus feedback refines Apertus prompts and ranking logic"
+  },
+  {
+    "title": "Our summaries retain the key legal points",
+    "image": "slides/slide-5.png",
+    "duration": 40,
+    "notes": "SLIDE 5 · 40 seconds · 03:50–04:30 · Miguel\nThe message is that our summaries retain most of the legal substance in Suva’s expert summaries. Coverage measures retained key legal points, not overall factual accuracy. First, Apertus extracts two to six key legal points from each Suva expert summary. In a separate judging call, it checks our summary against those points. Each point earns one for covered, half for partial and zero for missing. We average within a ruling, then across the held-out rulings. That gives 94.7 percent mean coverage across 19 examples. The expert comparison below shows the same ruling on both sides. We also check outcomes, consideration references and insurer names automatically.",
+    "text": "SUMMARY QUALITY\nOur summaries retain the key legal points\nLex Aperta\nHack Apertus · Suva challenge\n05\n94.7%\nMean legal-point coverage\n19 held-out rulings · automated evaluation\nApertus extracts key legal points from Suva’s summary\nApertus scores each: covered 1 · partial ½ · missing 0\nAverage within each ruling, then across rulings"
+  },
+  {
+    "title": "Lawyer decisions and corrections",
+    "image": "slides/slide-6.png",
+    "duration": 20,
+    "notes": "SLIDE 6 · 20 seconds · 04:30–04:50 · Paul\n\nLawyers confirm relevance and edit summaries with a correction history. Links to the cited clauses let them verify the source passage in one click. They can add case notes to keep observations beside the ruling. Their decisions then provide feedback for future ranking improvements.",
+    "text": "LAWYER FEEDBACK\nLawyer decisions and corrections\nLex Aperta\nHack Apertus · Suva challenge\n06\n8C_686/2025\nConfirm or reject\nKeep the working list focused on the lawyer’s needs\nEdit with history\nCreate a usable summary and trace every correction\nLinks to cited clauses\nVerify the source passage in one click\nAdd case notes\nRecord observations beside the ruling\nLearn from changes\nReuse decisions to improve future ranking"
+  },
+  {
+    "title": "Selection, ranking and independent checks",
+    "image": "slides/slide-7.png",
+    "duration": 10,
+    "notes": "SLIDE 7 · 10 seconds · 04:50–05:00 · Miguel\nMultiple passes improve Apertus selection. Feedback from larger models helps us refine its prompts and ranking. Miguel: pipeline. Paul: UI. Thank you.\nConclusion: Apertus output can be improved through multi-pass selection and prompt refinements informed by larger-model comparisons. This refers to development feedback and algorithm changes, not model-weight fine-tuning.",
+    "text": "RESULTS · TEAM\nSelection, ranking and independent checks\nLex Aperta\nHack Apertus · Suva challenge\n07\nFour-pass selection\nTriage + IV + ATSG evidence, critically reviewed\nLearned ranking\nApertus assessments weighted using Suva’s labels\nIndependent checks\nBlind model rankings expose disagreements\nMultiple passes improve selection. Feedback from larger models\nhelps us refine Apertus prompts and ranking.\nMiguel\nPipeline\nPaul\nUI"
+  }
+]
