@@ -13,14 +13,14 @@ const I18N = {
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     name: "Name", key: "Editor-Schlüssel (nur für den Server)", editor_set: (n) => n ? `Name: ${n} …` : "Name festlegen …",
     model: "Modell", mock: "Mock (kein LLM)", read_only: "Nur lesen",
-    mark_done: "Freigeben", reopen: "Freigabe zurückziehen", done_by: (n, at) => `Freigegeben von ${n}, ${at}`, approved: "Freigegeben", v_before: "Vorher", v_after: "Nachher", v_restore: "Diese Fassung wiederherstellen", v_show: "Fassungen ansehen", v_restored: "Fassung wiederhergestellt (im Verlauf protokolliert)", expand: "In eigenem Fenster öffnen (oder Doppelklick)", moved_done: "Freigegeben (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
+    mark_done: "Geprüft", reopen: "Prüfung zurücknehmen", done_by: (n, at) => `Geprüft von ${n}, ${at}`, approved: "Geprüft", v_before: "Vorher", v_after: "Nachher", v_restore: "Diese Fassung wiederherstellen", v_show: "Fassungen ansehen", v_restored: "Fassung wiederhergestellt (im Verlauf protokolliert)", expand: "In eigenem Fenster öffnen (oder Doppelklick)", moved_done: "Als geprüft markiert (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
     edit: "Bearbeiten", subject_hint: "Gegenstand laut Bundesgericht", subject: "Gegenstand", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
-    st_new: "neu", st_done: "freigegeben", st_rejected: "nicht relevant", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
+    st_new: "neu", st_done: "geprüft", st_rejected: "nicht relevant", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
     suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung", demo: "Demo",
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
@@ -36,14 +36,14 @@ const I18N = {
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     name: "Nom", key: "Clé d'éditeur (serveur uniquement)", editor_set: (n) => n ? `Nom : ${n} …` : "Définir le nom …",
     model: "Modèle", mock: "Fictif (sans LLM)", read_only: "Lecture seule",
-    mark_done: "Valider", reopen: "Retirer la validation", done_by: (n, at) => `Validé par ${n}, ${at}`, approved: "Validé", v_before: "Avant", v_after: "Après", v_restore: "Restaurer cette version", v_show: "voir les versions", v_restored: "Version restaurée (consignée dans l’historique)", expand: "Ouvrir dans une fenêtre (ou double-clic)", moved_done: "Validé (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
+    mark_done: "Vérifié", reopen: "Annuler la vérification", done_by: (n, at) => `Vérifié par ${n}, ${at}`, approved: "Vérifié", v_before: "Avant", v_after: "Après", v_restore: "Restaurer cette version", v_show: "voir les versions", v_restored: "Version restaurée (consignée dans l’historique)", expand: "Ouvrir dans une fenêtre (ou double-clic)", moved_done: "Marqué comme vérifié (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
     edit: "Modifier", subject_hint: "Objet selon le Tribunal fédéral", subject: "Objet", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
-    st_new: "nouveau", st_done: "validé", st_rejected: "non pertinent", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
+    st_new: "nouveau", st_done: "vérifié", st_rejected: "non pertinent", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
     suva_party: "Suva partie", human_example: "Résumé original Suva", demo: "Démo",
     cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
@@ -144,9 +144,9 @@ const INFO = {
     <p>Urteile, bei denen Apertus unsicher ist (oft Invaliden- oder Verfahrensrecht, das auch für die Unfallversicherung
     gelten kann). Sie stehen unter den klar relevanten Urteilen, tragen das gelbe Etikett <b>Grenzfall</b> und sind im Reiter
     „Grenzfälle" gesammelt. Lieber ein Grenzfall zu viel als ein verpasstes Urteil: bitte kurz prüfen.</p>
-    <h4>Neu · Freigegeben · Nicht relevant</h4>
+    <h4>Neu · Geprüft · Nicht relevant</h4>
     <ul><li><b>Neu</b>: noch nicht bearbeitet.</li>
-      <li><b>Freigeben</b>: geprüft und in Ordnung (Taste E). Das Urteil trägt dann «✓ Freigegeben von Name» mit Datum, verschwindet aus «Neu» und bleibt unter «Alle». Gilt für das ganze Team; im Verlauf lässt sich jede frühere Fassung ansehen und wiederherstellen.</li>
+      <li><b>Geprüft</b>: inhaltlich kontrolliert und in Ordnung (Taste E). Das Urteil trägt dann «✓ Geprüft von Name» mit Datum, verschwindet aus «Neu» und bleibt unter «Alle». Gilt für das ganze Team; im Verlauf lässt sich jede frühere Fassung ansehen und wiederherstellen.</li>
       <li><b>Nicht relevant</b>: nimmt das Urteil von der Trefferliste. Über Filter → „Nicht relevante anzeigen" wieder sichtbar und mit einem Klick wiederherstellbar.</li></ul>
     <h4>Bearbeiten</h4>
     <p>„Bearbeiten" im Detailbereich öffnet Score, Begründung und beide Zusammenfassungen zur Korrektur. Jede Änderung wird
@@ -168,9 +168,9 @@ const INFO = {
     <p>Arrêts pour lesquels Apertus hésite (souvent assurance-invalidité ou procédure pouvant aussi valoir pour
     l'assurance-accidents). Ils figurent sous les arrêts clairement pertinents, portent l’étiquette jaune <b>Cas limite</b> et
     sont regroupés dans l'onglet « Cas limites ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
-    <h4>Nouveau · Validé · Non pertinent</h4>
+    <h4>Nouveau · Vérifié · Non pertinent</h4>
     <ul><li><b>Nouveau</b>: pas encore traité.</li>
-      <li><b>Valider</b>: vérifié et en ordre (touche E). L'arrêt porte alors « ✓ Validé par nom » avec la date, disparaît de « Nouveaux » et reste sous « Tous ». Vaut pour toute l'équipe ; l'historique permet de consulter et de restaurer chaque version antérieure.</li>
+      <li><b>Vérifié</b>: contrôlé et en ordre (touche E). L'arrêt porte alors « ✓ Vérifié par nom » avec la date, disparaît de « Nouveaux » et reste sous « Tous ». Vaut pour toute l'équipe ; l'historique permet de consulter et de restaurer chaque version antérieure.</li>
       <li><b>Non pertinent</b>: retire l'arrêt de la liste des résultats. Visible via Filtre → « Non pertinents », restaurable en un clic.</li></ul>
     <h4>Modifier</h4>
     <p>« Modifier » dans le panneau de détail permet de corriger le score, la justification et les deux résumés. Chaque

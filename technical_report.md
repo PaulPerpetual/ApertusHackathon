@@ -80,11 +80,13 @@ Further features:
   "Bestätigen" and "Nicht relevant".
 - **One filter button.** It covers period (month, optionally shifted to Suva's publication date), minimum relevance,
   keywords (combined with "or") and "show rejected". Active filters appear as removable chips under the toolbar.
-- **Editing and history.** "Bearbeiten" edits title, reason, keywords and both summaries, and the AI original stays
-  viewable. Edited rulings carry an orange bar with editor and time. Every change is kept in the "Verlauf" tab, and
-  team notes go in the "Notizen" tab.
-- **Review workflow.** "Erledigt" (key E) and "Nicht relevant" apply to the whole team. The top-ranked ruling opens
-  on load.
+- **Human in the loop.** A lawyer marks a ruling "Geprüft" (key E), and it then shows "✓ Geprüft von <name>, <time>"
+  for the whole team. "Nicht relevant" takes it off the list. "Bearbeiten" edits title, reason, keywords and both
+  summaries, and the AI original stays viewable. Edited rulings carry an orange bar with editor and time.
+- **Versions.** The "Verlauf" tab logs every change. Edits to summaries and reasons open as before/after versions,
+  and either one can be restored; the restore is logged as well. Team notes go in the "Notizen" tab.
+- **Own window.** A double-click (or ⤢) opens a ruling in a separate browser window, as in Mail. Windows stay in
+  sync. The top-ranked ruling opens on load.
 - **Trefferliste.** Rank, normal/Grenzfall and score, with CSV download and "copy" in Suva's list format.
 - **Layout and help.** The detail panel can be resized by dragging and the layout works on a phone. An info dialog
   in DE and FR explains score, Grenzfälle and buttons.
