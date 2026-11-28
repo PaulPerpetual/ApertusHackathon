@@ -2,6 +2,8 @@
    detail pane, human score overrides and summary edits with simple name attribution. */
 const I18N = {
   de: {
+    month_all: "Alle Monate", m04: "April 2026", m05: "Mai 2026", m06: "Juni 2026",
+    pub_label: "nach Suva-Publikation (≈ +33 Tage)", pub_hint: "Monat nach geschätzter Publikation der Suva-Zusammenfassung: Entscheiddatum + 33 Tage (Median der Suva-Seiten 2025/26, Spanne 17–76 Tage). Ohne Häkchen: Entscheiddatum.",
     hitlist_btn: "Trefferliste", info_btn: "Info", info_close: "Verstanden",
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_hint1: "Apertus ist unsicher, eine Juristin sollte es ansehen.", promote: "Bestätigen", promoted: "Als relevant bestätigt",
     min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte", remove: "Entfernen",
@@ -23,6 +25,8 @@ const I18N = {
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
   fr: {
+    month_all: "Tous les mois", m04: "avril 2026", m05: "mai 2026", m06: "juin 2026",
+    pub_label: "selon publication Suva (≈ +33 jours)", pub_hint: "Mois selon la publication estimée du résumé Suva: date de décision + 33 jours (médiane des pages Suva 2025/26, 17–76 jours). Sans coche: date de décision.",
     hitlist_btn: "Liste des résultats", info_btn: "Info", info_close: "Compris",
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_hint1: "Apertus n’est pas sûr, un juriste devrait l’examiner.", promote: "Confirmer", promoted: "Confirmé comme pertinent",
     min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés", remove: "Retirer",
@@ -193,6 +197,13 @@ async function requireName() {
 /* ---------- chrome ---------- */
 function renderChrome() {
   document.documentElement.lang = state.lang;
+  const ms = $("#monthSel");
+  if (ms) {
+    ms.innerHTML = [["", "month_all"], ["2026-04", "m04"], ["2026-05", "m05"], ["2026-06", "m06"]]
+      .map(([v, k]) => `<option value="${v}">${t(k)}</option>`).join("");
+    ms.value = state.month;
+  }
+  if ($("#pubToggle")) { $("#pubToggle").checked = !!state.byPublication; $("#pubLabel").textContent = t("pub_label"); $("#pubLabel").parentElement.title = t("pub_hint"); }
   document.querySelectorAll("[data-i18n]").forEach((el) => (el.textContent = t(el.dataset.i18n)));
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => (el.placeholder = t(el.dataset.i18nPlaceholder)));
   document.querySelectorAll("[data-lang]").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
@@ -236,10 +247,18 @@ function tagsOf(c) {
 const subjectOf = (c) => (c.source === "demo" ? "" : String(c.subject || "").replace(/[\s,;]+$/, ""));
 
 /* ---------- list ---------- */
+const SUVA_LAG_DAYS = 33;  // median days from decision to Suva's summary page (Suva's Q4/Q1 list)
+function monthOf(c) {  // "YYYY-MM" used by the month filter: decision date, or estimated Suva publication
+  const d = c.decision_date || c.publication_date || "";
+  if (!state.byPublication || !d) return d.slice(0, 7);
+  const x = new Date(d + "T00:00:00Z"); x.setUTCDate(x.getUTCDate() + SUVA_LAG_DAYS);
+  return x.toISOString().slice(0, 7);
+}
 function visible() {
   const q = $("#search").value.trim().toLowerCase();
   const rows = state.cards.filter((c) => {
     if (!inScopeOf(c)) return false;
+    if (state.month && !monthOf(c).startsWith(state.month) && c.slug !== state.open) return false;
     if (!isBorder(c) && (c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
     if (!hasTags(c)) return false;
     if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || []), ...(c.tags_fr || [])].join(" ").toLowerCase().includes(q)) return false;
@@ -572,6 +591,10 @@ async function startAdd(docket) {
 
 /* ---------- wiring ---------- */
 function init() {
+  state.month = store.get("lex.month", "2026-06");  // default: June 2026 (Suva's top-5 review is about June)
+  state.byPublication = store.get("lex.byPublication", "0") === "1";
+  if ($("#pubToggle")) $("#pubToggle").onchange = (e) => { state.byPublication = e.target.checked; store.set("lex.byPublication", state.byPublication ? "1" : "0"); renderList(); };
+  if ($("#monthSel")) $("#monthSel").onchange = (e) => { state.month = e.target.value; store.set("lex.month", state.month); renderList(); };
   if ($("#infoBtn")) $("#infoBtn").onclick = openInfo;
   renderChrome();
   document.querySelectorAll("[data-lang]").forEach((b) => (b.onclick = () => {
@@ -634,7 +657,8 @@ function init() {
   load().then(() => {
     /* DAU-Filter (Suva): open the top-ranked ruling right away, or the one requested via ?open=<slug> (Trefferliste link) */
     const want = new URLSearchParams(location.search).get("open");
-    const first = want || (state.cards && state.cards.length ? [...state.cards].sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0].slug : null);
+    const top = visible().filter((c) => !isBorder(c)).sort((a, b) => (b.score ?? -1) - (a.score ?? -1))[0];
+    const first = want || (top ? top.slug : null);  // top-ranked ruling of the current month filter
     if (first && !state.open) openPanel(first);
   }).catch(() => {});
   /* Auto-refresh: reload list + open panel when the server's data_version changes (new pipeline data or

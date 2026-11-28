@@ -248,3 +248,7 @@ a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items
   .panel-head .panel-actions { grid-column: 1 / -1; grid-row: 2; flex-wrap: wrap; }
   .panel-head h2 { grid-row: 3; }
 }
+
+/* month filter (decision date), default June 2026 for the top-5 review */
+.month-sel { padding: 3px 8px; border-radius: 6px; border: 1px solid var(--control-border); background: var(--control); color: inherit; font: inherit; }
+.pub-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted, #605e5c); white-space: nowrap; }
