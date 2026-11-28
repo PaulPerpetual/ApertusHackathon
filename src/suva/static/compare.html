@@ -107,7 +107,7 @@ const DS_NAMES = {
 };
 const RUN_NAMES = {
   "apertus70b-v4-tiers-ranked": "Apertus: LIVE list (4 passes + learned ranking)",
-  "apertus70b-v1": "Apertus: pass 1 only (first triage)",
+  "apertus70b-v1": "Apertus: first version (triage + IV pass, until Fri)",
   "apertus70b-v2-principle": "Apertus: v2 prompt (tested, not used)",
   "apertus70b-v3-atsg-rescue": "Apertus: v3 with ATSG rescue (tested, not used)",
   "apertus70b-shadow-rank": "Apertus: alternative ranking (tested, not used)",
@@ -143,7 +143,7 @@ function fillRuns() {
   const target = ds === "aprjun", mo = target ? $("month").value : "";
   $("monthWrap").style.display = $("pubWrap").style.display = target ? "" : "none";
   const inMonth = Object.keys(DOCK).filter((k) => monthOk(k)).length;
-  $("dsnote").textContent = `${d.label}. ${d.rulings} rulings` + (d.labelled ? `, ${d.positives} picked by Suva.` : ". No labels yet.") +
+  $("dsnote").textContent = `${dsName(ds)}. ${d.rulings} rulings` + (d.labelled ? `, ${d.positives} picked by Suva.` : ". No labels yet.") +
     (mo ? ` Filter: ${MONTHS[mo]} 2026 ${$("pubmode").checked ? "(estimated Suva publication)" : "(decision date)"}, ${inMonth} candidates; all tables below count this month only.` : "");
   const labelled = d.labelled;
   const live = ALL["apertus70b-v4-tiers-ranked"];
