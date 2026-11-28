@@ -18,6 +18,7 @@
   <div class="spacer"></div>
   <label class="searchbox"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     <input id="search" type="search" data-i18n-placeholder="search"></label>
+  <button class="btn" id="addBtn"><span aria-hidden="true">＋</span> <span data-i18n="add">Urteil zusammenfassen</span></button>
   <a class="btn" href="hitlist" id="hitlistBtn" data-i18n="hitlist_btn">Trefferliste</a>
   <button class="btn" id="infoBtn" aria-haspopup="dialog"><span aria-hidden="true">ⓘ</span> <span data-i18n="info_btn">Info</span></button>
   <div class="seg small" role="group" aria-label="Sprache / langue">
@@ -26,7 +27,6 @@
   <div class="menu-wrap">
     <button id="menuBtn" class="tool-btn" aria-haspopup="true" aria-expanded="false" aria-label="Menu">⋯</button>
     <div id="menu" class="menu" hidden>
-      <button id="addBtn" class="menu-item" data-i18n="add">Urteil manuell hinzufügen …</button>
       <button id="editorBtn" class="menu-item"></button>
       <div class="menu-sep"></div>
       <div class="menu-row"><span data-i18n="preview_lines">Begründung in der Liste</span>
@@ -103,7 +103,7 @@
 
 <dialog id="addDlg">
   <form method="dialog">
-    <h3 data-i18n="add_title">Urteil manuell hinzufügen</h3>
+    <h3 data-i18n="add_title">Weiteres Urteil zusammenfassen</h3>
     <p class="muted" data-i18n="add_hint">Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch</p>
     <input id="addInput" required>
     <div class="row"><button value="cancel" class="btn" data-i18n="cancel" formnovalidate>Abbrechen</button>
