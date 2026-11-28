@@ -27,6 +27,7 @@ panel shows the original ruling and both summaries. Buttons let them confirm, re
 "Urteil zusammenfassen" adds any further ruling on demand.
 
 **Headline results:**
+
 - On Suva's 82 example rulings, the relevance pipeline finds **98 %** of the rulings Suva summarised (recall).
 - Ranking: a learned weighting of Apertus' own judgements, fitted on Suva's Q4/Q1 list, raises the share of our top 5
   that are on Suva's list from **56 % to 74 %** (top 10: 66 % → 69 %; cross-validated on Oct 2025 – Mar 2026).
@@ -58,6 +59,35 @@ The components are listed below.
 | Summaries | `summarize_v2.py`, `explain.py`, `tags.py` | Apertus first extracts the key considerations with their E. numbers. It then writes DE and FR separately, few-shot with the most similar Suva examples and a DE↔FR glossary. |
 | Quality checks | `postcheck.py` | Rule-based checks of every summary, then one guarded retry and mechanical clean-up (see below) |
 | App | `server.py`, `static/` | FastAPI + SQLite. Human decisions, score overrides and edited texts are stored next to the AI output, with a full edit history. |
+
+### User interface (for Suva's lawyers)
+
+The app is modelled on a mail client: one list, a detail panel, few buttons. It covers each element Suva names for
+the "overall product" criterion:
+
+| Suva asks for | In Lex Aperta |
+| --- | --- |
+| Original ruling | Link to bger.ch, plus an "Urteilstext" tab with the formatted original. Every "(E. x)" in a summary jumps to that consideration. |
+| Sortable score | Score 0–100 with a bar. Click the column headers to sort by relevance, title or decision date. Click the score to override it; the AI score can be restored. |
+| Reason | One or two sentences on why the ruling matters for Suva, in the list and in the panel |
+| Both summaries | Tabs "Zusammenfassung DE" and "Résumé FR"; the whole interface switches DE/FR |
+| Summarise another ruling | "＋ Urteil zusammenfassen" in the toolbar: enter a docket number or bger.ch link. The ruling is fetched, triaged and summarised in about 40 s. |
+
+Further features:
+
+- **Three views.** "Neu" shows unread rulings, "Alle" also shows those marked done, and "Grenzfälle" shows the
+  borderline ones. Borderline rulings also appear muted at the bottom of the list, like junk mail, with
+  "Bestätigen" and "Nicht relevant".
+- **One filter button.** It covers period (month, optionally shifted to Suva's publication date), minimum relevance,
+  keywords (combined with "or") and "show rejected". Active filters appear as removable chips under the toolbar.
+- **Editing and history.** "Bearbeiten" edits title, reason, keywords and both summaries, and the AI original stays
+  viewable. Edited rulings carry an orange bar with editor and time. Every change is kept in the "Verlauf" tab, and
+  team notes go in the "Notizen" tab.
+- **Review workflow.** "Erledigt" (key E) and "Nicht relevant" apply to the whole team. The top-ranked ruling opens
+  on load.
+- **Trefferliste.** Rank, normal/Grenzfall and score, with CSV download and "copy" in Suva's list format.
+- **Layout and help.** The detail panel can be resized by dragging and the layout works on a phone. An info dialog
+  in DE and FR explains score, Grenzfälle and buttons.
 
 **Quality checks (postcheck).** Every generated summary and reason is checked by rules before it is stored:
 
@@ -97,6 +127,7 @@ Lex Aperta is deployable as **a) on-premise**, **b) air-gapped** and **c) sovere
 **Every decision on the submitted list and every text comes from Apertus.** Other models (GPT, Gemini, Claude) were
 used only during development, as blind benchmark rankings on `/compare`. They never enter the list or its order.
 Prompts are in the files listed in §2. Settings:
+
 - temperature 0 for scoring, 0.7 with 3 samples in the recall pass;
 - input truncated to `LLM_MAX_INPUT_CHARS` (default 24 000 characters);
 - JSON output parsed with a fallback.
@@ -131,20 +162,24 @@ below the relevant rulings; the top 10 is chosen from June 2026 by decision date
 **Cross-check with other models (development only).** Codex (GPT-6), Gemini, Muse and Claude ranked the Q2 candidates
 blind. Each model's vote is weighted by its measured accuracy on 40 labelled rulings (AUC: Gemini 0.94, Muse 0.92,
 Codex 0.90, Claude 0.85; Apertus single pass 0.75). Results (`/compare`, `/stats`):
+
 - No ruling that any of these models rated relevant is missing from our list.
 - June top 10 (by decision date): the weighted consensus shares 8 of our 10; the models agree among themselves on
   8.5 of 10 on average.
 
 **Summaries.** Each Suva example is broken into legal points (`data/eval_gold_points.json`). We then measure how many
 of them our summary covers, and count error types (`src/eval_summaries.py`):
+
 - Development half: 92 % of Suva's points covered, no error types.
 - Hold-out half: 94.7 %, with 0 error types.
 - The top 20 rulings get a longer version (median 233 words DE, 256 FR, instead of 136 / 174), produced by an
   expansion step that re-runs the same checks; the longer text is kept only if it passes them.
 
 **Error analysis.** We read summaries against the original rulings, as a lawyer would, and used this only as an error
-analysis; the submitted texts are not corrected by hand. `TODO(Miguel/Paul): confirm the manual top-10 review was done.` Error types we found and how they are
-handled:
+analysis; the submitted texts are not corrected by hand. The current top 10 were checked against the original
+rulings; every one had at least one flaw (most often an invented closing sentence, a muddled legal concept, or a date
+or wrong-language abbreviation). Error types we found and how they are handled:
+
 - Reversed or invented outcomes: Dispositiv check.
 - Dates and costs in the text: postcheck.
 - Wrong-language legal abbreviations: postcheck.
