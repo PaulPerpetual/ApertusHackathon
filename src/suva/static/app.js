@@ -211,10 +211,10 @@ function renderChrome() {
 }
 
 function renderTagFilter() {
-  // several keywords combine with AND (like Finder's search criteria); counts show what is left after the chosen ones
+  // several keywords combine with OR: a ruling shows if it carries any of them; counts are per keyword over all rulings
   const freq = {}, label = {};
   state.cards.forEach((c) => tagsOf(c).forEach((g) => { label[g.key] = label[g.key] || g.label; }));
-  state.cards.filter(hasTags).forEach((c) => tagsOf(c).forEach((g) => { if (!state.tags.includes(g.key)) freq[g.key] = (freq[g.key] || 0) + 1; }));
+  state.cards.forEach((c) => tagsOf(c).forEach((g) => { if (!state.tags.includes(g.key)) freq[g.key] = (freq[g.key] || 0) + 1; }));
   const tags = Object.keys(freq).sort((a, b) => freq[b] - freq[a] || label[a].localeCompare(label[b]));
   $("#tagFilter").innerHTML = `<option value="">${state.tags.length ? t("add_tag") : t("all_keywords")}</option>` +
     tags.map((g) => `<option value="${esc(g)}">${esc(label[g])} (${freq[g]})</option>`).join("");
@@ -224,7 +224,7 @@ function renderTagFilter() {
     state.tags = state.tags.filter((k) => k !== b.dataset.k); renderTagFilter(); renderList();
   }));
 }
-const hasTags = (c) => state.tags.every((k) => (c.tags || []).includes(k));
+const hasTags = (c) => !state.tags.length || state.tags.some((k) => (c.tags || []).includes(k));
 
 /* tags: DE is the key (filter works across languages); FR label when triage delivered a 1:1 translation */
 function tagsOf(c) {
