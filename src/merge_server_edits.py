@@ -5,6 +5,7 @@ Human fields (never written by the pipeline):
   assessments.score_override/override_by/override_at, explanation_*_human, explanation_edited_by/at, tags_human
   summaries text/edited_by/edited_at where a person edited it
   edits (history) and notes: rows missing locally are appended
+  rulings added on the server ("Urteil manuell hinzufügen"): judgement, assessment and summaries copied whole
 
     python src/merge_server_edits.py SERVER_COPY.sqlite MASTER.sqlite
 """
@@ -49,6 +50,17 @@ def main(server, master):
             if (r["slug"], r["editor"], r["at"]) not in have:
                 dst.execute("INSERT INTO notes (slug, text, editor, at) VALUES (?,?,?,?)", tuple(r))
                 n["notes"] += 1
+    # rulings that exist only on the server (added by a lawyer via "Urteil manuell hinzufügen"): copy them whole
+    n["new_rulings"] = 0
+    have_slugs = {r[0] for r in dst.execute("SELECT slug FROM judgements")}
+    for table in ("judgements", "assessments", "summaries"):
+        common = [c for c in cols(src, table) if c in cols(dst, table)]
+        for r in src.execute(f"SELECT {', '.join(common)} FROM {table}"):
+            if r["slug"] in have_slugs:
+                continue
+            dst.execute(f"INSERT OR IGNORE INTO {table} ({', '.join(common)}) VALUES ({', '.join('?' * len(common))})", tuple(r))
+            if table == "judgements":
+                n["new_rulings"] += 1
     dst.commit()
     print("merged from server:", n)
 

@@ -20,6 +20,14 @@ def process(j, examples=None, force_summary=False, log=print):
     else:
         a = triage.assess(j, triage.topic_hint(shots))
         model = llm.model_name()
+    if model != "prefilter" and j.get("text"):
+        try:  # specific Begründung (legal question first, deciding consideration), same as the list (src/run_explanations.py)
+            from . import explain
+            x = explain.explain(j, a.get("score"))
+            if x.get("de"):
+                a["explanation_de"], a["explanation_fr"] = x["de"], x.get("fr") or a.get("explanation_fr")
+        except Exception as e:  # keep the triage text rather than failing the whole job
+            log(f"  explain failed for {j['docket']}: {e}")
     with db.connect() as con:
         db.save_assessment(con, slug, a, model, pre)
     log(f"{j['docket']}: prefilter={pre} score={a['score']} ({model})")
