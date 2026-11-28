@@ -7,18 +7,18 @@
     "text": "HACK APERTUS · SUVA CHALLENGE\nLex Aperta\nLex Aperta\nHack Apertus · Suva challenge\n01\nUrteilsradar\nFind and prioritise Suva-relevant rulings,\nwith verifiable summaries in German and French.\nMiguel\nPipeline\nPaul\nUI\nLive demo\napi.robotross.art/lex/"
   },
   {
-    "title": "Lawyer decisions and corrections",
-    "image": "slides/slide-2.png?v=8de42dd038",
-    "duration": 35,
-    "notes": "SLIDE 2 · 35 seconds · 00:15–00:50 · Paul\nLawyers confirm relevance and edit summaries with a correction history. Links to the cited clauses let them verify the source passage in one click. They can add case notes to keep observations beside the ruling. Their decisions then provide feedback for future ranking improvements.",
-    "text": "LAWYER FEEDBACK\nLawyer decisions and corrections\nLex Aperta\nHack Apertus · Suva challenge\n02\n8C_686/2025\nConfirm or reject\nKeep the working list focused on the lawyer’s needs\nEdit with history\nCreate a usable summary and trace every correction\nLinks to cited clauses\nVerify the source passage in one click\nAdd case notes\nRecord observations beside the ruling\nLearn from changes\nReuse decisions to improve future ranking"
+    "title": "Urteilsradar: the lawyer’s workspace",
+    "image": "slides/slide-2.png?v=d2f611e708",
+    "duration": 90,
+    "notes": "SLIDE 2 · 90 seconds · 00:15–01:45 · Paul\n00:15–00:35 [Show the ranked list.] Here is the live Urteilsradar. The left pane ranks the rulings, and the first useful case opens immediately.\n00:35–01:00 [Show the detail pane and switch language.] The detail view contains the relevance reason and a summary in German or French. Links to the cited considerations take the lawyer back to the original ruling.\n01:00–01:20 [Point to editing, history and case notes.] The lawyer can correct the summary, inspect changes and record notes beside the case. These controls make the generated text part of a reviewable workflow.\n01:20–01:35 [Show the borderline category.] Borderline cases remain visible for review. The lawyer can reject a case or confirm it for the working list.\n01:35–01:45 [Point to adding a ruling and the hit list.] Additional rulings can be summarised and the hit list exports as CSV.",
+    "text": "THE PRODUCT\nUrteilsradar: the lawyer’s workspace\nLex Aperta\nHack Apertus · Suva challenge\n03\nSorted rulings\nMost relevant first\nRuling details\nGerman / French summaries + source links\nLawyer edits\nCorrect text, inspect history\nRelevance decisions\nReject cases + flag borderline cases"
   },
   {
-    "title": "Urteilsradar: the lawyer’s workspace",
-    "image": "slides/slide-3.png?v=f36d04e9be",
-    "duration": 90,
-    "notes": "SLIDE 3 · 90 seconds · 00:50–02:20 · Paul\n00:50–01:10 [Show the ranked list.] Here is the live Urteilsradar. The left pane ranks the rulings, and the first useful case opens immediately.\n01:10–01:35 [Show the detail pane and switch language.] The detail view contains the relevance reason and a summary in German or French. Links to the cited considerations take the lawyer back to the original ruling.\n01:35–01:55 [Point to editing, history and case notes.] The lawyer can correct the summary, inspect changes and record notes beside the case. These controls make the generated text part of a reviewable workflow.\n01:55–02:10 [Show the borderline category.] Borderline cases remain visible for review. The lawyer can reject a case or confirm it for the working list.\n02:10–02:20 [Point to adding a ruling and the hit list.] Additional rulings can be summarised and the hit list exports as CSV. Miguel will now explain how the selection and ranking work.",
-    "text": "THE PRODUCT\nUrteilsradar: the lawyer’s workspace\nLex Aperta\nHack Apertus · Suva challenge\n03\nSorted rulings\nMost relevant first\nRuling details\nGerman / French summaries + source links\nLawyer edits\nCorrect text, inspect history\nRelevance decisions\nReject cases + flag borderline cases"
+    "title": "Lawyer decisions and corrections",
+    "image": "slides/slide-3.png?v=dd2f424313",
+    "duration": 35,
+    "notes": "SLIDE 3 · 35 seconds · 01:45–02:20 · Paul\nLawyers confirm relevance and edit summaries with a correction history. Links to the cited clauses let them verify the source passage in one click. They can add case notes to keep observations beside the ruling. Their decisions then provide feedback for future ranking improvements. Miguel will now explain how the selection and ranking work.",
+    "text": "LAWYER FEEDBACK\nLawyer decisions and corrections\nLex Aperta\nHack Apertus · Suva challenge\n02\n8C_686/2025\nConfirm or reject\nKeep the working list focused on the lawyer’s needs\nEdit with history\nCreate a usable summary and trace every correction\nLinks to cited clauses\nVerify the source passage in one click\nAdd case notes\nRecord observations beside the ruling\nLearn from changes\nReuse decisions to improve future ranking"
   },
   {
     "title": "Four selection passes, followed by ranking",
