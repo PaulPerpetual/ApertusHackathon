@@ -6,14 +6,14 @@ const I18N = {
     pub_label: "nach Suva-Publikation (≈ +33 Tage)", pub_hint: "Monat nach geschätzter Publikation der Suva-Zusammenfassung: Entscheiddatum + 33 Tage (Median der Suva-Seiten 2025/26, Spanne 17–76 Tage). Ohne Häkchen: Entscheiddatum.",
     hitlist_btn: "Trefferliste", info_btn: "Info", info_close: "Verstanden",
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_hint1: "Apertus ist unsicher, eine Juristin sollte es ansehen.", promote: "Bestätigen", promoted: "Als relevant bestätigt",
-    min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte", remove: "Entfernen",
+    min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte", remove: "Entfernen", filter: "Filter", period: "Zeitraum", keywords: "Schlagworte", show: "Anzeigen", show_done: "Erledigte", show_rejected: "Nicht relevante", reset_all: "Zurücksetzen", chip_min: (n) => `Relevanz ab ${n}`, chip_pub: "nach Publikation", chip_done: "+ Erledigte", chip_rej: "+ Nicht relevante",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
     add: "Urteil zusammenfassen", add_title: "Weiteres Urteil zusammenfassen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     name: "Name", key: "Editor-Schlüssel (nur für den Server)", editor_set: (n) => n ? `Name: ${n} …` : "Name festlegen …",
     model: "Modell", mock: "Mock (kein LLM)", read_only: "Nur lesen",
-    mark_done: "Erledigt", reopen: "Wieder öffnen", done_by: (n, at) => `Erledigt von ${n}, ${at}`, moved_done: "Nach «Erledigt» verschoben", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
+    mark_done: "Erledigt", reopen: "Wieder öffnen", done_by: (n, at) => `Erledigt von ${n}, ${at}`, moved_done: "Erledigt (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
@@ -29,14 +29,14 @@ const I18N = {
     pub_label: "selon publication Suva (≈ +33 jours)", pub_hint: "Mois selon la publication estimée du résumé Suva: date de décision + 33 jours (médiane des pages Suva 2025/26, 17–76 jours). Sans coche: date de décision.",
     hitlist_btn: "Liste des résultats", info_btn: "Info", info_close: "Compris",
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_hint1: "Apertus n’est pas sûr, un juriste devrait l’examiner.", promote: "Confirmer", promoted: "Confirmé comme pertinent",
-    min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés", remove: "Retirer",
+    min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés", remove: "Retirer", filter: "Filtre", period: "Période", keywords: "Mots-clés", show: "Afficher", show_done: "Traités", show_rejected: "Non pertinents", reset_all: "Réinitialiser", chip_min: (n) => `Pertinence dès ${n}`, chip_pub: "selon publication", chip_done: "+ traités", chip_rej: "+ non pertinents",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
     add: "Résumer un arrêt", add_title: "Résumer un autre arrêt", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     name: "Nom", key: "Clé d'éditeur (serveur uniquement)", editor_set: (n) => n ? `Nom : ${n} …` : "Définir le nom …",
     model: "Modèle", mock: "Fictif (sans LLM)", read_only: "Lecture seule",
-    mark_done: "Traité", reopen: "Rouvrir", done_by: (n, at) => `Traité par ${n}, ${at}`, moved_done: "Déplacé vers « Traités »", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
+    mark_done: "Traité", reopen: "Rouvrir", done_by: (n, at) => `Traité par ${n}, ${at}`, moved_done: "Traité (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
@@ -78,7 +78,10 @@ const isOpen = (c) => !isDone(c) && !isRejected(c);
 // "Bestätigen" (human score) takes a ruling out; "Nicht relevant" rejects it.
 const tierOf = (c) => c.tier ?? c.assessment?.tier;
 const isBorder = (c) => tierOf(c) === 2 && (c.score_override ?? c.assessment?.score_override) == null && isOpen(c);
-const inScopeOf = (c) => ({ all: true, done: isDone(c), rejected: isRejected(c), border: isBorder(c) }[state.scope] ?? isOpen(c));
+// Erledigt / Nicht relevant are no scopes of their own any more: done rulings stay in "Alle",
+// rejected ones come back with the filter "Nicht relevante anzeigen".
+const inScopeOf = (c) => (state.scope === "border" ? isBorder(c)
+  : isOpen(c) || (state.scope === "all" && isDone(c)) || (state.showRej && isRejected(c)));
 const readOnly = () => !!state.status?.read_only;
 
 /* ---------- API (live FastAPI, or static JSON export on GitHub Pages; see docs/API.md) ---------- */
@@ -133,8 +136,8 @@ const INFO = {
     „Grenzfälle" gesammelt. Lieber ein Grenzfall zu viel als ein verpasstes Urteil: bitte kurz prüfen.</p>
     <h4>Neu · Erledigt · Nicht relevant</h4>
     <ul><li><b>Neu</b>: noch nicht bearbeitet.</li>
-      <li><b>Erledigt</b>: geprüft und in Ordnung (Taste E). Gilt für das ganze Team.</li>
-      <li><b>Nicht relevant</b>: nimmt das Urteil von der Trefferliste. Im gleichnamigen Reiter mit einem Klick wiederherstellbar.</li></ul>
+      <li><b>Erledigt</b>: geprüft und in Ordnung (Taste E). Verschwindet aus «Neu», bleibt unter «Alle». Gilt für das ganze Team.</li>
+      <li><b>Nicht relevant</b>: nimmt das Urteil von der Trefferliste. Über Filter → „Nicht relevante anzeigen" wieder sichtbar und mit einem Klick wiederherstellbar.</li></ul>
     <h4>Bearbeiten</h4>
     <p>„Bearbeiten" im Detailbereich öffnet Score, Begründung und beide Zusammenfassungen zur Korrektur. Jede Änderung wird
     mit Ihrem Namen gespeichert und im Verlauf protokolliert; der ursprüngliche KI-Text bleibt abrufbar.
@@ -157,8 +160,8 @@ const INFO = {
     sont regroupés dans l'onglet « Cas limites ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
     <h4>Nouveau · Traité · Non pertinent</h4>
     <ul><li><b>Nouveau</b>: pas encore traité.</li>
-      <li><b>Traité</b>: vérifié et en ordre (touche E). Vaut pour toute l'équipe.</li>
-      <li><b>Non pertinent</b>: retire l'arrêt de la liste des résultats. Restaurable en un clic dans l'onglet du même nom.</li></ul>
+      <li><b>Traité</b>: vérifié et en ordre (touche E). Disparaît de « Nouveaux », reste sous « Tous ». Vaut pour toute l'équipe.</li>
+      <li><b>Non pertinent</b>: retire l'arrêt de la liste des résultats. Visible via Filtre → « Non pertinents », restaurable en un clic.</li></ul>
     <h4>Modifier</h4>
     <p>« Modifier » dans le panneau de détail permet de corriger le score, la justification et les deux résumés. Chaque
     modification est enregistrée avec votre nom et historisée; le texte original de l'IA reste disponible. Lors de la
@@ -208,12 +211,10 @@ function renderChrome() {
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => (el.placeholder = t(el.dataset.i18nPlaceholder)));
   document.querySelectorAll("[data-lang]").forEach((b) => b.classList.toggle("on", b.dataset.lang === state.lang));
   document.querySelectorAll("#scope [data-scope]").forEach((b) => b.classList.toggle("on", b.dataset.scope === state.scope));
-  $("#sortBy").value = state.sort;
   const lines = store.get("lex.whyLines", "4");
   document.documentElement.style.setProperty("--why-lines", lines === "0" ? "999" : lines);
   document.querySelectorAll("#whyLines [data-lines]").forEach((b) => b.classList.toggle("on", b.dataset.lines === lines));
   document.querySelectorAll("#mhead [data-sort]").forEach((b) => { b.classList.toggle("on", b.dataset.sort === state.sort); b.classList.toggle("asc", state.dir === "asc"); });
-  $("#sortDir").textContent = state.dir === "desc" ? "↓" : "↑"; $("#sortDir").title = state.dir === "desc" ? t("desc") : t("asc");
   $("#editorBtn").textContent = t("editor_set", state.editor);
   $("#addBtn").hidden = readOnly(); $("#editorBtn").hidden = readOnly();
   $("#minScore").value = state.minScore; $("#minScoreOut").textContent = state.minScore;
@@ -303,11 +304,47 @@ function renderList() {
   const nBorderRows = rows.filter(isBorder).length;
   $("#rows").innerHTML = rows.map((c, i) => (i === firstBorder
     ? `<li class="sect"><b>${t("scope_border")}</b> <span class="count">${nBorderRows}</span><span class="muted">${t("border_hint")}</span></li>` : "") + rowHtml(c)).join("");
+  renderActiveFilters();
   const inScope = state.cards.filter(inScopeOf).length;
   $("#listMeta").textContent = t("n_shown", rows.length, inScope);
   const nNew = state.cards.filter((c) => isOpen(c) && !isBorder(c) && !readSet.has(c.slug) && (c.score ?? 0) >= state.minScore).length;
-  $("#cNew").textContent = nNew || ""; $("#cDone").textContent = state.cards.filter(isDone).length || ""; $("#cRej").textContent = state.cards.filter(isRejected).length || ""; $("#cBorder").textContent = state.cards.filter(isBorder).length || "";
+  $("#cNew").textContent = nNew || ""; $("#cRej").textContent = state.cards.filter(isRejected).length || ""; $("#cBorder").textContent = state.cards.filter(isBorder).length || "";
   $("#empty").hidden = rows.length > 0; $("#empty").textContent = state.scope === "new" ? t("empty_new") : t("empty");
+}
+
+/* active filters: chips under the toolbar (click × to drop one) + a count on the Filter button */
+function activeFilters() {
+  const label = (k) => (tagsOf({ tags: [k], tags_fr: [] })[0] || {}).label || k;
+  const tagLabel = {};
+  state.cards.forEach((c) => tagsOf(c).forEach((g) => { tagLabel[g.key] = tagLabel[g.key] || g.label; }));
+  const f = [];
+  if (state.month) f.push({ text: t("m" + state.month.slice(5)) + (state.byPublication ? ` (${t("chip_pub")})` : ""), clear: () => { state.month = ""; store.set("lex.month", ""); } });
+  if (state.minScore > 0) f.push({ text: t("chip_min", state.minScore), clear: () => { state.minScore = 0; store.set("lex.min", "0"); } });
+  state.tags.forEach((k) => f.push({ text: tagLabel[k] || label(k), clear: () => { state.tags = state.tags.filter((x) => x !== k); } }));
+  if (state.showRej) f.push({ text: t("chip_rej"), clear: () => { state.showRej = false; store.set("lex.showRej", "0"); } });
+  return f;
+}
+function renderActiveFilters() {
+  const f = activeFilters();
+  $("#filterCount").textContent = f.length ? ` · ${f.length}` : "";
+  $("#filterBtn").classList.toggle("on", f.length > 0);
+  $("#activeFilters").innerHTML = f.map((x, i) => `<button class="tag-chip" data-i="${i}" title="${esc(t("remove"))}">${esc(x.text)} <span aria-hidden="true">×</span></button>`).join("")
+    + (isDefault() ? "" : `<button class="linkbtn" data-reset>${esc(t("reset_all"))}</button>`);
+  $("#activeFilters").querySelectorAll("[data-i]").forEach((b) => (b.onclick = () => { f[+b.dataset.i].clear(); syncFilters(); }));
+  const rb = $("#activeFilters [data-reset]"); if (rb) rb.onclick = resetFilters;
+}
+function syncFilters() {  // after any filter change: controls in the popover, tag list, chips, list
+  renderChrome(); renderTagFilter(); renderList();
+  $("#showRej").checked = !!state.showRej;
+}
+// "Zurücksetzen" = back to the defaults (June 2026, relevance from 40), not to "everything": with no threshold
+// the ~2,000 crawled rulings that Apertus never scored would flood the list.
+const DEFAULTS = { month: "2026-06", minScore: 40 };
+const isDefault = () => state.month === DEFAULTS.month && !state.byPublication && state.minScore === DEFAULTS.minScore && !state.tags.length && !state.showRej;
+function resetFilters() {
+  state.month = DEFAULTS.month; state.byPublication = false; state.minScore = DEFAULTS.minScore; state.tags = []; state.showRej = false;
+  store.set("lex.month", state.month); store.set("lex.byPublication", "0"); store.set("lex.min", String(state.minScore)); store.set("lex.showRej", "0");
+  syncFilters();
 }
 
 async function load() {
@@ -614,6 +651,20 @@ function init() {
   initResizer();
   state.month = store.get("lex.month", "2026-06");  // default: June 2026 (Suva's top-5 review is about June)
   state.byPublication = store.get("lex.byPublication", "0") === "1";
+  state.showRej = store.get("lex.showRej", "0") === "1";
+  if (state.scope === "done" || state.scope === "rejected") {  // old scopes: now "Alle" (+ the rejected filter)
+    if (state.scope === "rejected") { state.showRej = true; store.set("lex.showRej", "1"); }
+    state.scope = "all"; store.set("lex.scope", "all");
+  }
+  $("#showRej").checked = state.showRej;
+  $("#showRej").onchange = (e) => { state.showRej = e.target.checked; store.set("lex.showRej", state.showRej ? "1" : "0"); renderList(); };
+  $("#resetFilters").onclick = resetFilters;
+  const pop = $("#filterPop"), fb = $("#filterBtn");
+  const setPop = (open) => { pop.hidden = !open; fb.setAttribute("aria-expanded", String(open)); };
+  fb.onclick = (e) => { e.stopPropagation(); setPop(pop.hidden); };
+  // composedPath: a chip removed by its own click is no longer in the DOM, but still in the event path
+  document.addEventListener("click", (e) => { if (!pop.hidden && !e.composedPath().some((n) => n === pop || n === fb)) setPop(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) setPop(false); });
   if ($("#pubToggle")) $("#pubToggle").onchange = (e) => { state.byPublication = e.target.checked; store.set("lex.byPublication", state.byPublication ? "1" : "0"); renderList(); };
   if ($("#monthSel")) $("#monthSel").onchange = (e) => { state.month = e.target.value; store.set("lex.month", state.month); renderList(); };
   if ($("#infoBtn")) $("#infoBtn").onclick = openInfo;
@@ -624,10 +675,6 @@ function init() {
     renderChrome(); renderTagFilter(); renderList(); if (state.open) renderPanel();
   }));
   document.querySelectorAll("#scope [data-scope]").forEach((b) => (b.onclick = () => { state.scope = b.dataset.scope; store.set("lex.scope", state.scope); renderChrome(); renderList(); }));
-  $("#sortBy").onchange = (e) => {
-    state.sort = e.target.value; state.dir = state.sort === "title" || state.sort === "docket" ? "asc" : "desc";
-    store.set("lex.sort", state.sort); store.set("lex.dir", state.dir); renderChrome(); renderList();
-  };
   document.querySelectorAll("#mhead [data-sort]").forEach((b) => (b.onclick = () => {
     if (state.sort === b.dataset.sort) state.dir = state.dir === "desc" ? "asc" : "desc";
     else { state.sort = b.dataset.sort; state.dir = state.sort === "title" ? "asc" : "desc"; }
@@ -635,7 +682,6 @@ function init() {
   }));
   // a failed save must never be silent (e.g. missing/wrong editor key on the hosted server)
   window.addEventListener("unhandledrejection", (e) => { toast(`${t("failed_action")}: ${errText(e.reason)}`); });
-  $("#sortDir").onclick = () => { state.dir = state.dir === "desc" ? "asc" : "desc"; store.set("lex.dir", state.dir); renderChrome(); renderList(); };
   $("#minScore").oninput = (e) => { state.minScore = parseInt(e.target.value, 10); store.set("lex.min", String(state.minScore)); $("#minScoreOut").textContent = state.minScore; renderList(); };
   $("#tagFilter").onchange = (e) => { const v = e.target.value; if (v && !state.tags.includes(v)) state.tags.push(v); renderTagFilter(); renderList(); };
   $("#search").oninput = renderList;

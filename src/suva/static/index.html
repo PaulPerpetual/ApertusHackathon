@@ -12,14 +12,25 @@
     <button data-scope="new" class="on"><span data-i18n="scope_new">Neu</span> <span class="count" id="cNew"></span></button>
     <button data-scope="all" data-i18n="scope_all">Alle</button>
     <button data-scope="border"><span data-i18n="scope_border">Grenzfälle</span> <span class="count" id="cBorder"></span></button>
-    <button data-scope="done"><span data-i18n="scope_done">Erledigt</span> <span class="count" id="cDone"></span></button>
-    <button data-scope="rejected"><span data-i18n="scope_rejected">Nicht relevant</span> <span class="count" id="cRej"></span></button>
   </div>
   <div class="spacer"></div>
-  <select id="monthSel" class="month-sel" aria-label="Monat / mois"></select>
-  <label class="pub-toggle" title=""><input type="checkbox" id="pubToggle"> <span id="pubLabel"></span></label>
   <label class="searchbox"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
     <input id="search" type="search" data-i18n-placeholder="search"></label>
+  <div class="filter-wrap">
+    <button class="btn" id="filterBtn" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 16 16" aria-hidden="true" width="13" height="13"><path d="M2 3h12l-4.6 5.4V13l-2.8-1.4V8.4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg> <span data-i18n="filter">Filter</span><span class="fcount" id="filterCount"></span></button>
+    <div id="filterPop" class="filter-pop" hidden>
+      <div class="fp-row"><span class="fp-label" data-i18n="period">Zeitraum</span>
+        <div class="fp-ctl"><select id="monthSel" class="month-sel" aria-label="Monat / mois"></select>
+          <label class="pub-toggle" title=""><input type="checkbox" id="pubToggle"> <span id="pubLabel"></span></label></div></div>
+      <div class="fp-row"><span class="fp-label" data-i18n="min_relevance">Relevanz ab</span>
+        <div class="fp-ctl"><input id="minScore" type="range" min="0" max="100" step="5"><output id="minScoreOut"></output></div></div>
+      <div class="fp-row"><span class="fp-label" data-i18n="keywords">Schlagworte</span>
+        <div class="fp-ctl"><select id="tagFilter"></select><span id="tagChips" class="tag-chips"></span></div></div>
+      <div class="fp-row"><span class="fp-label" data-i18n="show">Anzeigen</span>
+        <div class="fp-ctl fp-checks"><label><input type="checkbox" id="showRej"> <span data-i18n="show_rejected">Nicht relevante</span> <span class="count" id="cRej"></span></label></div></div>
+      <div class="fp-foot"><button class="linkbtn" id="resetFilters" data-i18n="reset_all">Zurücksetzen</button></div>
+    </div>
+  </div>
   <button class="btn" id="addBtn"><span aria-hidden="true">＋</span> <span data-i18n="add">Urteil zusammenfassen</span></button>
   <a class="btn" href="hitlist" id="hitlistBtn" data-i18n="hitlist_btn">Trefferliste</a>
   <button class="btn" id="infoBtn" aria-haspopup="dialog"><span aria-hidden="true">ⓘ</span> <span data-i18n="info_btn">Info</span></button>
@@ -40,20 +51,7 @@
 </header>
 
 <div class="filterbar">
-  <label class="f-item"><span data-i18n="min_relevance">Relevanz ab</span>
-    <input id="minScore" type="range" min="0" max="100" step="5"><output id="minScoreOut"></output></label>
-  <label class="f-item"><span data-i18n="keyword">Schlagwort</span>
-    <select id="tagFilter"></select></label>
-  <span id="tagChips" class="tag-chips"></span>
-  <label class="f-item"><span data-i18n="sort_by">Sortieren nach</span>
-    <select id="sortBy">
-      <option value="score" data-i18n="col_relevance">Relevanz</option>
-      <option value="date" data-i18n="col_date">Entscheiddatum</option>
-      <option value="title" data-i18n="col_title">Titel</option>
-      <option value="docket" data-i18n="col_docket">Nummer</option>
-      <option value="edited" data-i18n="col_edited">Bearbeitet</option>
-    </select>
-    <button id="sortDir" class="tool-btn small" title=""></button></label>
+  <span id="activeFilters" class="active-filters"></span>
   <div class="spacer"></div>
   <span id="listMeta" class="meta"></span>
 </div>

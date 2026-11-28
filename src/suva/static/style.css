@@ -265,3 +265,20 @@ a.btn { text-decoration: none; color: inherit; display: inline-flex; align-items
 /* month filter (decision date), default June 2026 for the top-5 review */
 .month-sel { padding: 3px 8px; border-radius: 6px; border: 1px solid var(--control-border); background: var(--control); color: inherit; font: inherit; }
 .pub-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted, #605e5c); white-space: nowrap; }
+
+/* filter popover (all filters in one place) + active-filter chips under the toolbar */
+.filter-wrap { position: relative; }
+#filterBtn { display: inline-flex; align-items: center; gap: 5px; }
+#filterBtn.on { border-color: var(--accent); color: var(--accent); }
+.filter-pop { position: absolute; right: 0; top: calc(100% + 6px); z-index: 40; width: 380px; max-width: calc(100vw - 24px); background: var(--surface);
+  border: 1px solid var(--sep); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.16); padding: 12px 14px; font-size: 13px; }
+.fp-row { display: grid; grid-template-columns: 96px 1fr; gap: 10px; align-items: start; padding: 7px 0; border-bottom: 1px solid var(--sep); }
+.fp-label { color: var(--muted); font-size: 12px; padding-top: 4px; }
+.fp-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.fp-ctl input[type=range] { width: 160px; accent-color: var(--accent); }
+.fp-ctl select { border: 1px solid var(--control-border); border-radius: 5px; background: var(--control); padding: 2px 6px; max-width: 100%; color: var(--text); }
+.fp-checks { flex-direction: column; align-items: flex-start; gap: 4px; }
+.fp-checks .count { color: var(--muted); font-size: 11px; }
+.fp-foot { display: flex; justify-content: flex-end; padding-top: 8px; }
+.linkbtn { border: 0; background: none; color: var(--accent); cursor: pointer; font: inherit; font-size: 12px; padding: 0 4px; }
+.active-filters { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
