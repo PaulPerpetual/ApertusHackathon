@@ -21,7 +21,7 @@ import urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "results")
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-TEAM = os.environ.get("LEX_TEAM", "Paul · Miguel Rodriguez")
+TEAM = os.environ.get("LEX_TEAM", "Paul Grünenwald · Miguel Rodriguez")
 PROJECT = "Lex Aperta"
 MONTHS = {"04": ("April", "avril"), "05": ("Mai", "mai"), "06": ("Juni", "juin")}
 CSS = """body{font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;line-height:1.45;color:#222;max-width:760px;margin:auto}

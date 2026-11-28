@@ -1,11 +1,11 @@
-# Technical report — Lex Aperta, `team name`
+# Technical report — Lex Aperta
 
 A deeper write-up than the README: what we built, how it works, and what the numbers say.
 
 - **Challenge partner:** Suva
 - **Challenge:** Identification of relevant Federal Court judgements and preparation of a legal summary
 - **Event:** On-site Zurich
-- **Team:** `team name` — Paul, Miguel
+- **Team:** Lex Aperta — Paul Grünenwald (UI, API), Miguel Rodriguez (pipeline: crawl, relevance, ranking, summaries)
 - **Demo:** `link to video`
 - **Live prototype:** <https://api.robotross.art/lex/> (read-only showcase: <https://paulperpetual.github.io/ApertusHackathon/>)
 

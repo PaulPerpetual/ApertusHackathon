@@ -1,6 +1,6 @@
 # Lex Aperta: results (Hack Apertus Zürich 2026, Challenge Suva)
 
-Team: Paul · Miguel Rodriguez. All selections, rankings and texts by Apertus v1.5 70B (swiss-ai, via CSCS/Keera).
+Team: Paul Grünenwald · Miguel Rodriguez. All selections, rankings and texts by Apertus v1.5 70B (swiss-ai, via CSCS/Keera).
 
 | File | Content |
 | --- | --- |
