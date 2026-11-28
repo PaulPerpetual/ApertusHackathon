@@ -1,5 +1,5 @@
 """Glue: judgement -> prefilter -> LLM triage -> (if relevant) DE/FR summaries -> database."""
-from . import config, db, examples as ex_mod, llm, summarize, triage
+from . import config, db, examples as ex_mod, llm, summarize, summarize_v2, triage
 
 PREFILTER_MIN = 20  # below this, store a rule-based "not relevant" assessment without calling the LLM
 
@@ -24,7 +24,7 @@ def process(j, examples=None, force_summary=False, log=print):
         db.save_assessment(con, slug, a, model, pre)
     log(f"{j['docket']}: prefilter={pre} score={a['score']} ({model})")
     if (a["score"] >= config.RELEVANCE_SUMMARY_THRESHOLD or force_summary) and j.get("text"):
-        s = summarize.summarize(j, shots)
+        s = summarize_v2.summarize(j, shots)  # S2.2, the prompt confirmed on the hold-out (same as the list)
         with db.connect() as con:
             for lang in ("de", "fr"):
                 db.save_summary(con, slug, lang, s[lang], llm.model_name())
