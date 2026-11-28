@@ -176,7 +176,7 @@ of them our summary covers, and count error types (`src/eval_summaries.py`):
   expansion step that re-runs the same checks; the longer text is kept only if it passes them.
 
 **Error analysis.** We read summaries against the original rulings, as a lawyer would, and used this only as an error
-analysis; the submitted texts are not corrected by hand. The current top 10 were checked against the original
+analysis. Only two clear factual errors in the June top 10 were corrected by hand, as logged editor edits in the app: an outcome sentence (8C_365/2025: Suva's appeal was admitted, not the insured's dismissed) and a wrong insurer in an invalidity case (9C_73/2026: IV office, not Suva); everything else is unedited Apertus output. The current top 10 were checked against the original
 rulings; every one had at least one flaw (most often an invented closing sentence, a muddled legal concept, or a date
 or wrong-language abbreviation). Error types we found and how they are handled:
 
