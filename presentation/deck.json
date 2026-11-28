@@ -28,7 +28,7 @@
     "text": "SYSTEM OVERVIEW\nFour selection passes, followed by ranking\nLex Aperta\nHack Apertus · Suva challenge\n04\n1  Triage\nScore overall relevance\nExplain the legal question\n89\n2  IV rescue\nFind transferable rules\nin disability rulings\n+12\n3  ATSG rescue\nRevisit earlier rejections\nRequire a quote from the ruling\n+110\n4  Review\nWeigh the evidence\nagainst the ruling\nKeep plausible cases\n98%\n5  Ranker\nSuva-trained weights\ncombine Apertus scores\nBorderline cases below\n74%\nATSG = Federal Act on the General Part of Social Insurance Law. IV = disability insurance."
   },
   {
-    "title": "Benchmarking frontier models improved",
+    "title": "Benchmarking frontier models improved system prompts for Apertus",
     "image": "slides/slide-5.png?v=b84a4750e8",
     "duration": 55,
     "notes": "SLIDE 5 · 55 seconds · 03:05–04:00 · Miguel\nWe used independent frontier-model rankings to identify where Apertus needed better prompts. Codex, Gemini, Muse and Claude ranked the same cases blind. We normalised their scores to percentile ranks and combined them using weights calibrated on labelled cases. Comparing that consensus with Apertus exposed general patterns, such as overvaluing an individual remand and undervaluing a rule with broad effect. Those lessons informed more precise system prompts and ranking criteria. The graph shows top-ten overlap in June. The final ranker still uses Apertus's own assessments and case facts, with weights learned from Suva's yes-or-no list. We compare ranking methods through cross-validation. Frontier-model outputs are development references, not runtime inputs.",
