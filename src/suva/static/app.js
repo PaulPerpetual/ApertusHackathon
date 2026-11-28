@@ -13,14 +13,14 @@ const I18N = {
     start: "Zusammenfassen", cancel: "Abbrechen", who: "Wer bearbeitet?", who_hint: "Ihr Name wird bei Änderungen angezeigt. Keine Anmeldung nötig.",
     name: "Name", key: "Editor-Schlüssel (nur für den Server)", editor_set: (n) => n ? `Name: ${n} …` : "Name festlegen …",
     model: "Modell", mock: "Mock (kein LLM)", read_only: "Nur lesen",
-    mark_done: "Erledigt", reopen: "Wieder öffnen", done_by: (n, at) => `Erledigt von ${n}, ${at}`, moved_done: "Erledigt (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
+    mark_done: "Freigeben", reopen: "Freigabe zurückziehen", done_by: (n, at) => `Freigegeben von ${n}, ${at}`, approved: "Freigegeben", v_before: "Vorher", v_after: "Nachher", v_restore: "Diese Fassung wiederherstellen", v_show: "Fassungen ansehen", v_restored: "Fassung wiederhergestellt (im Verlauf protokolliert)", expand: "Gross anzeigen", shrink: "Seitlich anzeigen", moved_done: "Freigegeben (weiter unter «Alle»)", moved_new: "Wieder geöffnet", reject: "Nicht relevant", moved_rejected: "Als nicht relevant aus der Liste genommen", rejected_by: (n, at) => `Als nicht relevant markiert von ${n}, ${at}`, restore: "Wieder aufnehmen",
     relevance: "Relevanz", manual: "manuell", score_ai: "KI-Score", score_human: "Manuell", revert: "KI-Score wiederherstellen", edit_score: "Klicken zum Ändern",
     why: "Begründung", details: "Details", decided: "Entscheid", published: "Publiziert", division: "Abteilung", original: "Originalurteil", open_bger: "Auf bger.ch öffnen",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Urteilstext", history: "Verlauf",
     edit: "Bearbeiten", subject_hint: "Gegenstand laut Bundesgericht", subject: "Gegenstand", add_tag: "Schlagwort hinzufügen …", h_tags: "Schlagworte geändert", notes: "Notizen", no_notes: "Noch keine Notizen.", note_ph: "Notiz für das Team …", add_note: "Notiz hinzufügen", delete: "Löschen", h_note: "Notiz hinzugefügt", h_note_deleted: "Notiz gelöscht", h_explanation_de: "Begründung DE bearbeitet", h_explanation_fr: "Begründung FR bearbeitet", save: "Speichern", show_ai: "KI-Original anzeigen", hide_ai: "KI-Original ausblenden", edited_by: "bearbeitet von", ai: "KI",
     no_summary: "Noch keine Zusammenfassung.", generate: "Jetzt zusammenfassen", no_text: "Volltext nicht verfügbar.", no_history: "Keine manuellen Änderungen.",
     h_score: "Score geändert", h_revert: "Score zurückgesetzt", h_summary_de: "Zusammenfassung DE bearbeitet", h_summary_fr: "Résumé FR bearbeitet", h_status: "Status",
-    st_new: "neu", st_done: "erledigt", st_rejected: "nicht relevant", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
+    st_new: "neu", st_done: "freigegeben", st_rejected: "nicht relevant", saved: "Gespeichert", failed_action: "Nicht gespeichert", err_key: "Editor-Schlüssel fehlt oder ist falsch (⋯ → Name/Schlüssel)", queued: "Wird verarbeitet …", done: "Fertig", failed: "Fehler",
     suva_party: "Suva Partei", human_example: "Suva-Originalzusammenfassung", demo: "Demo",
     cite_missing: "Erwägung im Volltext nicht gefunden", cite_hint: "Zur Erwägung im Urteilstext springen",
   },
@@ -36,14 +36,14 @@ const I18N = {
     start: "Résumer", cancel: "Annuler", who: "Qui modifie ?", who_hint: "Votre nom s'affiche lors des modifications. Pas d'inscription.",
     name: "Nom", key: "Clé d'éditeur (serveur uniquement)", editor_set: (n) => n ? `Nom : ${n} …` : "Définir le nom …",
     model: "Modèle", mock: "Fictif (sans LLM)", read_only: "Lecture seule",
-    mark_done: "Traité", reopen: "Rouvrir", done_by: (n, at) => `Traité par ${n}, ${at}`, moved_done: "Traité (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
+    mark_done: "Valider", reopen: "Retirer la validation", done_by: (n, at) => `Validé par ${n}, ${at}`, approved: "Validé", v_before: "Avant", v_after: "Après", v_restore: "Restaurer cette version", v_show: "voir les versions", v_restored: "Version restaurée (consignée dans l’historique)", expand: "Agrandir", shrink: "Afficher sur le côté", moved_done: "Validé (toujours sous « Tous »)", moved_new: "Rouvert", reject: "Non pertinent", moved_rejected: "Retiré de la liste comme non pertinent", rejected_by: (n, at) => `Marqué non pertinent par ${n}, ${at}`, restore: "Réintégrer",
     relevance: "Pertinence", manual: "manuel", score_ai: "Score IA", score_human: "Manuel", revert: "Rétablir le score IA", edit_score: "Cliquer pour modifier",
     why: "Justification", details: "Détails", decided: "Décision", published: "Publié", division: "Cour", original: "Arrêt original", open_bger: "Ouvrir sur bger.ch",
     summary_de: "Zusammenfassung DE", summary_fr: "Résumé FR", text: "Texte de l'arrêt", history: "Historique",
     edit: "Modifier", subject_hint: "Objet selon le Tribunal fédéral", subject: "Objet", add_tag: "Ajouter un mot-clé …", h_tags: "Mots-clés modifiés", notes: "Notes", no_notes: "Pas encore de notes.", note_ph: "Note pour l\u2019équipe …", add_note: "Ajouter une note", delete: "Supprimer", h_note: "Note ajoutée", h_note_deleted: "Note supprimée", h_explanation_de: "Justification DE modifiée", h_explanation_fr: "Justification FR modifiée", save: "Enregistrer", show_ai: "Afficher l'original IA", hide_ai: "Masquer l'original IA", edited_by: "modifié par", ai: "IA",
     no_summary: "Pas encore de résumé.", generate: "Résumer maintenant", no_text: "Texte intégral indisponible.", no_history: "Aucune modification manuelle.",
     h_score: "Score modifié", h_revert: "Score rétabli", h_summary_de: "Zusammenfassung DE modifiée", h_summary_fr: "Résumé FR modifié", h_status: "Statut",
-    st_new: "nouveau", st_done: "traité", st_rejected: "non pertinent", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
+    st_new: "nouveau", st_done: "validé", st_rejected: "non pertinent", saved: "Enregistré", failed_action: "Non enregistré", err_key: "Clé d\u2019éditeur manquante ou incorrecte (⋯ → Nom/clé)", queued: "En cours …", done: "Terminé", failed: "Erreur",
     suva_party: "Suva partie", human_example: "Résumé original Suva", demo: "Démo",
     cite_missing: "Considérant introuvable dans le texte", cite_hint: "Aller au considérant dans le texte de l'arrêt",
   },
@@ -134,9 +134,9 @@ const INFO = {
     <p>Urteile, bei denen Apertus unsicher ist (oft Invaliden- oder Verfahrensrecht, das auch für die Unfallversicherung
     gelten kann). Sie stehen unter den klar relevanten Urteilen, tragen das gelbe Etikett <b>Grenzfall</b> und sind im Reiter
     „Grenzfälle" gesammelt. Lieber ein Grenzfall zu viel als ein verpasstes Urteil: bitte kurz prüfen.</p>
-    <h4>Neu · Erledigt · Nicht relevant</h4>
+    <h4>Neu · Freigegeben · Nicht relevant</h4>
     <ul><li><b>Neu</b>: noch nicht bearbeitet.</li>
-      <li><b>Erledigt</b>: geprüft und in Ordnung (Taste E). Verschwindet aus «Neu», bleibt unter «Alle». Gilt für das ganze Team.</li>
+      <li><b>Freigeben</b>: geprüft und in Ordnung (Taste E). Das Urteil trägt dann «✓ Freigegeben von Name» mit Datum, verschwindet aus «Neu» und bleibt unter «Alle». Gilt für das ganze Team; im Verlauf lässt sich jede frühere Fassung ansehen und wiederherstellen.</li>
       <li><b>Nicht relevant</b>: nimmt das Urteil von der Trefferliste. Über Filter → „Nicht relevante anzeigen" wieder sichtbar und mit einem Klick wiederherstellbar.</li></ul>
     <h4>Bearbeiten</h4>
     <p>„Bearbeiten" im Detailbereich öffnet Score, Begründung und beide Zusammenfassungen zur Korrektur. Jede Änderung wird
@@ -158,9 +158,9 @@ const INFO = {
     <p>Arrêts pour lesquels Apertus hésite (souvent assurance-invalidité ou procédure pouvant aussi valoir pour
     l'assurance-accidents). Ils figurent sous les arrêts clairement pertinents, portent l’étiquette jaune <b>Cas limite</b> et
     sont regroupés dans l'onglet « Cas limites ». Mieux vaut un cas limite de trop qu'un arrêt manqué: merci de vérifier.</p>
-    <h4>Nouveau · Traité · Non pertinent</h4>
+    <h4>Nouveau · Validé · Non pertinent</h4>
     <ul><li><b>Nouveau</b>: pas encore traité.</li>
-      <li><b>Traité</b>: vérifié et en ordre (touche E). Disparaît de « Nouveaux », reste sous « Tous ». Vaut pour toute l'équipe.</li>
+      <li><b>Valider</b>: vérifié et en ordre (touche E). L'arrêt porte alors « ✓ Validé par nom » avec la date, disparaît de « Nouveaux » et reste sous « Tous ». Vaut pour toute l'équipe ; l'historique permet de consulter et de restaurer chaque version antérieure.</li>
       <li><b>Non pertinent</b>: retire l'arrêt de la liste des résultats. Visible via Filtre → « Non pertinents », restaurable en un clic.</li></ul>
     <h4>Modifier</h4>
     <p>« Modifier » dans le panneau de détail permet de corriger le score, la justification et les deux résumés. Chaque
@@ -279,7 +279,8 @@ function rowHtml(c) {
   const overridden = c.score_override !== null && c.score_override !== undefined;
   const unread = !readSet.has(c.slug) && isOpen(c);
   const tip = `${t("score_ai")}: ${c.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${c.score_override} (${c.override_by || ""})` : ""} · ${t("edit_score")}`;
-  const edited = c.last_editor ? `<span class="edited">✎ ${esc(c.last_editor)} · ${esc(fmtTime(c.last_edit_at))}</span>` : "";
+  const edited = (isDone(c) ? `<span class="ok-badge" title="${esc(t("done_by", c.status_by || "–", fmtTime(c.status_at)))}">✓ ${t("approved")}${c.status_by ? ` · ${esc(c.status_by)}` : ""}</span>` : "")
+    + (c.last_editor ? `<span class="edited">✎ ${esc(c.last_editor)} · ${esc(fmtTime(c.last_edit_at))}</span>` : "");
   return `<li data-slug="${esc(c.slug)}" class="mrow ${c.slug === state.open ? "sel" : ""} ${isRejected(c) ? "rejected" : ""} ${isBorder(c) ? "border" : ""} ${unread ? "unread" : ""} ${c.last_editor ? "is-edited" : ""}">
     <div class="m-dot">${unread ? '<span class="dot"></span>' : ""}</div>
     <div class="m-score ${overridden ? "manual" : ""}" data-score title="${esc(tip)}">
@@ -454,7 +455,12 @@ async function openPanel(slug) {
   $("#panel").hidden = false; renderList(); await renderPanel();
   const tr = document.querySelector(`#rows [data-slug="${CSS.escape(slug)}"]`); if (tr) tr.scrollIntoView({ block: "nearest" });
 }
-function closePanel() { state.open = null; $("#panel").hidden = true; renderList(); }
+function closePanel() { setBig(false); state.open = null; $("#panel").hidden = true; renderList(); }
+// "Gross anzeigen": the same detail view as a large centred window over the list (Esc / backdrop / ⤡ go back)
+function setBig(on) {
+  document.body.classList.toggle("panel-big", on); $("#backdrop").hidden = !on;
+  const b = $("#pExpand"); if (b) { b.textContent = on ? "⤡" : "⤢"; b.title = t(on ? "shrink" : "expand"); b.setAttribute("aria-label", b.title); }
+}
 
 async function renderPanel() {
   const d = await api(`/api/judgements/${encodeURIComponent(state.open)}`);
@@ -489,7 +495,7 @@ async function renderPanel() {
         <span class="muted">${t("score_ai")}: ${a.ai_score ?? "–"}${overridden ? ` · ${t("score_human")}: ${a.score_override} (${esc(a.override_by)}, ${esc(fmtTime(a.override_at))})` : ""}</span>
         ${overridden && !readOnly() ? `<button class="btn small" id="revertBtn">${t("revert")}</button>` : ""}</div>
       ${isBorder(d) ? `<div class="bl-note"><span><b>${t("border")}:</b> ${t("border_hint1")}${(d.tier_reason ?? a.tier_reason) ? ` ${fmt(d.tier_reason ?? a.tier_reason)}` : ""}</span>${readOnly() ? "" : `<button class="btn small" id="promoteBtn">${t("promote")}</button>`}</div>` : ""}
-      ${(done || rejected) && d.status_by ? `<p class="muted">${esc(t(done ? "done_by" : "rejected_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
+      ${(done || rejected) && d.status_by ? `<p class="${done ? "ok-line" : "muted"}">${done ? "✓ " : ""}${esc(t(done ? "done_by" : "rejected_by", d.status_by, fmtTime(d.status_at)))}</p>` : ""}</div>
     <div class="section"><h4>${t("why")}${whyEdited && a.explanation_edited_by ? ` <span class="edited">✎ ${esc(a.explanation_edited_by)}</span>` : ""}</h4>
       ${E ? `<textarea class="why-edit" id="eWhy">${esc(dr.why ?? why ?? "")}</textarea>` : `<p>${fmt(String(why || "").replace(BORDER_PREFIX, ""))}</p>`}
       ${E ? tagEditor(dr.tags ?? a.tags ?? [])
@@ -533,14 +539,34 @@ async function renderPanel() {
   } else {
     const label = (h) => (h.field === "status" ? `${t("h_status")}: ${t("st_" + h.old_value)} → ${t("st_" + h.new_value)}`
       : t("h_" + h.field.replace("_score", "")) + (h.field.includes("score") ? `: ${esc(h.old_value)} → ${esc(h.new_value)}` : ""));
+    // text changes (summaries, reasons) are versions: open one to see before/after and restore either side
+    const textField = (f) => /^(summary|explanation)_(de|fr)$/.test(f);
+    const ver = (h, side) => {
+      const v = side === "old" ? h.old_value : h.new_value;
+      return `<div class="ver"><div class="ver-head"><span class="muted">${t(side === "old" ? "v_before" : "v_after")}</span>
+        ${readOnly() || v == null ? "" : `<button class="btn small" data-restore="${h.id}" data-side="${side}">↺ ${t("v_restore")}</button>`}</div>
+        <div class="ver-text">${v == null ? `<span class="muted">–</span>` : esc(v)}</div></div>`;
+    };
     html += d.history.length
-      ? `<ul class="history">${d.history.map((h) => `<li><b>${esc(h.editor)}</b> · ${esc(fmtTime(h.at))} · ${label(h)}</li>`).join("")}</ul>`
+      ? `<ul class="history">${d.history.map((h) => textField(h.field)
+          ? `<li><details><summary><b>${esc(h.editor)}</b> · ${esc(fmtTime(h.at))} · ${label(h)} <span class="muted">· ${t("v_show")}</span></summary>
+              <div class="ver-pair">${ver(h, "old")}${ver(h, "new")}</div></details></li>`
+          : `<li><b>${esc(h.editor)}</b> · ${esc(fmtTime(h.at))} · ${label(h)}</li>`).join("")}</ul>`
       : `<p class="muted">${t("no_history")}</p>`;
   }
   html += `</div>`;
   $("#pBody").innerHTML = html;
 
   $("#pBody").querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.tab; renderPanel(); }));
+  $("#pBody").querySelectorAll("[data-restore]").forEach((b) => (b.onclick = async () => {
+    const h = d.history.find((x) => String(x.id) === b.dataset.restore); if (!h || !(await requireName())) return;
+    const text = b.dataset.side === "old" ? h.old_value : h.new_value;
+    const [kind, lang] = h.field.split("_");
+    try {
+      await api(`/api/judgements/${encodeURIComponent(d.slug)}/${kind}/${lang}`, { method: "PUT", body: JSON.stringify({ text, editor: state.editor }) });
+      toast(t("v_restored")); await load();
+    } catch (e) { toast(`${t("failed_action")}: ${errText(e)}`); }
+  }));
   $("#pBody").querySelectorAll(".cite").forEach((el) => (el.onclick = (e) => { e.preventDefault(); state.tab = "text"; state.pendingErw = el.dataset.erw; renderPanel(); }));
   if (state.tab === "text" && d.html) anchorHtml($("#origHtml"));
   if (state.tab === "text" && state.pendingErw) {
@@ -649,6 +675,9 @@ function initResizer() {
 /* ---------- wiring ---------- */
 function init() {
   initResizer();
+  $("#pExpand").onclick = () => setBig(!document.body.classList.contains("panel-big"));
+  $("#backdrop").onclick = () => setBig(false);
+  setBig(false);
   state.month = store.get("lex.month", "2026-06");  // default: June 2026 (Suva's top-5 review is about June)
   state.byPublication = store.get("lex.byPublication", "0") === "1";
   state.showRej = store.get("lex.showRej", "0") === "1";
@@ -709,6 +738,7 @@ function init() {
   // keyboard like Mail: ↑/↓ move, Esc closes, E marks done / reopens
   document.addEventListener("keydown", (e) => {
     if (document.querySelector("dialog[open]") || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName)) return;
+    if (e.key === "Escape" && document.body.classList.contains("panel-big")) { setBig(false); return; }
     if (e.key === "Escape" && state.open) closePanel();
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       const rows = visible(); if (!rows.length) return;
