@@ -4,7 +4,7 @@ const I18N = {
   de: {
     hitlist_btn: "Trefferliste", info_btn: "Info", info_close: "Verstanden",
     app_title: "Urteilsradar", search: "Suchen", scope_new: "Neu", scope_all: "Alle", scope_done: "Erledigt", scope_rejected: "Nicht relevant", scope_border: "Grenzfälle", border: "Grenzfall", border_hint: "Apertus ist unsicher, ob diese Urteile für die Suva relevant sind.", border_hint1: "Apertus ist unsicher, eine Juristin sollte es ansehen.", promote: "Bestätigen", promoted: "Als relevant bestätigt",
-    min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte",
+    min_relevance: "Relevanz ab", sort_by: "Sortieren nach", asc: "Aufsteigend", desc: "Absteigend", keyword: "Schlagwort", all_keywords: "Alle Schlagworte", remove: "Entfernen",
     preview_lines: "Begründung in der Liste", all_lines: "alle", col_relevance: "Relevanz", col_ruling: "Urteil", col_title: "Titel", col_docket: "Nummer", col_date: "Entscheiddatum", col_tags: "Schlagworte", col_edited: "Bearbeitet",
     n_shown: (n, t) => `${n} von ${t}`, empty_new: "Keine neuen Urteile über dieser Relevanzschwelle.", empty: "Keine Urteile gefunden.",
     add: "Urteil zusammenfassen", add_title: "Weiteres Urteil zusammenfassen", add_hint: "Geschäftsnummer (z.B. 8C_145/2025) oder Link von bger.ch",
@@ -25,7 +25,7 @@ const I18N = {
   fr: {
     hitlist_btn: "Liste des résultats", info_btn: "Info", info_close: "Compris",
     app_title: "Radar des arrêts", search: "Rechercher", scope_new: "Nouveaux", scope_all: "Tous", scope_done: "Traités", scope_rejected: "Non pertinents", scope_border: "Cas limites", border: "Cas limite", border_hint: "Apertus n’est pas sûr que ces arrêts soient pertinents pour la Suva.", border_hint1: "Apertus n’est pas sûr, un juriste devrait l’examiner.", promote: "Confirmer", promoted: "Confirmé comme pertinent",
-    min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés",
+    min_relevance: "Pertinence dès", sort_by: "Trier par", asc: "Croissant", desc: "Décroissant", keyword: "Mot-clé", all_keywords: "Tous les mots-clés", remove: "Retirer",
     preview_lines: "Justification dans la liste", all_lines: "tout", col_relevance: "Pertinence", col_ruling: "Arrêt", col_title: "Titre", col_docket: "Numéro", col_date: "Date de l\u2019arrêt", col_tags: "Mots-clés", col_edited: "Modifié",
     n_shown: (n, t) => `${n} sur ${t}`, empty_new: "Aucun nouvel arrêt au-dessus de ce seuil.", empty: "Aucun arrêt trouvé.",
     add: "Résumer un arrêt", add_title: "Résumer un autre arrêt", add_hint: "Numéro de dossier (p.ex. 8C_145/2025) ou lien bger.ch",
@@ -55,7 +55,7 @@ const saveRead = () => store.set("lex.read", JSON.stringify([...readSet]));
 const state = {
   lang: store.get("suva.lang", "de"), editor: store.get("suva.editor", ""),
   scope: store.get("lex.scope", "new"), sort: store.get("lex.sort", "score"), dir: store.get("lex.dir", "desc"),
-  minScore: parseInt(store.get("lex.min", "40"), 10), tag: "", cards: [], open: null, tab: null, editing: false, showAi: false, status: null,
+  minScore: parseInt(store.get("lex.min", "40"), 10), tags: [], cards: [], open: null, tab: null, editing: false, showAi: false, status: null,
 };
 const $ = (s) => document.querySelector(s);
 const t = (k, ...a) => { const v = I18N[state.lang][k]; return typeof v === "function" ? v(...a) : v ?? k; };
@@ -211,12 +211,20 @@ function renderChrome() {
 }
 
 function renderTagFilter() {
+  // several keywords combine with AND (like Finder's search criteria); counts show what is left after the chosen ones
   const freq = {}, label = {};
-  state.cards.forEach((c) => tagsOf(c).forEach((g) => { freq[g.key] = (freq[g.key] || 0) + 1; label[g.key] = label[g.key] || g.label; }));
+  state.cards.forEach((c) => tagsOf(c).forEach((g) => { label[g.key] = label[g.key] || g.label; }));
+  state.cards.filter(hasTags).forEach((c) => tagsOf(c).forEach((g) => { if (!state.tags.includes(g.key)) freq[g.key] = (freq[g.key] || 0) + 1; }));
   const tags = Object.keys(freq).sort((a, b) => freq[b] - freq[a] || label[a].localeCompare(label[b]));
-  $("#tagFilter").innerHTML = `<option value="">${t("all_keywords")}</option>` +
-    tags.map((g) => `<option value="${esc(g)}" ${g === state.tag ? "selected" : ""}>${esc(label[g])} (${freq[g]})</option>`).join("");
+  $("#tagFilter").innerHTML = `<option value="">${state.tags.length ? t("add_tag") : t("all_keywords")}</option>` +
+    tags.map((g) => `<option value="${esc(g)}">${esc(label[g])} (${freq[g]})</option>`).join("");
+  $("#tagChips").innerHTML = state.tags.map((k) =>
+    `<button class="tag-chip" data-k="${esc(k)}" title="${esc(t("remove"))}">${esc(label[k] || k)} <span aria-hidden="true">×</span></button>`).join("");
+  $("#tagChips").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => {
+    state.tags = state.tags.filter((k) => k !== b.dataset.k); renderTagFilter(); renderList();
+  }));
 }
+const hasTags = (c) => state.tags.every((k) => (c.tags || []).includes(k));
 
 /* tags: DE is the key (filter works across languages); FR label when triage delivered a 1:1 translation */
 function tagsOf(c) {
@@ -233,7 +241,7 @@ function visible() {
   const rows = state.cards.filter((c) => {
     if (!inScopeOf(c)) return false;
     if (!isBorder(c) && (c.score ?? 0) < state.minScore && c.slug !== state.open) return false;
-    if (state.tag && !(c.tags || []).includes(state.tag)) return false;
+    if (!hasTags(c)) return false;
     if (q && ![c.docket, c.title_de, c.title_fr, c.explanation_de, c.explanation_fr, c.subject, ...(c.tags || []), ...(c.tags_fr || [])].join(" ").toLowerCase().includes(q)) return false;
     return true;
   });
@@ -585,7 +593,7 @@ function init() {
   window.addEventListener("unhandledrejection", (e) => { toast(`${t("failed_action")}: ${errText(e.reason)}`); });
   $("#sortDir").onclick = () => { state.dir = state.dir === "desc" ? "asc" : "desc"; store.set("lex.dir", state.dir); renderChrome(); renderList(); };
   $("#minScore").oninput = (e) => { state.minScore = parseInt(e.target.value, 10); store.set("lex.min", String(state.minScore)); $("#minScoreOut").textContent = state.minScore; renderList(); };
-  $("#tagFilter").onchange = (e) => { state.tag = e.target.value; renderList(); };
+  $("#tagFilter").onchange = (e) => { const v = e.target.value; if (v && !state.tags.includes(v)) state.tags.push(v); renderTagFilter(); renderList(); };
   $("#search").oninput = renderList;
   const menu = $("#menu"), menuBtn = $("#menuBtn");
   const setMenu = (open) => { menu.hidden = !open; menuBtn.setAttribute("aria-expanded", String(open)); };
