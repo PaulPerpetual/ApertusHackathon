@@ -50,9 +50,9 @@
       <label>Dataset<select id="ds"></select></label>
       <label>Run A<select id="ra"></select></label>
       <label>Run B<select id="rb"></select></label>
-      <label>Monat (Entscheid)<select id="month"><option value="">Alle</option><option value="2026-04">April 2026</option>
+      <label id="monthWrap">Monat<select id="month"><option value="">Alle</option><option value="2026-04">April 2026</option>
         <option value="2026-05">Mai 2026</option><option value="2026-06">Juni 2026</option></select></label>
-      <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="pubmode"> nach Suva-Publikation (≈ +33 Tage)</label>
+      <label id="pubWrap" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" id="pubmode"> nach Suva-Publikation (≈ +33 Tage)</label>
     </div>
     <div class="note" id="dsnote"></div>
   </div>
@@ -98,7 +98,27 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const pct = (x) => x == null ? "–" : Math.round(x * 100) + "%";
 const f3 = (x) => x == null ? "–" : x.toFixed(3);
 const store = { get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
-let IDX = null, DOCK = {}, A = null, B = null, filter = store.get("cmp.filter", "diff");
+let IDX = null, DOCK = {}, A = null, B = null, ALL = {}, filter = store.get("cmp.filter", "diff");
+// readable names (ids stay the same in files and URLs)
+const DS_NAMES = {
+  aprjun: "Q2 2026: period under review (Apr–Jun, 177 candidates)",
+  window: "Test period Oct 2025 – Mar 2026 (733 rulings, Suva's yes/no list known)",
+  calibration40: "Calibration sample: 40 rulings from the test period (half of them Suva picks)",
+};
+const RUN_NAMES = {
+  "apertus70b-v4-tiers-ranked": "Apertus: LIVE list (4 passes + learned ranking)",
+  "apertus70b-v1": "Apertus: pass 1 only (first triage)",
+  "apertus70b-v2-principle": "Apertus: v2 prompt (tested, not used)",
+  "apertus70b-v3-atsg-rescue": "Apertus: v3 with ATSG rescue (tested, not used)",
+  "apertus70b-shadow-rank": "Apertus: alternative ranking (tested, not used)",
+  "codex-gpt6": "Codex (GPT-6), reference",
+  "gem": "Gem (Gemini), reference",
+  "muse": "Muse, reference",
+  "clau": "Clau (Claude), reference",
+  "consensus-weighted": "Consensus of the 4 reference models (weighted)",
+};
+const dsName = (id) => DS_NAMES[id] || id, runName = (id) => RUN_NAMES[id] || id;
+const MONTHS = { "2026-04": "April", "2026-05": "Mai", "2026-06": "Juni" };
 
 function spearman(xs, ys) {
   const rank = (v) => { const s = v.map((x, i) => [x, i]).sort((a, b) => a[0] - b[0]); const r = Array(v.length);
@@ -113,21 +133,30 @@ async function getJSON(p) { const r = await fetch(p, { cache: "no-store" }); if 
 
 function fillRuns() {
   const ds = $("ds").value, runs = IDX.runs.filter((r) => r.dataset === ds);
-  const opt = (r) => `<option value="${esc(r.id)}">${esc(r.id)}</option>`;
+  const opt = (r) => `<option value="${esc(r.id)}">${esc(runName(r.id))}</option>`;
   $("ra").innerHTML = runs.map(opt).join(""); $("rb").innerHTML = runs.map(opt).join("");
-  const pa = store.get(`cmp.a.${ds}`, runs.find((r) => /apertus.*v1/.test(r.id))?.id || runs[0]?.id);
+  const pa = store.get(`cmp.a.${ds}`, (runs.find((r) => /v4-tiers/.test(r.id)) || runs.find((r) => /apertus.*v1/.test(r.id)))?.id || runs[0]?.id);
   const pb = store.get(`cmp.b.${ds}`, runs.find((r) => /codex/.test(r.id))?.id || runs.find((r) => r.id !== pa)?.id || runs[0]?.id);
   if (runs.some((r) => r.id === pa)) $("ra").value = pa;
   if (runs.some((r) => r.id === pb)) $("rb").value = pb;
   const d = IDX.datasets.find((x) => x.id === ds);
-  $("dsnote").textContent = `${d.label}. ${d.rulings} rulings` + (d.labelled ? `, ${d.positives} picked by Suva.` : ". No labels yet.");
+  const target = ds === "aprjun", mo = target ? $("month").value : "";
+  $("monthWrap").style.display = $("pubWrap").style.display = target ? "" : "none";
+  const inMonth = Object.keys(DOCK).filter((k) => monthOk(k)).length;
+  $("dsnote").textContent = `${d.label}. ${d.rulings} rulings` + (d.labelled ? `, ${d.positives} picked by Suva.` : ". No labels yet.") +
+    (mo ? ` Filter: ${MONTHS[mo]} 2026 ${$("pubmode").checked ? "(estimated Suva publication)" : "(decision date)"}, ${inMonth} candidates; all tables below count this month only.` : "");
   const labelled = d.labelled;
-  $("runs").innerHTML = `<tr><th>Run</th><th>Model</th><th class="n">Listed</th>${labelled ? `<th class="n">Hits</th><th class="n">Recall</th><th class="n">Precision</th><th class="n">F2</th><th class="n">AUC</th>` : ""}<th>Notes</th></tr>` +
-    runs.map((r) => { const m = r.metrics || {}; return `<tr class="${[$("ra").value, $("rb").value].includes(r.id) ? "sel" : ""}"><td><b>${esc(r.id)}</b></td><td>${esc(r.model)}</td><td class="n">${r.listed}/${r.rulings}</td>` +
+  const live = ALL["apertus70b-v4-tiers-ranked"];
+  const top10 = (rows) => new Set([...rows].filter((r) => monthOk(r.docket)).sort((x, y) => (y.score ?? -1) - (x.score ?? -1)).slice(0, 10).map((r) => r.docket));
+  const liveTop = live ? top10(live.rows) : null;
+  const cnt = (r) => { const f = ALL[r.id]; return f && mo ? `${f.rows.filter((x) => x.relevant && monthOk(x.docket)).length}/${f.rows.filter((x) => monthOk(x.docket)).length}` : `${r.listed}/${r.rulings}`; };
+  const ov = (r) => { const f = ALL[r.id]; if (!f || !liveTop) return "–"; const t = top10(f.rows); return `${[...t].filter((x) => liveTop.has(x)).length}/10`; };
+  $("runs").innerHTML = `<tr><th>Run</th><th>Model</th><th class="n">Listed${mo ? " (" + MONTHS[mo] + ")" : ""}</th>${target ? `<th class="n">Top 10 shared with LIVE list</th>` : ""}${labelled ? `<th class="n">Hits</th><th class="n">Recall</th><th class="n">Precision</th><th class="n">F2</th><th class="n">AUC</th>` : ""}<th>Notes</th></tr>` +
+    runs.map((r) => { const m = r.metrics || {}; return `<tr class="${[$("ra").value, $("rb").value].includes(r.id) ? "sel" : ""}"><td><b>${esc(runName(r.id))}</b><div class="reason">${esc(r.id)}</div></td><td>${esc(r.model)}</td><td class="n">${cnt(r)}</td>${target ? `<td class="n">${ov(r)}</td>` : ""}` +
       (labelled ? `<td class="n">${m.hits}/${m.positives}</td><td class="n">${pct(m.recall)}</td><td class="n">${pct(m.precision)}</td><td class="n"><b>${f3(m.f2)}</b></td><td class="n">${f3(m.auc)}</td>` : "") +
       `<td class="muted" style="font-size:12px">${esc(r.notes)}</td></tr>`; }).join("");
   $("runsnote").textContent = ds === "calibration40"
-    ? "Note: this set is half Suva picks by design, which flatters lenient runs. Use 'window' (about 20 % picks, as in reality) to judge F2."
+    ? "Note: this set is half Suva picks by design, which flatters lenient runs. Use the test period (about 20 % picks, as in reality) to judge F2."
     : ds === "window" ? "Realistic base rate: this is the yardstick for the hit list." : "Suva's labels for Apr–Jun arrive with the judging; until then compare agreement and read the disagreements.";
 }
 
@@ -135,12 +164,14 @@ async function load() {
   const ds = $("ds").value;
   store.set("cmp.ds", ds); store.set(`cmp.a.${ds}`, $("ra").value); store.set(`cmp.b.${ds}`, $("rb").value);
   DOCK = await getJSON(`api/runs/${ds}/_dockets`);
+  ALL = {};
+  if (ds === "aprjun") await Promise.all(IDX.runs.filter((r) => r.dataset === ds).map(async (r) => { try { ALL[r.id] = await getJSON(`api/runs/${ds}/${r.id}`); } catch {} }));
   const [a, b] = await Promise.all([getJSON(`api/runs/${ds}/${$("ra").value}`), getJSON(`api/runs/${ds}/${$("rb").value}`)]);
   A = a; B = b; fillRuns(); render();
 }
 
 function monthOk(d) {  // month filter: decision date, or estimated Suva publication (decision + 33 days)
-  const m = $("month").value; if (!m) return true;
+  const m = $("ds").value === "aprjun" ? $("month").value : ""; if (!m) return true;
   const date = (DOCK[d] || {}).date; if (!date) return false;
   if (!$("pubmode").checked) return date.startsWith(m);
   const x = new Date(date + "T00:00:00Z"); x.setUTCDate(x.getUTCDate() + 33); return x.toISOString().startsWith(m);
@@ -158,8 +189,8 @@ function render() {
   const labelled = Object.values(DOCK).some((m) => m.suva != null);
   const missed = labelled ? ids.filter((d) => DOCK[d]?.suva && !ma.get(d)?.relevant && !mb.get(d)?.relevant) : [];
   $("venn").innerHTML = [
-    [both.length, "both say relevant", "var(--both)"], [onlyA.length, `only A (${A.meta.run})`, "var(--a)"],
-    [onlyB.length, `only B (${B.meta.run})`, "var(--b)"], [pct(common.length ? agree / common.length : null), "agreement", "var(--fg)"],
+    [both.length, "both say relevant", "var(--both)"], [onlyA.length, `only A (${runName(A.meta.run)})`, "var(--a)"],
+    [onlyB.length, `only B (${runName(B.meta.run)})`, "var(--b)"], [pct(common.length ? agree / common.length : null), "agreement", "var(--fg)"],
     [rho == null ? "–" : rho.toFixed(2), "score correlation", "var(--fg)"],
     ...(labelled ? [[missed.length, "Suva picks both missed", "var(--no)"]] : []),
   ].map(([v, l, c]) => `<div class="vbox" style="border-left:4px solid ${c}"><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join("");
@@ -187,7 +218,7 @@ function render() {
   if (q) list = list.filter((d) => [d, DOCK[d]?.subject, DOCK[d]?.title, ma.get(d)?.reason, mb.get(d)?.reason].join(" ").toLowerCase().includes(q));
   list = [...list].sort((x, y) => Math.abs((ma.get(y)?.score ?? 0) - (mb.get(y)?.score ?? 0)) - Math.abs((ma.get(x)?.score ?? 0) - (mb.get(x)?.score ?? 0)));
   const cell = (r) => r ? `<span class="pill ${r.relevant ? "yes" : "no"}">${r.score ?? "–"}</span><div class="reason">${esc(r.reason)}</div>` : `<span class="muted">–</span>`;
-  $("rows").innerHTML = `<tr><th>Ruling</th>${labelled ? "<th>Suva</th>" : ""}<th>A: ${esc(A.meta.run)}</th><th>B: ${esc(B.meta.run)}</th></tr>` +
+  $("rows").innerHTML = `<tr><th>Ruling</th>${labelled ? "<th>Suva</th>" : ""}<th>A: ${esc(runName(A.meta.run))}</th><th>B: ${esc(runName(B.meta.run))}</th></tr>` +
     list.slice(0, 300).map((d) => { const m = DOCK[d] || {}; return `<tr><td><b>${m.url ? `<a href="${esc(m.url)}" target="_blank" rel="noopener">${esc(d)}</a>` : esc(d)}</b><div class="reason">${esc(m.date)} · ${esc(m.subject)}</div>${m.title ? `<div class="reason">${esc(m.title)}</div>` : ""}</td>` +
       (labelled ? `<td>${m.suva ? '<span class="pill yes">picked</span>' : '<span class="pill no">no</span>'}</td>` : "") +
       `<td>${cell(ma.get(d))}</td><td>${cell(mb.get(d))}</td></tr>`; }).join("") +
@@ -198,14 +229,15 @@ function render() {
 (async () => {
   try {
     IDX = await getJSON("api/runs");
-    $("ds").innerHTML = IDX.datasets.map((d) => `<option value="${d.id}">${esc(d.id)}</option>`).join("");
+    const order = ["aprjun", "window", "calibration40"];
+    $("ds").innerHTML = [...IDX.datasets].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id)).map((d) => `<option value="${d.id}">${esc(dsName(d.id))}</option>`).join("");
     const ds = store.get("cmp.ds", "aprjun"); if (IDX.datasets.some((d) => d.id === ds)) $("ds").value = ds;
     fillRuns();
     $("ds").onchange = () => { fillRuns(); load(); };
     $("ra").onchange = load; $("rb").onchange = load; $("q").oninput = () => render();
-    $("month").value = store.get("cmp.month", ""); $("pubmode").checked = store.get("cmp.pub", "0") === "1";
-    $("month").onchange = () => { store.set("cmp.month", $("month").value); render(); };
-    $("pubmode").onchange = () => { store.set("cmp.pub", $("pubmode").checked ? "1" : "0"); render(); };
+    $("month").value = store.get("cmp.month2", "2026-06");  // default: June = month under review $("pubmode").checked = store.get("cmp.pub", "0") === "1";
+    $("month").onchange = () => { store.set("cmp.month2", $("month").value); fillRuns(); render(); };
+    $("pubmode").onchange = () => { store.set("cmp.pub", $("pubmode").checked ? "1" : "0"); fillRuns(); render(); };
     await load();
   } catch (e) { $("dsnote").textContent = "Could not load runs: " + e.message; }
 })();

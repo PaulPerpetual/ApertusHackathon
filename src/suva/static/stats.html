@@ -39,7 +39,7 @@
   <div class="kpis" id="kpis"></div>
 
   <div class="card" style="margin-top:16px">
-    <h2>Model comparison on the labelled window</h2>
+    <h2>Model comparison on the test period (Oct 2025 – Mar 2026, Suva list known)</h2>
     <div class="sub" id="winlabel"></div>
     <div class="scroll"><table id="cmp"></table></div>
     <div class="note">Suva scores the delivered list with Recall and F2 (recall counts 4× as much as precision).
@@ -69,7 +69,7 @@
 
   <div class="grid">
     <div class="card">
-      <h2>By subject area (window)</h2>
+      <h2>By subject area (test period)</h2>
       <div class="scroll"><table id="area"></table></div>
     </div>
     <div class="card">
@@ -144,7 +144,7 @@ fetch("api/stats", { cache: "no-store" }).then((r) => r.json()).then((s) => {
   $("kpis").innerHTML = [
     [p.crawled, "rulings crawled Apr–Jun 2026"], [p.candidates, "subject-area candidates"],
     [p.selected, "on the hit list"], [p.summarised, "summarised (DE + FR)"],
-    [pct(sel.recall), "recall on labelled window"], [sel.f2 != null ? sel.f2.toFixed(3) : "–", "F2 on labelled window"],
+    [pct(sel.recall), "recall on test period"], [sel.f2 != null ? sel.f2.toFixed(3) : "–", "F2 on test period"],
   ].map(([v, l]) => `<div class="kpi"><b>${esc(v ?? "–")}</b><span>${esc(l)}</span></div>`).join("");
 
   $("winlabel").textContent = `${w.label || ""}: ${w.rulings || "?"} social-insurance rulings, ${w.suva_positives || "?"} on Suva's list.`;
